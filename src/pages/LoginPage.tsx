@@ -7,19 +7,24 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
+  const [info, setInfo] = useState('');
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setInfo('');
     let result;
     if (isSignUp) {
       result = await supabase.auth.signUp({ email, password });
       if (!result.error && result.data.user) {
         // Insert profile with default role
         await supabase.from('profiles').insert([
-          { id: result.data.user.id, role: 'user' }
+          { id: result.data.user.id, role: 'user', email: email }
         ]);
+        setInfo('check your email for verification');
+      } else {
+        setInfo(result.error?.message || 'Something went wrong');
       }
     } else {
       result = await supabase.auth.signInWithPassword({ email, password });
@@ -59,7 +64,7 @@ const LoginPage: React.FC = () => {
           </button>
         </form>
         {error && <div className="text-red-500 mt-2">{error}</div>}
-        {/* {info && <div className="text-green-600 mt-2">{info}</div>} */}
+        {info && <div className="text-green-600 mt-2">{info}</div>}
         <div className="mt-4 text-center">
           <button
             className="text-blue-600 hover:underline"
