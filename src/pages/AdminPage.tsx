@@ -5,6 +5,8 @@ import SongFiltersComponent from '../components/SongFilters';
 import Modal from '../components/Modal';
 import SongForm from '../components/SongForm';
 import Export from '../components/Export';
+import { Tooltip } from 'react-tooltip';
+
 
 const AdminPage: React.FC = () => {
   const [songsPerPage, setSongsPerPage] = useState(5); // default 5
@@ -163,12 +165,13 @@ const AdminPage: React.FC = () => {
 
           {/* Export button */}
           <button
+            data-tooltip-id="exportTip"
             onClick={() => setIsExportModalOpen(true)}
             className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
           >
             Export
           </button>
-
+          <Tooltip id="exportTip" place="top" content="יצא את השירים שבחרת לקובץ" />
           {/* Add Song Button */}
           <button
             onClick={() => setIsEditSongModalOpen(true)}
