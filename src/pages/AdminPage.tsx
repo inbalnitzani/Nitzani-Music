@@ -265,41 +265,47 @@ const AdminPage: React.FC = () => {
           </tbody>
         </table>
       </div>
-      {/* Pagination Controls */}
-      <div className="flex justify-center items-center gap-2 mt-6">
-        <button
-          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Prev
-        </button>
-        <span className="mx-2">Page {currentPage} of {totalPages}</span>
-        <button
-          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-        <div className=" ml-4 flex items-center gap-2">
-          {/* <label htmlFor="songs-per-page" className="text-sm font-medium text-gray-700">שירים בעמוד:</label> */}
-          <select
-            value={songsPerPage}
-            onChange={e => {
-              const newSize = Number(e.target.value);
-              setSongsPerPage(newSize);
-              setCurrentPage(1);
-              fetchSongs(currentFilters, 1, newSize);
-            }}
-            className="border rounded px-2 py-1 w-24"
-          >
-            {[5, 10, 20, 50, 100].map(size => (
-              <option key={size} value={size}>{size}</option>
-            ))}
-          </select>
-        </div>
-      </div>
+      <div className="relative flex justify-center items-center gap-2 mt-6">
+  {/* Pagination controls (centered) */}
+  <button
+    className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+    onClick={() => handlePageChange(currentPage - 1)}
+    disabled={currentPage === 1}
+  >
+    Prev
+  </button>
+  <span className="mx-2">Page {currentPage} of {totalPages}</span>
+  <button
+    className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+    onClick={() => handlePageChange(currentPage + 1)}
+    disabled={currentPage === totalPages}
+  >
+    Next
+  </button>
+
+{/* page size */}
+  <select
+      value={songsPerPage}
+      onChange={e => {
+        const newSize = Number(e.target.value);
+        setSongsPerPage(newSize);
+        setCurrentPage(1);
+        fetchSongs(currentFilters, 1, newSize);
+      }}
+      className="border rounded px-2 py-1 w-24"
+    >
+      {[5, 10, 20, 50, 100].map(size => (
+        <option key={size} value={size}>{size}</option>
+      ))}
+    </select>
+
+  {/*  total songs on the left */}
+  <div className="flex items-center gap-2 absolute left-0">
+
+    <span className="text-sm text-gray-500">שירים בטבלה: {totalSongs}</span>
+  </div>
+</div>
+
     </div>
   );
 }
