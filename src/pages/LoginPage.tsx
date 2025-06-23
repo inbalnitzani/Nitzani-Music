@@ -20,7 +20,7 @@ const LoginPage: React.FC = () => {
       if (!result.error && result.data.user) {
         // Insert profile with default role
         await supabase.from('profiles').insert([
-          { id: result.data.user.id, role: 'user', email: email }
+          { id: result.data.user.id, role: 'user' }
         ]);
         setInfo('check your email for verification');
       } else {
