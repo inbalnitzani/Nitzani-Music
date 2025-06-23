@@ -14,24 +14,47 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     setError('');
     setInfo('');
-    let result;
-    if (isSignUp) {
-      result = await supabase.auth.signUp({ email, password });
-      if (!result.error && result.data.user) {
-        // Insert profile with default role
-        await supabase.from('profiles').insert([
-          { id: result.data.user.id, role: 'user' }
-        ]);
-        setInfo('check your email for verification');
+  
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({ email, password });
+  
+        if (error) {
+          setError(error.message);
+        } else {
+          setInfo('Check your email to verify your account');
+          // Do not insert into 'profiles' table yet — user is not confirmed
+        }
       } else {
-        setInfo(result.error?.message || 'Something went wrong');
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+  
+        if (signInError) {
+          setError(signInError.message);
+        } else if (signInData.user) {
+          // Insert into 'profiles' table only after user successfully signs in
+          const { error: insertError } = await supabase.from('profiles').upsert([
+            { id: signInData.user.id, email, role: 'user' }
+          ]);
+  
+          if (insertError) {
+            console.error('Failed to insert profile:', insertError);
+          }
+  
+          setInfo('Successfully signed in');
+        }
       }
-    } else {
-      result = await supabase.auth.signInWithPassword({ email, password });
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     }
-    if (result.error) setError(result.error.message);
+  
     setLoading(false);
   };
+  
+  
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
