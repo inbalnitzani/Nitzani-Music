@@ -46,7 +46,14 @@ Font.register({
       textAlign: 'center',
       padding: 6,
 
-    }
+    },title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 16,
+        textAlign: 'center',
+        color: '#1e293b',
+        fontFamily: 'Noto Sans Hebrew'
+      }
   });
 const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
     const [fileName, setFileName] = useState("songs_export");
@@ -115,6 +122,8 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
         const doc = (
           <PDFDocument>
             <Page size="A4" style={pdfStyles.page}>
+            <Text style={styles.title}>{fileName || "שירים"}</Text>
+            <View style={pdfStyles.table}>
               <View style={pdfStyles.table}>
                 {/* Table Header */}
                 <View style={pdfStyles.tableRow}>
@@ -126,6 +135,7 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
                     </View>
                   ))}
                 </View>
+              </View>
                 {/* Table Body */}
                 {data.map((row, idx) => (
                   <View key={idx} style={pdfStyles.tableRow}>
