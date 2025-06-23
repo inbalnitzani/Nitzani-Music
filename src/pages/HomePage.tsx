@@ -8,10 +8,6 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.reload();
-  };
 
   const searchSongsByPrompt = async (prompt: string) => {
     setIsLoading(true);
@@ -188,7 +184,6 @@ export default function HomePage() {
                         </a>
                       )}
                       <div className="text-xs text-gray-500">
-                        <StarRating score={song.score || 0} />
                       </div>
                     </div>
                   </div>
