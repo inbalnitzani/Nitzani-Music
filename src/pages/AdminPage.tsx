@@ -6,7 +6,7 @@ import Modal from '../components/Modal';
 import SongForm from '../components/SongForm';
 import Export from '../components/Export';
 import { Tooltip } from 'react-tooltip';
-
+import TagList from '../components/TageList';
 
 const AdminPage: React.FC = () => {
   const [songsPerPage, setSongsPerPage] = useState(5); // default 5
@@ -235,9 +235,15 @@ const AdminPage: React.FC = () => {
                 className="bg-white border-b hover:bg-gray-50 cursor-pointer"
                 onClick={() => handleEditSong(song)}
               >                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{song.title}</td>
-                <td className="px-6 py-4">{song.artists?.join(', ')}</td>
-                <td className="px-6 py-4">{song.authors?.join(', ')}</td>
-                <td className="px-6 py-4">{song.keywords?.join(', ')}</td>
+                <td className="px-6 py-4">
+                  <TagList items={song.artists} />
+                </td>
+                <td className="px-6 py-4">
+                  <TagList items={song.authors} colorClass="bg-green-100 text-green-800" />
+                </td>
+                <td className="px-6 py-4">
+                  <TagList items={song.keywords} colorClass="bg-pink-100 text-pink-800" />
+                </td>
                 <td className="px-6 py-4 truncate max-w-xs">{song.lyrics}</td>
                 <td className="px-6 py-4">{song.year}</td>
                 <td className="px-6 py-4"><a href={song.link} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{song.link ? 'Link' : ''}</a></td>
