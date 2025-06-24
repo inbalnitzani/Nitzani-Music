@@ -7,7 +7,7 @@ import type { MultiValue } from 'react-select';
 type SongFormProps = {
     onClose: () => void;
     onSuccess: () => void;
-    song?: Song & { song_artists?: { artist_id: string }[] };
+    song?: Song & { song_artists?: { artist_id: string }[], song_authors?: { author_id: string }[], song_keywords?: { keyword_id: string }[], song_genres?: { genre_id: string }[] };
 };
 
 type ArtistOption = { value: string; label: string };
@@ -31,9 +31,11 @@ const SongForm: React.FC<SongFormProps> = ({
     });
     const [selectedArtistIds, setSelectedArtistIds] = useState<string[]>([]);
     const [selectedArtistOptions, setSelectedArtistOptions] = useState<ArtistOption[]>([]);
+    const [selectedAuthorOptions, setSelectedAuthorOptions] = useState<ArtistOption[]>([]);
+    const [selectedKeywordOptions, setSelectedKeywordOptions] = useState<ArtistOption[]>([]);
+    const [selectedGenreOptions, setSelectedGenreOptions] = useState<ArtistOption[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
 
     // Set selected artists for edit mode
     useEffect(() => {
@@ -53,7 +55,34 @@ const SongForm: React.FC<SongFormProps> = ({
                 })();
             }
         }
-    }, [isEditMode, song?.id, song?.song_artists]);
+        if (isEditMode && song?.song_authors) {
+            const ids = song.song_authors.map(sa => sa.author_id);
+            if (ids.length > 0) {
+                (async () => {
+                    const { data } = await supabase.from('authors').select('id, name').in('id', ids);
+                    setSelectedAuthorOptions((data || []).map(a => ({ value: a.id, label: a.name })));
+                })();
+            }
+        }
+        if (isEditMode && song?.song_keywords) {
+            const ids = song.song_keywords.map(sk => sk.keyword_id);
+            if (ids.length > 0) {
+                (async () => {
+                    const { data } = await supabase.from('keywords').select('id, name').in('id', ids);
+                    setSelectedKeywordOptions((data || []).map(k => ({ value: k.id, label: k.name })));
+                })();
+            }
+        }
+        if (isEditMode && song?.song_genres) {
+            const ids = (song.song_genres as { genre_id: string }[]).map(sg => sg.genre_id);
+            if (ids.length > 0) {
+                (async () => {
+                    const { data } = await supabase.from('genres').select('id, name').in('id', ids);
+                    setSelectedGenreOptions((data || []).map(g => ({ value: g.id, label: g.name })));
+                })();
+            }
+        }
+    }, [isEditMode, song?.id, song?.song_artists, song?.song_authors, song?.song_keywords, song?.song_genres]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -69,8 +98,6 @@ const SongForm: React.FC<SongFormProps> = ({
 
             const formDataToSend = {
                 ...formData,
-                keywords: prepareArray(formData.keywords),
-                authors: prepareArray(formData.authors),
                 genres: prepareArray(formData.genres),
             };
 
@@ -100,7 +127,37 @@ const SongForm: React.FC<SongFormProps> = ({
             // Handle artists through song_artists table
             await handleSongArtists(songId, selectedArtistIds);
 
-            updateFiltersOptions(formDataToSend.authors, selectedArtistIds, formDataToSend.keywords);
+            // Handle authors through song_authors table
+            await supabase.from('song_authors').delete().eq('song_id', songId);
+            if (selectedAuthorOptions.length > 0) {
+                const songAuthorsData = selectedAuthorOptions.map((author, idx) => ({
+                    song_id: songId,
+                    author_id: author.value,
+                    position: idx
+                }));
+                await supabase.from('song_authors').insert(songAuthorsData);
+            }
+
+            // Handle keywords through song_keywords table
+            await supabase.from('song_keywords').delete().eq('song_id', songId);
+            if (selectedKeywordOptions.length > 0) {
+                const songKeywordsData = selectedKeywordOptions.map((keyword) => ({
+                    song_id: songId,
+                    keyword_id: keyword.value
+                }));
+                await supabase.from('song_keywords').insert(songKeywordsData);
+            }
+
+            // Handle genres through song_genres table
+            await supabase.from('song_genres').delete().eq('song_id', songId);
+            if (selectedGenreOptions.length > 0) {
+                const songGenresData = selectedGenreOptions.map((genre) => ({
+                    song_id: songId,
+                    genre_id: genre.value
+                }));
+                await supabase.from('song_genres').insert(songGenresData);
+            }
+
             onSuccess();
             onClose();
         } catch (err) {
@@ -160,60 +217,37 @@ const SongForm: React.FC<SongFormProps> = ({
         return (data || []).map((a: { id: string; name: string }) => ({ value: a.id, label: a.name }));
     };
 
-    const handleDelete = async () => {
-        if (!isEditMode) return;
-        setIsDeleting(true);
-        setError(null);
-        try {
-            // Delete song_artists associations first
-            await supabase
-                .from('song_artists')
-                .delete()
-                .eq('song_id', song?.id);
-
-            // Delete the song
-            const { error: deleteError } = await supabase
-                .from('songs')
-                .delete()
-                .eq('id', song?.id);
-
-            if (deleteError) throw new Error('Failed to delete song');
-            onSuccess();
-            onClose();
-        } catch (err) {
-            setError('Failed to delete song');
-            console.error('Error:', err);
-        } finally {
-            setIsDeleting(false);
-        }
+    const loadAuthorOptions = async (inputValue: string) => {
+        if (!inputValue) return [];
+        const { data } = await supabase.from('authors').select('id, name').ilike('name', `%${inputValue}%`).order('name').limit(20);
+        return (data || []).map(a => ({ value: a.id, label: a.name }));
     };
 
-    // update filters options
-    const updateFiltersOptions = async (authors: string[], artistIds: string[], keywords: string[]) => {
-        try {
-            await Promise.all([
-                supabase.from('authors').upsert(authors.map(name => ({ name })), { onConflict: 'name' }),
-                supabase.from('keywords').upsert(keywords.map(name => ({ name })), { onConflict: 'name' })
-            ]);
-        } catch (err) {
-            setError('Failed to update filters options');
-            console.error('Error:', err);
-        }
+    const loadKeywordOptions = async (inputValue: string) => {
+        if (!inputValue) return [];
+        const { data } = await supabase.from('keywords').select('id, name').ilike('name', `%${inputValue}%`).order('name').limit(20);
+        return (data || []).map(k => ({ value: k.id, label: k.name }));
+    };
+
+    const loadGenreOptions = async (inputValue: string) => {
+        if (!inputValue) return [];
+        const { data } = await supabase.from('genres').select('id, name').ilike('name', `%${inputValue}%`).order('name').limit(20);
+        return (data || []).map(g => ({ value: g.id, label: g.name }));
     };
 
     return (
-        <div className="max-w-lg mx-auto">
-            <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="max-w-2xl mx-auto">
+            <form onSubmit={handleSubmit} className="space-y-8">
                 {error && (
                     <div className="p-3 bg-red-50 text-red-500 rounded-md text-sm">
                         {error}
                     </div>
                 )}
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+
+                {/* Title and Link */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                            Title
-                        </label>
+                        <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
                         <input
                             type="text"
                             id="title"
@@ -223,65 +257,76 @@ const SongForm: React.FC<SongFormProps> = ({
                             className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
                         />
                     </div>
-                    <div className="col-span-2">
-                        <label className="block text-sm font-medium text-gray-700">
-                            Artists
-                        </label>
-                        <AsyncSelect
-                            isMulti
-                            cacheOptions
-                            defaultOptions={false}
-                            loadOptions={loadArtistOptions}
-                            value={selectedArtistOptions}
-                            onChange={handleArtistsChange}
-                            className="mt-1"
-                            placeholder="Search and select artists..."
-                        />
-                    </div>
                     <div>
-                        <label htmlFor="keywords" className="block text-sm font-medium text-gray-700">
-                            Keywords
-                        </label>
+                        <label htmlFor="link" className="block text-sm font-medium text-gray-700">Link</label>
                         <input
-                            type="text"
-                            id="keywords"
-                            name="keywords"
-                            value={formData.keywords || ''}
-                            onChange={handleChange}
-                            className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="genres" className="block text-sm font-medium text-gray-700">
-                            Genres
-                        </label>
-                        <input
-                            type="text"
-                            id="genres"
-                            name="genres"
-                            value={formData.genres || ''}
-                            onChange={handleChange}
-                            className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="authors" className="block text-sm font-medium text-gray-700">
-                            Authors
-                        </label>
-                        <input
-                            type="text"
-                            id="authors"
-                            name="authors"
-                            value={formData.authors || ''}
+                            type="url"
+                            id="link"
+                            name="link"
+                            value={formData.link || ''}
                             onChange={handleChange}
                             className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
                         />
                     </div>
                 </div>
+
+                {/* Each select in its own row */}
                 <div>
-                    <label htmlFor="lyrics" className="block text-sm font-medium text-gray-700">
-                        Lyrics
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700">Artists</label>
+                    <AsyncSelect
+                        isMulti
+                        cacheOptions
+                        defaultOptions={false}
+                        loadOptions={loadArtistOptions}
+                        value={selectedArtistOptions}
+                        onChange={handleArtistsChange}
+                        className="mt-1"
+                        placeholder="Search and select artists..."
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Authors</label>
+                    <AsyncSelect
+                        isMulti
+                        cacheOptions
+                        defaultOptions={false}
+                        loadOptions={loadAuthorOptions}
+                        value={selectedAuthorOptions}
+                        onChange={opts => setSelectedAuthorOptions(opts as ArtistOption[])}
+                        className="mt-1"
+                        placeholder="Search and select authors..."
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Genres</label>
+                    <AsyncSelect
+                        isMulti
+                        cacheOptions
+                        defaultOptions={false}
+                        loadOptions={loadGenreOptions}
+                        value={selectedGenreOptions}
+                        onChange={opts => setSelectedGenreOptions(opts as ArtistOption[])}
+                        className="mt-1"
+                        placeholder="Search and select genres..."
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Keywords</label>
+                    <AsyncSelect
+                        isMulti
+                        cacheOptions
+                        defaultOptions={false}
+                        loadOptions={loadKeywordOptions}
+                        value={selectedKeywordOptions}
+                        onChange={opts => setSelectedKeywordOptions(opts as ArtistOption[])}
+                        className="mt-1"
+                        placeholder="Search and select keywords..."
+                    />
+                </div>
+
+                {/* Lyrics */}
+                <div>
+                    <label htmlFor="lyrics" className="block text-sm font-medium text-gray-700">Lyrics</label>
                     <textarea
                         id="lyrics"
                         name="lyrics"
@@ -290,11 +335,11 @@ const SongForm: React.FC<SongFormProps> = ({
                         className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
                     />
                 </div>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+
+                {/* Year, Score, Free */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <label htmlFor="year" className="block text-sm font-medium text-gray-700">
-                            Year
-                        </label>
+                        <label htmlFor="year" className="block text-sm font-medium text-gray-700">Year</label>
                         <input
                             type="number"
                             id="year"
@@ -307,46 +352,45 @@ const SongForm: React.FC<SongFormProps> = ({
                         />
                     </div>
                     <div>
-                        <label htmlFor="link" className="block text-sm font-medium text-gray-700">
-                            Link
-                        </label>
+                        <label htmlFor="score" className="block text-sm font-medium text-gray-700">Score</label>
                         <input
-                            type="url"
-                            id="link"
-                            name="link"
-                            value={formData.link || ''}
+                            type="number"
+                            id="score"
+                            name="score"
+                            value={formData.score || ''}
                             onChange={handleChange}
                             className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
                         />
                     </div>
-                </div>
-                <div className="flex justify-between items-center pt-4">
-                    {isEditMode && (
-                        <button
-                            type="button"
-                            onClick={handleDelete}
-                            disabled={isDeleting}
-                            className="px-4 py-2 text-sm font-medium text-white bg-red-500 border border-transparent rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {isDeleting ? 'Deleting...' : 'Delete Song'}
-                        </button>
-                    )}
-                    <div className={`flex gap-3 ${!isEditMode ? 'ml-auto' : ''}`}>
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className="px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {isLoading ? (isEditMode ? 'Saving...' : 'Creating...') : (isEditMode ? 'Save Changes' : 'Create Song')}
-                        </button>
+                    <div className="flex items-center mt-6">
+                        <input
+                            type="checkbox"
+                            id="is_free"
+                            name="is_free"
+                            checked={formData.is_free || false}
+                            onChange={e => setFormData({ ...formData, is_free: e.target.checked })}
+                            className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                        />
+                        <label htmlFor="is_free" className="ml-2 text-sm font-medium text-gray-700">Free</label>
                     </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex justify-end gap-4 pt-6">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isLoading ? (isEditMode ? 'Saving...' : 'Creating...') : (isEditMode ? 'Save Changes' : 'Create Song')}
+                    </button>
                 </div>
             </form>
         </div>

@@ -12,10 +12,6 @@ const AdminPage: React.FC = () => {
   const [songsPerPage, setSongsPerPage] = useState(5); // default 5
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [authors, setAuthors] = useState<string[] | null>(null);
-  const [artists, setArtists] = useState<string[] | null>(null);
-  const [artistOptions, setArtistOptions] = useState<{ value: string; label: string }[]>([]);
-  const [keywords, setKeywords] = useState<string[] | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [isEditSongModalOpen, setIsEditSongModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -34,23 +30,13 @@ const AdminPage: React.FC = () => {
   // Fetch authors and artists for filters
   const fetchFilterData = useCallback(async () => {
     try {
-      const [authorsResponse, artistsResponse, keywordsResponse] = await Promise.all([
-        supabase.from('authors').select('name').order('name'),
-        supabase.from('artists').select('id, name').order('name').range(0, 2000),
-        supabase.from('keywords').select('name').order('name')
-      ]);
+      const artistsResponse = await supabase.from('artists').select('id, name').order('name').range(0, 2000);
 
-      setAuthors(authorsResponse.data?.map(author => author.name) || []);
-      setArtists(artistsResponse.data?.map(artist => artist.name) || []);
-      setArtistOptions(
-        (artistsResponse.data || []).map((a: { id: string; name: string }) => ({ value: a.id, label: a.name }))
-      );
       // Debug: log total, first and last 10 artist names
       const allArtists = artistsResponse.data || [];
       console.log('Total artists fetched:', allArtists.length);
       console.log('First 10:', allArtists.slice(0, 10).map(a => a.name));
       console.log('Last 10:', allArtists.slice(-10).map(a => a.name));
-      setKeywords(keywordsResponse.data?.map(keyword => keyword.name) || []);
     } catch (err) {
       console.error('Error fetching filter data:', err);
     }
@@ -101,7 +87,12 @@ const AdminPage: React.FC = () => {
 
       let query = supabase
         .from('songs')
-        .select(`*, song_artists (position, artist_id, artists (id, name))`, { count: 'exact' });
+        .select(`*,
+          song_artists (position, artist_id, artists (id, name)),
+          song_authors (position, author_id, authors (id, name)),
+          song_keywords (keyword_id, keywords (id, name)),
+          song_genres (genre_id, genres (id, name))
+        `, { count: 'exact' });
 
       if (filters.authors?.length && filters.authors.length > 0) {
         query = query.contains('authors', filters.authors!);
@@ -130,13 +121,22 @@ const AdminPage: React.FC = () => {
 
       // Map artists for display
       if (songsData && songsData.length > 0) {
-        const songsWithArtists = songsData.map(song => ({
+        const songsWithDetails = songsData.map(song => ({
           ...song,
           artists: (song.song_artists || [])
             .map((sa: { artists?: { name?: string } | null }) => sa.artists?.name)
-            .filter(Boolean)
+            .filter(Boolean),
+          authors: (song.song_authors || [])
+            .map((sa: { authors?: { name?: string } | null }) => sa.authors?.name)
+            .filter(Boolean),
+          keywords: (song.song_keywords || [])
+            .map((sk: { keywords?: { name?: string } | null }) => sk.keywords?.name)
+            .filter(Boolean),
+          genres: (song.song_genres || [])
+            .map((sg: { genres?: { name?: string } | null }) => sg.genres?.name)
+            .filter(Boolean),
         }));
-        setSongs(songsWithArtists);
+        setSongs(songsWithDetails);
       } else {
         setSongs([]);
       }
@@ -231,9 +231,6 @@ const AdminPage: React.FC = () => {
       <SongFiltersComponent
         filters={currentFilters}
         onFilterChange={handleFiltersChange}
-        authors={authors || []}
-        keywords={keywords || []}
-        artists={artists || []}
       />
       {/* Edit Song Modal */}
       <Modal
@@ -245,7 +242,6 @@ const AdminPage: React.FC = () => {
           onClose={handleCloseModal}
           onSuccess={handleCreateSuccess}
           song={selectedSongForEdit || undefined}
-          artistOptions={artistOptions}
         />
       </Modal>
       {/* Export Modal */}
@@ -270,6 +266,7 @@ const AdminPage: React.FC = () => {
               <th scope="col" className="px-6 py-3">Artists</th>
               <th scope="col" className="px-6 py-3">Authors</th>
               <th scope="col" className="px-6 py-3">Keywords</th>
+              <th scope="col" className="px-6 py-3">Genres</th>
               <th scope="col" className="px-6 py-3">Lyrics</th>
               <th scope="col" className="px-6 py-3">Year</th>
               <th scope="col" className="px-6 py-3">Link</th>
@@ -291,6 +288,9 @@ const AdminPage: React.FC = () => {
                 </td>
                 <td className="px-6 py-4">
                   <TagList items={song.keywords} colorClass="bg-pink-100 text-pink-800" />
+                </td>
+                <td className="px-6 py-4">
+                  <TagList items={song.genres} colorClass="bg-yellow-100 text-yellow-800" />
                 </td>
                 <td className="px-6 py-4 truncate max-w-xs">{song.lyrics}</td>
                 <td className="px-6 py-4">{song.year}</td>

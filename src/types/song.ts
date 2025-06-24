@@ -17,4 +17,5 @@ export interface SongFilters {
   authors?: string[];
   artists?: string[];
   searchText?: string;
+  genres?: string[];
 }
