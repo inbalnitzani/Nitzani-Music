@@ -7,6 +7,7 @@ import SongForm from '../components/SongForm';
 import Export from '../components/Export';
 import { Tooltip } from 'react-tooltip';
 import TagList from '../components/TageList';
+import ManageSite from '../components/ManageSite';
 
 const AdminPage: React.FC = () => {
   const [songsPerPage, setSongsPerPage] = useState(5); // default 5
@@ -24,8 +25,7 @@ const AdminPage: React.FC = () => {
     artists: [],
     searchText: ''
   });
-
-
+  const [isManageSiteModalOpen, setIsManageSiteModalOpen] = useState(false);
 
   // Fetch authors and artists for filters
   const fetchFilterData = useCallback(async () => {
@@ -45,7 +45,6 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     fetchFilterData();
   }, [fetchFilterData]);
-
 
   // Fetch songs
   const fetchSongs = async (filters: SongFilters, page: number, pageSize = songsPerPage) => {
@@ -172,7 +171,6 @@ const AdminPage: React.FC = () => {
     setSelectedSongForEdit(null)
   }
 
-
   // handle create success
   const handleCreateSuccess = () => {
     fetchSongs(currentFilters, currentPage, songsPerPage)
@@ -196,20 +194,14 @@ const AdminPage: React.FC = () => {
     }
   }
 
-
-
   const totalPages = Math.ceil(totalSongs / songsPerPage)
-
-
 
   return (
     <div className="p-4 sm:p-8">
       <div className="flex justify-between items-center mb-4 sm:mb-6">
-
         <h1 className="text-xl sm:text-2xl font-bold">Admin - Songs Table</h1>
 
         <div className="flex gap-2">
-
           {/* Export button */}
           <button
             data-tooltip-id="exportTip"
@@ -226,6 +218,12 @@ const AdminPage: React.FC = () => {
           >
             Add Song
           </button>
+          <button
+            onClick={() => setIsManageSiteModalOpen(true)}
+            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+          >
+            Manage Site
+          </button>
         </div>
       </div>
       <SongFiltersComponent
@@ -234,6 +232,7 @@ const AdminPage: React.FC = () => {
       />
       {/* Edit Song Modal */}
       <Modal
+        size="md"
         isOpen={isEditSongModalOpen}
         onClose={handleCloseModal}
         title={selectedSongForEdit ? 'Edit Song' : 'Create Song'}
@@ -246,11 +245,25 @@ const AdminPage: React.FC = () => {
       </Modal>
       {/* Export Modal */}
       <Modal
+        size="lg"
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
         title="Export Songs"
       >
         <Export songsForExport={selectedSongs} />
+      </Modal>
+      {/* Manage Site Modal */}
+      <Modal
+        size="xl"
+        isOpen={isManageSiteModalOpen}
+        onClose={() => setIsManageSiteModalOpen(false)}
+        title="Manage Site"
+      >
+        <ManageSite onSave={() => {
+          setIsManageSiteModalOpen(false);
+          fetchFilterData();
+          fetchSongs(currentFilters, currentPage, songsPerPage);
+        }} />
       </Modal>
       {/* Modern Tailwind Table */}
       {isLoading && (
