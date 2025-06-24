@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import type { Song, SongFilters } from '../types/song';
 import { supabase } from '../supabaseClient';
 import SongFiltersComponent from '../components/SongFilters';
@@ -172,7 +172,6 @@ const AdminPage: React.FC = () => {
   // handle create success
   const handleCreateSuccess = () => {
     fetchSongs(currentFilters, currentPage, songsPerPage)
-    fetchFilterData() // Refresh filters lists
     setIsEditSongModalOpen(false) // Close Create song Modal
     setSelectedSongForEdit(null)
   }
@@ -259,7 +258,6 @@ const AdminPage: React.FC = () => {
       >
         <ManageSite onSave={() => {
           setIsManageSiteModalOpen(false);
-          fetchFilterData();
           fetchSongs(currentFilters, currentPage, songsPerPage);
         }} />
       </Modal>
