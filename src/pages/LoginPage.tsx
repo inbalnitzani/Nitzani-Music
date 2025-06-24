@@ -17,29 +17,28 @@ const LoginPage: React.FC = () => {
   
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({ 
+          email, 
+          password,
+          options: {
+            data: {
+              full_name: email.split('@')[0], // Use email prefix as full_name
+              username: email.split('@')[0], // Use email prefix as username
+            }
+          }
+        });
   
         if (error) {
           setError(error.message);
         } else {
           setInfo('Check your email to verify your account');
-          // Do not insert into 'profiles' table yet — user is not confirmed
         }
       } else {
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
   
         if (signInError) {
           setError(signInError.message);
-        } else if (signInData.user) {
-          // Insert into 'profiles' table only after user successfully signs in
-          const { error: insertError } = await supabase.from('profiles').upsert([
-            { id: signInData.user.id, email, role: 'user' }
-          ]);
-  
-          if (insertError) {
-            console.error('Failed to insert profile:', insertError);
-          }
-  
+        } else {
           setInfo('Successfully signed in');
         }
       }

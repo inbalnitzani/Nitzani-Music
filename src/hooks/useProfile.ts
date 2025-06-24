@@ -1,28 +1,30 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import type { User } from '@supabase/supabase-js';
+import type { Profile } from '../types/profiles';
 
 export function useProfile(user: User | null) {
-  const [role, setRole] = useState<string | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) {
-      setRole(null);
+      setProfile(null);
       setLoading(false);
       return;
     }
     setLoading(true);
     supabase
       .from('profiles')
-      .select('role')
+      .select('id, updated_at, username, full_name, role')
       .eq('id', user.id)
-      .maybeSingle()
+      .single()
       .then(({ data }) => {
-        setRole(data?.role ?? null);
+        setProfile(data);
         setLoading(false);
       });
+
   }, [user]);
 
-  return { role, loading };
+  return { profile, loading, role: profile?.role || null };
 } 
