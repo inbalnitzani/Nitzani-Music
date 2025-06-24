@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import TagList from './TageList';
+import TagList from './TagList';
 import { supabase } from '../supabaseClient';
 // import jsPDF from 'jspdf';
 import { useInView } from 'react-intersection-observer';

@@ -6,7 +6,7 @@ import Modal from '../components/Modal';
 import SongForm from '../components/SongForm';
 import Export from '../components/Export';
 import { Tooltip } from 'react-tooltip';
-import TagList from '../components/TageList';
+import TagList from '../components/TagList';
 import ManageSite from '../components/ManageSite';
 
 const AdminPage: React.FC = () => {

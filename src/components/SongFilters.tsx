@@ -160,6 +160,9 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                         value={selectedKeywordOptions}
                         onChange={handleKeywordChange}
                         placeholder="Search and select keywords..."
+                        classNamePrefix="tagselect"
+
+                        
                     />
                 </div>
 

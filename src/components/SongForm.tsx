@@ -290,7 +290,9 @@ const SongForm: React.FC<SongFormProps> = ({
             value={selectedArtistOptions}
             onChange={handleArtistsChange}
             className="mt-1"
+            classNamePrefix="tagselect"
             placeholder="Search and select or add artists..."
+            
           />
         </div>
         <div>
@@ -301,6 +303,7 @@ const SongForm: React.FC<SongFormProps> = ({
             value={selectedAuthorOptions}
             onChange={opts => setSelectedAuthorOptions(opts as ArtistOption[])}
             className="mt-1"
+            classNamePrefix="tagselect"
             placeholder="Search and select or add authors..."
           />
         </div>
@@ -311,7 +314,8 @@ const SongForm: React.FC<SongFormProps> = ({
             loadOptions={loadGenreOptions}
             value={selectedGenreOptions}
             onChange={opts => setSelectedGenreOptions(opts as ArtistOption[])}
-            className="mt-1"
+            className="mt-1"  
+            classNamePrefix="tagselect"
             placeholder="Search and select genres..."
           />
         </div>
@@ -323,6 +327,7 @@ const SongForm: React.FC<SongFormProps> = ({
             value={selectedKeywordOptions}
             onChange={opts => setSelectedKeywordOptions(opts as ArtistOption[])}
             className="mt-1"
+            classNamePrefix="tagselect"
             placeholder="Search and select keywords..."
           />
         </div>
