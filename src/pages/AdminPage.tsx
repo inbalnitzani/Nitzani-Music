@@ -27,25 +27,6 @@ const AdminPage: React.FC = () => {
   });
   const [isManageSiteModalOpen, setIsManageSiteModalOpen] = useState(false);
 
-  // Fetch authors and artists for filters
-  const fetchFilterData = useCallback(async () => {
-    try {
-      const artistsResponse = await supabase.from('artists').select('id, name').order('name').range(0, 2000);
-
-      // Debug: log total, first and last 10 artist names
-      const allArtists = artistsResponse.data || [];
-      console.log('Total artists fetched:', allArtists.length);
-      console.log('First 10:', allArtists.slice(0, 10).map(a => a.name));
-      console.log('Last 10:', allArtists.slice(-10).map(a => a.name));
-    } catch (err) {
-      console.error('Error fetching filter data:', err);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchFilterData();
-  }, [fetchFilterData]);
-
   // Fetch songs
   const fetchSongs = async (filters: SongFilters, page: number, pageSize = songsPerPage) => {
     try {
