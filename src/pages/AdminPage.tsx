@@ -57,53 +57,70 @@ const AdminPage: React.FC = () => {
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
 
-      let songIdsByArtist: string[] | null = null;
+      let query = supabase
+        .from('songs')
+        .select(`*,
+          song_artists!inner(position, artist_id, artists (id, name)),
+          song_authors!inner(position, author_id, authors (id, name)),
+          song_keywords!inner(keyword_id, keywords (id, name)),
+          song_genres (genre_id, genres (id, name))
+        `, { count: 'exact' });
+
+      // Filter by artists
       if (filters.artists?.length && filters.artists.length > 0) {
-        // 1. Get artist ids by name
+        // Get artist ids by name
         const { data: artistRows, error: artistError } = await supabase
           .from('artists')
           .select('id')
           .in('name', filters.artists);
         if (artistError) throw artistError;
         const artistIds = (artistRows || []).map(a => a.id);
-
         if (artistIds.length > 0) {
-          // 2. Get song_ids from song_artists
-          const { data: songArtistRows, error: songArtistError } = await supabase
-            .from('song_artists')
-            .select('song_id')
-            .in('artist_id', artistIds);
-          if (songArtistError) throw songArtistError;
-          songIdsByArtist = [...new Set((songArtistRows || []).map(sa => sa.song_id))];
-          if (songIdsByArtist.length === 0) {
-            setSongs([]);
-            setTotalSongs(0);
-            setIsLoading(false);
-            return;
-          }
+          query = query.in('song_artists.artist_id', artistIds);
+        } else {
+          setSongs([]);
+          setTotalSongs(0);
+          setIsLoading(false);
+          return;
         }
       }
 
-      let query = supabase
-        .from('songs')
-        .select(`*,
-          song_artists (position, artist_id, artists (id, name)),
-          song_authors (position, author_id, authors (id, name)),
-          song_keywords (keyword_id, keywords (id, name)),
-          song_genres (genre_id, genres (id, name))
-        `, { count: 'exact' });
-
+      // Filter by authors
       if (filters.authors?.length && filters.authors.length > 0) {
-        query = query.contains('authors', filters.authors!);
+        // Get author ids by name
+        const { data: authorRows, error: authorError } = await supabase
+          .from('authors')
+          .select('id')
+          .in('name', filters.authors);
+        if (authorError) throw authorError;
+        const authorIds = (authorRows || []).map(a => a.id);
+        if (authorIds.length > 0) {
+          query = query.in('song_authors.author_id', authorIds);
+        } else {
+          setSongs([]);
+          setTotalSongs(0);
+          setIsLoading(false);
+          return;
+        }
       }
 
+      // Filter by keywords
       if (filters.keywords?.length && filters.keywords.length > 0) {
-        query = query.contains('keywords', filters.keywords!);
-      }
-
-      // 3. Filter by song IDs if artist filter is active
-      if (songIdsByArtist) {
-        query = query.in('id', songIdsByArtist);
+        // Get keyword ids by name
+        const { data: keywordRows, error: keywordError } = await supabase
+          .from('keywords')
+          .select('id')
+          .in('name', filters.keywords);
+        if (keywordError) throw keywordError;
+        const keywordIds = (keywordRows || []).map(k => k.id);
+        if (keywordIds.length > 0) {
+          query = query.in('song_keywords.keyword_id', keywordIds);
+        } else {
+          setSongs([]);
+          setTotalSongs(0);
+          setIsLoading(false);
+          return;
+        }
       }
 
       if (filters.searchText) {
