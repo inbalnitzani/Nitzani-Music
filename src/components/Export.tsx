@@ -110,11 +110,14 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
         if (formats.pdf) {
             exportPDF(filteredSongs,selectedFieldKeys, fileName);
         }
-        if (formats.excel) {
+        else if (formats.excel) {
             exportExcel(filteredSongs, selectedFieldKeys, fileName);
         }
-        if (formats.word) {
+        else if (formats.word) {
             exportWord(filteredSongs, selectedFieldKeys, fileName);
+        }
+        else {
+            alert("אנא בחר פורמט לייצוא");
         }
     };
 
