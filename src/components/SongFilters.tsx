@@ -20,7 +20,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
 }) => {
     const [selectedAuthorOptions, setSelectedAuthorOptions] = React.useState<SelectOption[]>([]);
     const [selectedKeywordOptions, setSelectedKeywordOptions] = React.useState<SelectOption[]>([]);
-    const [selectedGenreOptions, setSelectedGenreOptions] = React.useState<SelectOption[]>([]);
+    // const [selectedGenreOptions, setSelectedGenreOptions] = React.useState<SelectOption[]>([]);
 
     const handleAuthorChange = (selected: MultiValue<SelectOption>) => {
         setSelectedAuthorOptions(selected as SelectOption[]);
@@ -81,22 +81,22 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
         return (data || []).map((k: { id: string; name: string }) => ({ value: k.id, label: k.name }));
     };
 
-    const loadGenreOptions = async (inputValue: string) => {
-        if (!inputValue) return [];
-        const { data, error } = await supabase
-            .from('genres')
-            .select('id, name')
-            .ilike('name', `%${inputValue}%`)
-            .order('name')
-            .limit(20);
-        if (error) return [];
-        return (data || []).map((g: { id: string; name: string }) => ({ value: g.id, label: g.name }));
-    };
+    // const loadGenreOptions = async (inputValue: string) => {
+    //     if (!inputValue) return [];
+    //     const { data, error } = await supabase
+    //         .from('genres')
+    //         .select('id, name')
+    //         .ilike('name', `%${inputValue}%`)
+    //         .order('name')
+    //         .limit(20);
+    //     if (error) return [];
+    //     return (data || []).map((g: { id: string; name: string }) => ({ value: g.id, label: g.name }));
+    // };
 
-    const handleGenreChange = (selected: MultiValue<SelectOption>) => {
-        setSelectedGenreOptions(selected as SelectOption[]);
-        onFilterChange({ ...filters, genres: selected.map(opt => opt.label) });
-    };
+    // const handleGenreChange = (selected: MultiValue<SelectOption>) => {
+    //     setSelectedGenreOptions(selected as SelectOption[]);
+    //     onFilterChange({ ...filters, genres: selected.map(opt => opt.label) });
+    // };
 
     return (
         <div className="bg-white p-4 rounded-lg shadow mb-6">
@@ -164,7 +164,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                 </div>
 
                 {/* Genres */}
-                <div>
+                {/* <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         Genres
                     </label>
@@ -177,7 +177,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                         onChange={handleGenreChange}
                         placeholder="Search and select genres..."
                     />
-                </div>
+                </div> */}
             </div>
             {/* Clear Filters Button */}
             <div className="mt-4 flex justify-end">

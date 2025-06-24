@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Song } from '../types/song';
 import { supabase } from '../supabaseClient';
+import CreatableAsyncSelect from 'react-select/creatable';
 import AsyncSelect from 'react-select/async';
 import type { MultiValue } from 'react-select';
 
@@ -273,36 +274,30 @@ const SongForm: React.FC<SongFormProps> = ({
                 {/* Each select in its own row */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Artists</label>
-                    <AsyncSelect
+                    <CreatableAsyncSelect
                         isMulti
-                        cacheOptions
-                        defaultOptions={false}
                         loadOptions={loadArtistOptions}
                         value={selectedArtistOptions}
                         onChange={handleArtistsChange}
                         className="mt-1"
-                        placeholder="Search and select artists..."
+                        placeholder="Search and select or add artists..."
                     />
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Authors</label>
-                    <AsyncSelect
+                    <CreatableAsyncSelect
                         isMulti
-                        cacheOptions
-                        defaultOptions={false}
                         loadOptions={loadAuthorOptions}
                         value={selectedAuthorOptions}
                         onChange={opts => setSelectedAuthorOptions(opts as ArtistOption[])}
                         className="mt-1"
-                        placeholder="Search and select authors..."
+                        placeholder="Search and select or add authors..."
                     />
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Genres</label>
                     <AsyncSelect
                         isMulti
-                        cacheOptions
-                        defaultOptions={false}
                         loadOptions={loadGenreOptions}
                         value={selectedGenreOptions}
                         onChange={opts => setSelectedGenreOptions(opts as ArtistOption[])}
@@ -314,8 +309,6 @@ const SongForm: React.FC<SongFormProps> = ({
                     <label className="block text-sm font-medium text-gray-700">Keywords</label>
                     <AsyncSelect
                         isMulti
-                        cacheOptions
-                        defaultOptions={false}
                         loadOptions={loadKeywordOptions}
                         value={selectedKeywordOptions}
                         onChange={opts => setSelectedKeywordOptions(opts as ArtistOption[])}
