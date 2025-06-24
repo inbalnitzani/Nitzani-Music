@@ -191,6 +191,15 @@ const AdminPage: React.FC = () => {
     }
   }
 
+  // handle select all songs
+  const handleSelectAllSongs = () => {
+    if (selectedSongs.length === songs.length) {
+      setSelectedSongs([])
+    } else {
+      setSelectedSongs(songs)
+    }
+  }
+
   const totalPages = Math.ceil(totalSongs / songsPerPage)
 
   return (
@@ -279,9 +288,10 @@ const AdminPage: React.FC = () => {
               <th scope="col" className="px-6 py-3">Lyrics</th>
               <th scope="col" className="px-6 py-3">Year</th>
               <th scope="col" className="px-6 py-3">Link</th>
-              <th scope="col" className="px-6 py-3">Select</th>
+              <th scope="col" className="px-6 py-3 cursor-pointer hover:bg-gray-100 hover:text-blue-600" data-tooltip-id="selectAllTip" onClick={() => handleSelectAllSongs()}>Select</th>
             </tr>
           </thead>
+          
           <tbody>
             {songs.map(song => (
               <tr
@@ -321,6 +331,8 @@ const AdminPage: React.FC = () => {
             ))}
           </tbody>
         </table>
+        <Tooltip id="selectAllTip" place="top" content={selectedSongs.length === songs.length ? "בטל בחירה" : "בחר את כל השירים"} />
+
       </div>
       <div className="relative flex justify-center items-center gap-2 mt-6">
   {/* Pagination controls (centered) */}
