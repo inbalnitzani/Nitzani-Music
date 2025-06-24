@@ -1,14 +1,15 @@
 import React from 'react';
 import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 import type { MultiValue } from 'react-select';
 import type { SongFilters } from '../types/song';
+import { supabase } from '../supabaseClient';
 
 interface SongFiltersProps {
     filters: SongFilters;
     onFilterChange: (filters: SongFilters) => void;
     authors: string[];
     keywords: string[];
-    artists: string[];
 }
 
 interface SelectOption {
@@ -20,8 +21,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
     filters = {},
     onFilterChange,
     authors = [],
-    keywords = [],
-    artists = []
+    keywords = []
 }) => {
     const handleAuthorChange = (selectedOptions: MultiValue<SelectOption>) => {
         onFilterChange({
@@ -38,16 +38,29 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
     const handleSearchChange = (search: string) => {
         onFilterChange({ ...filters, searchText: search })
     }
-    const handleArtistChange = (selectedOptions: MultiValue<SelectOption>) => {
-        onFilterChange({
-            ...filters,
-            artists: selectedOptions.map((option: SelectOption) => option.value)
-        });
-    };
     const handleClearFilters = () => {
         onFilterChange({})
     }
     
+    // Async load options for artist search
+    const loadArtistOptions = async (inputValue: string) => {
+        if (!inputValue) return [];
+        const { data, error } = await supabase
+            .from('artists')
+            .select('id, name')
+            .ilike('name', `%${inputValue}%`)
+            .order('name')
+            .limit(20);
+        if (error) return [];
+        return (data || []).map((a: { id: string; name: string }) => ({ value: a.id, label: a.name }));
+    };
+
+    const handleArtistChange = (selectedOptions: MultiValue<SelectOption>) => {
+        onFilterChange({
+            ...filters,
+            artists: selectedOptions.map((option: SelectOption) => option.label)
+        });
+    };
 
     return (
         <div className="bg-white p-4 rounded-lg shadow mb-6">
@@ -84,11 +97,14 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         Artists
                     </label>
-                    <Select
+                    <AsyncSelect
                         isMulti
-                        options={artists.map(a => ({ value: a, label: a }))}
+                        cacheOptions
+                        defaultOptions={false}
+                        loadOptions={loadArtistOptions}
                         value={filters?.artists?.map(a => ({ value: a, label: a })) || []}
                         onChange={handleArtistChange}
+                        placeholder="Search and select artists..."
                     />
                 </div>
 

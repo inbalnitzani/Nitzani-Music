@@ -14,6 +14,7 @@ const AdminPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [authors, setAuthors] = useState<string[] | null>(null);
   const [artists, setArtists] = useState<string[] | null>(null);
+  const [artistOptions, setArtistOptions] = useState<{ value: string; label: string }[]>([]);
   const [keywords, setKeywords] = useState<string[] | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [isEditSongModalOpen, setIsEditSongModalOpen] = useState(false);
@@ -35,12 +36,20 @@ const AdminPage: React.FC = () => {
     try {
       const [authorsResponse, artistsResponse, keywordsResponse] = await Promise.all([
         supabase.from('authors').select('name').order('name'),
-        supabase.from('artists').select('name').order('name'),
+        supabase.from('artists').select('id, name').order('name').range(0, 2000),
         supabase.from('keywords').select('name').order('name')
       ]);
 
       setAuthors(authorsResponse.data?.map(author => author.name) || []);
       setArtists(artistsResponse.data?.map(artist => artist.name) || []);
+      setArtistOptions(
+        (artistsResponse.data || []).map((a: { id: string; name: string }) => ({ value: a.id, label: a.name }))
+      );
+      // Debug: log total, first and last 10 artist names
+      const allArtists = artistsResponse.data || [];
+      console.log('Total artists fetched:', allArtists.length);
+      console.log('First 10:', allArtists.slice(0, 10).map(a => a.name));
+      console.log('Last 10:', allArtists.slice(-10).map(a => a.name));
       setKeywords(keywordsResponse.data?.map(keyword => keyword.name) || []);
     } catch (err) {
       console.error('Error fetching filter data:', err);
@@ -55,18 +64,44 @@ const AdminPage: React.FC = () => {
   // Fetch songs
   const fetchSongs = async (filters: SongFilters, page: number, pageSize = songsPerPage) => {
     try {
-
-      setIsLoading(true)
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      setIsLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
       // Calculate range for pagination
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
 
+      let songIdsByArtist: string[] | null = null;
+      if (filters.artists?.length && filters.artists.length > 0) {
+        // 1. Get artist ids by name
+        const { data: artistRows, error: artistError } = await supabase
+          .from('artists')
+          .select('id')
+          .in('name', filters.artists);
+        if (artistError) throw artistError;
+        const artistIds = (artistRows || []).map(a => a.id);
+
+        if (artistIds.length > 0) {
+          // 2. Get song_ids from song_artists
+          const { data: songArtistRows, error: songArtistError } = await supabase
+            .from('song_artists')
+            .select('song_id')
+            .in('artist_id', artistIds);
+          if (songArtistError) throw songArtistError;
+          songIdsByArtist = [...new Set((songArtistRows || []).map(sa => sa.song_id))];
+          if (songIdsByArtist.length === 0) {
+            setSongs([]);
+            setTotalSongs(0);
+            setIsLoading(false);
+            return;
+          }
+        }
+      }
+
       let query = supabase
         .from('songs')
-        .select('*', { count: 'exact' })
+        .select(`*, song_artists (position, artist_id, artists (id, name))`, { count: 'exact' });
 
       if (filters.authors?.length && filters.authors.length > 0) {
         query = query.contains('authors', filters.authors!);
@@ -76,8 +111,9 @@ const AdminPage: React.FC = () => {
         query = query.contains('keywords', filters.keywords!);
       }
 
-      if (filters.artists?.length && filters.artists.length > 0) {
-        query = query.contains('artists', filters.artists!);
+      // 3. Filter by song IDs if artist filter is active
+      if (songIdsByArtist) {
+        query = query.in('id', songIdsByArtist);
       }
 
       if (filters.searchText) {
@@ -92,7 +128,18 @@ const AdminPage: React.FC = () => {
         console.error('Error fetching songs:', songsError);
       }
 
-      setSongs(songsData || []);
+      // Map artists for display
+      if (songsData && songsData.length > 0) {
+        const songsWithArtists = songsData.map(song => ({
+          ...song,
+          artists: (song.song_artists || [])
+            .map((sa: { artists?: { name?: string } | null }) => sa.artists?.name)
+            .filter(Boolean)
+        }));
+        setSongs(songsWithArtists);
+      } else {
+        setSongs([]);
+      }
       setTotalSongs(totalSongs || 0);
     } catch (err) {
       console.error('Error fetching songs:', err);
@@ -198,6 +245,7 @@ const AdminPage: React.FC = () => {
           onClose={handleCloseModal}
           onSuccess={handleCreateSuccess}
           song={selectedSongForEdit || undefined}
+          artistOptions={artistOptions}
         />
       </Modal>
       {/* Export Modal */}
