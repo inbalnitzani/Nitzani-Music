@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Song } from '../types/song';
 import { supabase } from '../supabaseClient';
-import CreatableAsyncSelect from 'react-select/creatable';
 import AsyncSelect from 'react-select/async';
 import type { MultiValue } from 'react-select';
 
@@ -274,7 +273,7 @@ const SongForm: React.FC<SongFormProps> = ({
                 {/* Each select in its own row */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Artists</label>
-                    <CreatableAsyncSelect
+                    <AsyncSelect
                         isMulti
                         loadOptions={loadArtistOptions}
                         value={selectedArtistOptions}
@@ -285,7 +284,7 @@ const SongForm: React.FC<SongFormProps> = ({
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Authors</label>
-                    <CreatableAsyncSelect
+                    <AsyncSelect
                         isMulti
                         loadOptions={loadAuthorOptions}
                         value={selectedAuthorOptions}
