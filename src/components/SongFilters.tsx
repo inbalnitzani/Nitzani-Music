@@ -21,6 +21,8 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
     const [selectedAuthorOptions, setSelectedAuthorOptions] = React.useState<SelectOption[]>([]);
     const [selectedKeywordOptions, setSelectedKeywordOptions] = React.useState<SelectOption[]>([]);
     // const [selectedGenreOptions, setSelectedGenreOptions] = React.useState<SelectOption[]>([]);
+    const [allKeywordOptions, setAllKeywordOptions] = React.useState<SelectOption[]>([]);
+    
 
     const handleAuthorChange = (selected: MultiValue<SelectOption>) => {
         setSelectedAuthorOptions(selected as SelectOption[]);
@@ -37,6 +39,23 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
         onFilterChange({})
     }
     
+    // Fetch all keyword options
+    React.useEffect(() => {
+        const fetchKeywords = async () => {
+          const { data, error } = await supabase
+            .from('keywords')
+            .select('id, name')
+            .order('name');
+          if (!error && data) {
+            setAllKeywordOptions(data.map((k: { id: string; name: string }) => ({
+              value: k.id,
+              label: k.name
+            })));
+          }
+        };
+        fetchKeywords();
+      }, []);
+
     // Async load options for artist search
     const loadArtistOptions = async (inputValue: string) => {
         if (!inputValue) return [];
@@ -155,7 +174,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                     <AsyncSelect
                         isMulti
                         cacheOptions
-                        defaultOptions={false}
+                        defaultOptions={allKeywordOptions}
                         loadOptions={loadKeywordOptions}
                         value={selectedKeywordOptions}
                         onChange={handleKeywordChange}
