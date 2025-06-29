@@ -234,7 +234,7 @@ const SongForm: React.FC<SongFormProps> = ({
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       <form onSubmit={handleSubmit} className="space-y-8">
         {error && (
           <div className="p-3 bg-red-50 text-red-500 rounded-md text-sm">
