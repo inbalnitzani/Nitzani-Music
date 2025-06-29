@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import type { Song, SongFilters } from '../types/song';
 import { supabase } from '../supabaseClient';
 import SongFiltersComponent from '../components/SongFilters';
@@ -10,6 +11,7 @@ import TagList from '../components/TagList';
 import ManageSite from '../components/ManageSite';
 
 const AdminPage: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [songsPerPage, setSongsPerPage] = useState(5); // default 5
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,12 +21,15 @@ const AdminPage: React.FC = () => {
   const [totalSongs, setTotalSongs] = useState(0);
   const [selectedSongForEdit, setSelectedSongForEdit] = useState<Song | null>(null);
   const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
-  const [currentFilters, setCurrentFilters] = useState<SongFilters>({
-    authors: [],
-    keywords: [],
-    artists: [],
-    searchText: ''
-  });
+  const getFiltersFromParams = () => {
+    return {
+      authors: searchParams.get('authors') ? searchParams.get('authors')!.split(',').filter(Boolean) : [],
+      keywords: searchParams.get('keywords') ? searchParams.get('keywords')!.split(',').filter(Boolean) : [],
+      artists: searchParams.get('artists') ? searchParams.get('artists')!.split(',').filter(Boolean) : [],
+      searchText: searchParams.get('searchText') || ''
+    };
+  };
+  const [currentFilters, setCurrentFilters] = useState<SongFilters>(getFiltersFromParams());
   const [isManageSiteModalOpen, setIsManageSiteModalOpen] = useState(false);
 
   // Fetch songs
@@ -145,16 +150,24 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  // Initial fetch
+  // On mount or when searchParams change, update filters and fetch
   useEffect(() => {
-    fetchSongs({}, 1, songsPerPage);
-  }, []);
-
-  // handle filters change
-  const handleFiltersChange = (filters: SongFilters) => {
-    setCurrentFilters(filters)
-    setCurrentPage(1);
+    const filters = getFiltersFromParams();
+    setCurrentFilters(filters);
     fetchSongs(filters, 1, songsPerPage);
+  }, [searchParams, songsPerPage]);
+
+  const handleFiltersChange = (filters: SongFilters) => {
+    setCurrentFilters(filters);
+    setCurrentPage(1);
+    // Update URL params
+    const params: Record<string, string> = {};
+    if ((filters.authors ?? []).length) params.authors = (filters.authors ?? []).join(',');
+    if ((filters.keywords ?? []).length) params.keywords = (filters.keywords ?? []).join(',');
+    if ((filters.artists ?? []).length) params.artists = (filters.artists ?? []).join(',');
+    if (filters.searchText) params.searchText = filters.searchText;
+    setSearchParams(params);
+    // fetchSongs will be called by useEffect
   };
 
   // handle pagination
