@@ -144,7 +144,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                         cacheOptions
                         defaultOptions={false}
                         loadOptions={loadAuthorOptions}
-                        value={selectedAuthorOptions}
+                        value={filters.authors?.map(a => ({ value: a, label: a })) || []}
                         onChange={handleAuthorChange}
                         placeholder="Search and select authors..."
                     />
@@ -176,7 +176,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                         cacheOptions
                         defaultOptions={allKeywordOptions}
                         loadOptions={loadKeywordOptions}
-                        value={selectedKeywordOptions}
+                        value={filters.keywords?.map(k => ({ value: k, label: k })) || []}
                         onChange={handleKeywordChange}
                         placeholder="Search and select keywords..."
                         classNamePrefix="tagselect"

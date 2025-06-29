@@ -251,7 +251,7 @@ const AdminPage: React.FC = () => {
       />
       {/* Edit Song Modal */}
       <Modal
-        size="md"
+        size="2xl"
         isOpen={isEditSongModalOpen}
         onClose={handleCloseModal}
         title={selectedSongForEdit ? 'Edit Song' : 'Create Song'}
