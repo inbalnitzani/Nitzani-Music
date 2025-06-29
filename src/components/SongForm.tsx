@@ -20,10 +20,7 @@ const SongForm: React.FC<SongFormProps> = ({
   const isEditMode = !!song;
   const [formData, setFormData] = useState<Partial<Song>>({
     title: song?.title || '',
-    keywords: song?.keywords || [],
     lyrics: song?.lyrics || '',
-    authors: song?.authors || [],
-    genres: song?.genres || [],
     year: song?.year || undefined,
     link: song?.link || '',
     is_free: song?.is_free || false,
@@ -96,10 +93,7 @@ const SongForm: React.FC<SongFormProps> = ({
             ? value
             : [];
 
-      const formDataToSend = {
-        ...formData,
-        genres: prepareArray(formData.genres),
-      };
+            const formDataToSend = formData;
 
       let songId: string;
 
