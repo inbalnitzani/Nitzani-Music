@@ -86,14 +86,7 @@ const SongForm: React.FC<SongFormProps> = ({
     setIsLoading(true);
     setError(null);
     try {
-      const prepareArray = (value: string | string[] | undefined) =>
-        typeof value === 'string'
-          ? value.split(',').map(s => s.trim()).filter(Boolean)
-          : Array.isArray(value)
-            ? value
-            : [];
-
-            const formDataToSend = formData;
+      const formDataToSend = formData;
 
       let songId: string;
 
