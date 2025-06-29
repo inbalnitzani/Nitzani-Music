@@ -18,18 +18,18 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
     filters = {},
     onFilterChange,
 }) => {
-    const [selectedAuthorOptions, setSelectedAuthorOptions] = React.useState<SelectOption[]>([]);
-    const [selectedKeywordOptions, setSelectedKeywordOptions] = React.useState<SelectOption[]>([]);
+    // const [selectedAuthorOptions, setSelectedAuthorOptions] = React.useState<SelectOption[]>([]);
+    // const [selectedKeywordOptions, setSelectedKeywordOptions] = React.useState<SelectOption[]>([]);
     // const [selectedGenreOptions, setSelectedGenreOptions] = React.useState<SelectOption[]>([]);
     const [allKeywordOptions, setAllKeywordOptions] = React.useState<SelectOption[]>([]);
     
 
     const handleAuthorChange = (selected: MultiValue<SelectOption>) => {
-        setSelectedAuthorOptions(selected as SelectOption[]);
+        // setSelectedAuthorOptions(selected as SelectOption[]);
         onFilterChange({ ...filters, authors: selected.map(opt => opt.label) });
     };
     const handleKeywordChange = (selected: MultiValue<SelectOption>) => {
-        setSelectedKeywordOptions(selected as SelectOption[]);
+        // setSelectedKeywordOptions(selected as SelectOption[]);
         onFilterChange({ ...filters, keywords: selected.map(opt => opt.label) });
     };
     const handleSearchChange = (search: string) => {
