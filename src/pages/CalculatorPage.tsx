@@ -16,10 +16,12 @@ export interface PriceRow {
 
 type PriceTable = PriceRow[];
 
+const SERVICE_FEE = 1.5;
+
 const CalculatorPage: React.FC = () => {
 
     const { t } = useTranslation();
-    const [productionType, setProductionType] = useState("docu");
+    const [productionType, setProductionType] = useState("עלילתי");
     const [media, setMedia] = useState("");
     const [territory, setTerritory] = useState("");
     const [duration, setDuration] = useState(60);
@@ -48,19 +50,45 @@ const CalculatorPage: React.FC = () => {
 
     // calculate price
     const handleCalculate = () => {
-        if (!productionType || !media || !territory) return;
-        const prices = priceTable.filter(row => row.license_type === productionType && row.media_type === media && row.territory === territory);
-        if (prices.length === 0) return;
+        if (!productionType || !media || !territory || !name || !duration) {
+            alert("יש למלא את כל השדות");
+            return;
+        }
+        const row = priceTable.find(
+            row =>
+                row.license_type === productionType &&
+                row.media_type === media &&
+                row.territory === territory
+        );
+        if (!row) return;
 
         let base = 0;
         if (duration < 5) {
-            base = prices[duration - 1].level_1;
+            base = row[`level_${duration}` as keyof PriceRow] as number;
         } else {
-            base = prices[4].level_1 * (duration - 4) + prices[3].level_1;
+            base = row.level_4 + (duration - 4) * row.vat_amount;
         }
-        const total = base * 1.5;
+        const total = base * SERVICE_FEE;
         setResult({ total });
     };
+
+    const mediaOptions = Array.from(
+      new Set(
+        priceTable
+          .filter(row => row.license_type === productionType)
+          .map(row => row.media_type)
+      )
+    );
+
+    const territoryOptions = priceTable.length
+      ? Array.from(
+          new Set(
+            priceTable
+              .filter(row => row.license_type === productionType && row.media_type === media)
+              .map(row => row.territory)
+          )
+        )
+      : [];
 
     return (
         <div className="max-w-xl mx-auto py-8 px-4 text-right rtl">
@@ -72,7 +100,7 @@ const CalculatorPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">שם היצירה</label>
-                        <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white" />
+                        <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white"  />
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -81,13 +109,22 @@ const CalculatorPage: React.FC = () => {
                         <select
                             value={productionType}
                             onChange={e => {
-                                setProductionType(e.target.value);
-                                setMedia("");
+                                const newProductionType = e.target.value;
+                                setProductionType(newProductionType);
+                                const newMediaOptions = Array.from(
+                                    new Set(
+                                        priceTable
+                                            .filter(row => row.license_type === newProductionType)
+                                            .map(row => row.media_type)
+                                    )
+                                );
+                                setMedia(newMediaOptions[0] || "");
+                                setTerritory("");
                             }}
                             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                         >
-                            <option value="docu">דוקומנטרי</option>
-                            <option value="drama">עלילתי</option>
+                            <option value="עלילתי">עלילתי</option>
+                            <option value="דוקומנטרי">דוקומנטרי</option>
                         </select>
                     </div>
                     <div>
@@ -100,8 +137,8 @@ const CalculatorPage: React.FC = () => {
                             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                         >
                             <option value="">{t('calculator.select_media')}</option>
-                            {priceTable.map(row => (
-                                <option key={row.media_type} value={row.media_type}>{row.media_type}</option>
+                            {mediaOptions.map(media => (
+                                <option key={media} value={media}>{media}</option>
                             ))}
                         </select>
                     </div>
@@ -116,8 +153,8 @@ const CalculatorPage: React.FC = () => {
                             disabled={!media}
                         >
                             <option value="">{t('calculator.select_territory')}</option>
-                            {priceTable.filter(row => row.media_type === media).map(row => (
-                                <option key={row.territory} value={row.territory}>{row.territory}</option>
+                            {territoryOptions.map(territory => (
+                                <option key={territory} value={territory}>{territory}</option>
                             ))}
                         </select>
                     </div>
