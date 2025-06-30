@@ -20,7 +20,10 @@ const AdminPage: React.FC = () => {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [totalSongs, setTotalSongs] = useState(0);
   const [selectedSongForEdit, setSelectedSongForEdit] = useState<Song | null>(null);
-  const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
+  const [selectedSongs, setSelectedSongs] = useState<Song[]>(() => {
+    const saved = localStorage.getItem('selectedSongs');
+    return saved ? JSON.parse(saved) : [];
+  });
   const getFiltersFromParams = () => {
     return {
       authors: searchParams.get('authors') ? searchParams.get('authors')!.split(',').filter(Boolean) : [],
@@ -150,6 +153,19 @@ const AdminPage: React.FC = () => {
     }
   };
 
+  // Restore selected songs on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('selectedSongs');
+    if (saved) {
+      setSelectedSongs(JSON.parse(saved));
+    }
+  }, []);
+
+  // Save selected songs on change
+  useEffect(() => {
+    localStorage.setItem('selectedSongs', JSON.stringify(selectedSongs));
+  }, [selectedSongs]);
+
   // On mount or when searchParams change, update filters and fetch
   useEffect(() => {
     const filters = getFiltersFromParams();
@@ -212,6 +228,7 @@ const AdminPage: React.FC = () => {
       setSelectedSongs(songs)
     }
   }
+
 
   const totalPages = Math.ceil(totalSongs / songsPerPage)
 
@@ -304,7 +321,7 @@ const AdminPage: React.FC = () => {
               <th scope="col" className="px-6 py-3 cursor-pointer hover:bg-gray-100 hover:text-blue-600" data-tooltip-id="selectAllTip" onClick={() => handleSelectAllSongs()}>Select</th>
             </tr>
           </thead>
-          
+
           <tbody>
             {songs.map(song => (
               <tr
@@ -348,45 +365,45 @@ const AdminPage: React.FC = () => {
 
       </div>
       <div className="relative flex justify-center items-center gap-2 mt-6">
-  {/* Pagination controls (centered) */}
-  <button
-    className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
-    onClick={() => handlePageChange(currentPage - 1)}
-    disabled={currentPage === 1}
-  >
-    Prev
-  </button>
-  <span className="mx-2">Page {currentPage} of {totalPages}</span>
-  <button
-    className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
-    onClick={() => handlePageChange(currentPage + 1)}
-    disabled={currentPage === totalPages}
-  >
-    Next
-  </button>
+        {/* Pagination controls (centered) */}
+        <button
+          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Prev
+        </button>
+        <span className="mx-2">Page {currentPage} of {totalPages}</span>
+        <button
+          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
 
-{/* page size */}
-  <select
-      value={songsPerPage}
-      onChange={e => {
-        const newSize = Number(e.target.value);
-        setSongsPerPage(newSize);
-        setCurrentPage(1);
-        fetchSongs(currentFilters, 1, newSize);
-      }}
-      className="border rounded px-2 py-1 w-24"
-    >
-      {[5, 10, 20, 50, 100].map(size => (
-        <option key={size} value={size}>{size}</option>
-      ))}
-    </select>
+        {/* page size */}
+        <select
+          value={songsPerPage}
+          onChange={e => {
+            const newSize = Number(e.target.value);
+            setSongsPerPage(newSize);
+            setCurrentPage(1);
+            fetchSongs(currentFilters, 1, newSize);
+          }}
+          className="border rounded px-2 py-1 w-24"
+        >
+          {[5, 10, 20, 50, 100].map(size => (
+            <option key={size} value={size}>{size}</option>
+          ))}
+        </select>
 
-  {/*  total songs on the left */}
-  <div className="flex items-center gap-2 absolute left-0">
+        {/*  total songs on the left */}
+        <div className="flex items-center gap-2 absolute left-0">
 
-    <span className="text-sm text-gray-500">שירים בטבלה: {totalSongs}</span>
-  </div>
-</div>
+          <span className="text-sm text-gray-500">שירים בטבלה: {totalSongs}</span>
+        </div>
+      </div>
 
     </div>
   );
