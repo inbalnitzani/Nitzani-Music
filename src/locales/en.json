@@ -10,7 +10,7 @@
         "select_media": "Select Media",
         "select_territory": "Select Territory",
         "usage_years": "Usage Period",
-        "work_name": "Work Name",
+        "work_name": "Composition’s name",
         "result_note": "This is an automatic mechanism and the price is an estimated price only",
         "hebrew": "עברית",
         "english": "English",
@@ -101,7 +101,9 @@
         "score": "Score",
         "pdf": "PDF",
         "excel": "Excel",
-        "word": "Word"
+        "word": "Word",
+        "year": "Year",
+        "link": "Link"
     },
     "manage_site": {
         "authors": "Authors",

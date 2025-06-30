@@ -101,7 +101,9 @@
         "score": "ניקוד",
         "pdf": "PDF",
         "excel": "Excel",
-        "word": "Word"
+        "word": "Word",
+        "year": "שנה",
+        "link": "קישור"
     },
     "manage_site": {
         "authors": "מחברים",

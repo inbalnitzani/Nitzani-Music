@@ -99,7 +99,7 @@ const CalculatorPage: React.FC = () => {
                 </h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">שם היצירה</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('calculator.work_name')}</label>
                         <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white"  />
                     </div>
                     <div>
@@ -144,7 +144,7 @@ const CalculatorPage: React.FC = () => {
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            {t('territory')}
+                            {t('calculator.territory')}
                         </label>
                         <select
                             value={territory}
