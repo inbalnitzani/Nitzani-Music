@@ -100,7 +100,7 @@ const priceTable: PriceTable = {
 };
 
 const CalculatorPage: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [productionType, setProductionType] = useState("docu");
   const [media, setMedia] = useState("");
   const [territory, setTerritory] = useState("");
