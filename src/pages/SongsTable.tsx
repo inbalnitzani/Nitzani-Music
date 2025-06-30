@@ -9,8 +9,10 @@ import Export from '../components/Export';
 import { Tooltip } from 'react-tooltip';
 import TagList from '../components/TagList';
 import ManageSite from '../components/ManageSite';
+import { useTranslation } from 'react-i18next';
 
 const AdminPage: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [songsPerPage, setSongsPerPage] = useState(5); // default 5
   const [songs, setSongs] = useState<Song[]>([]);
@@ -235,7 +237,7 @@ const AdminPage: React.FC = () => {
   return (
     <div className="p-4 sm:p-8">
       <div className="flex justify-between items-center mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold">Admin - Songs Table</h1>
+        <h1 className="text-xl sm:text-2xl font-bold">{t('songs.songs_table')}</h1>
 
         <div className="flex gap-2">
           {/* Export button */}
@@ -244,21 +246,21 @@ const AdminPage: React.FC = () => {
             onClick={() => setIsExportModalOpen(true)}
             className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
           >
-            Export
+            {t('songs.export')}
           </button>
-          <Tooltip id="exportTip" place="top" content="יצא את השירים שבחרת לקובץ" />
+          <Tooltip id="exportTip" place="top" content={t('songs.export_tooltip')} />
           {/* Add Song Button */}
           <button
             onClick={() => setIsEditSongModalOpen(true)}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >
-            Add Song
+            {t('songs.add_song')}
           </button>
           <button
             onClick={() => setIsManageSiteModalOpen(true)}
             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
           >
-            Manage Site
+            {t('songs.manage_site')}
           </button>
         </div>
       </div>
@@ -271,7 +273,7 @@ const AdminPage: React.FC = () => {
         size="2xl"
         isOpen={isEditSongModalOpen}
         onClose={handleCloseModal}
-        title={selectedSongForEdit ? 'Edit Song' : 'Create Song'}
+        title={selectedSongForEdit ? t('songs.edit_song') : t('songs.create_song')}
       >
         <SongForm
           onClose={handleCloseModal}
@@ -284,7 +286,7 @@ const AdminPage: React.FC = () => {
         size="lg"
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
-        title="Export Songs"
+        title={t('songs.export_songs')}
       >
         <Export songsForExport={selectedSongs} />
       </Modal>
@@ -293,7 +295,7 @@ const AdminPage: React.FC = () => {
         size="xl"
         isOpen={isManageSiteModalOpen}
         onClose={() => setIsManageSiteModalOpen(false)}
-        title="Manage Site"
+        title={t('songs.manage_site')}
       >
         <ManageSite onSave={() => {
           setIsManageSiteModalOpen(false);
@@ -310,15 +312,15 @@ const AdminPage: React.FC = () => {
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3">Title</th>
-              <th scope="col" className="px-6 py-3">Artists</th>
-              <th scope="col" className="px-6 py-3">Authors</th>
-              <th scope="col" className="px-6 py-3">Keywords</th>
-              <th scope="col" className="px-6 py-3">Genres</th>
-              <th scope="col" className="px-6 py-3">Lyrics</th>
-              <th scope="col" className="px-6 py-3">Year</th>
-              <th scope="col" className="px-6 py-3">Link</th>
-              <th scope="col" className="px-6 py-3 cursor-pointer hover:bg-gray-100 hover:text-blue-600" data-tooltip-id="selectAllTip" onClick={() => handleSelectAllSongs()}>Select</th>
+              <th scope="col" className="px-6 py-3">{t('songs.title')}</th>
+              <th scope="col" className="px-6 py-3">{t('songs.artists')}</th>
+              <th scope="col" className="px-6 py-3">{t('songs.authors')}</th>
+              <th scope="col" className="px-6 py-3">{t('songs.keywords')}</th>
+              <th scope="col" className="px-6 py-3">{t('songs.genres')}</th>
+              <th scope="col" className="px-6 py-3">{t('songs.lyrics')}</th>
+              <th scope="col" className="px-6 py-3">{t('songs.year')}</th>
+              <th scope="col" className="px-6 py-3">{t('songs.link')}</th>
+              <th scope="col" className="px-6 py-3 cursor-pointer hover:bg-gray-100 hover:text-blue-600" data-tooltip-id="selectAllTip" onClick={() => handleSelectAllSongs()}>{t('songs.select')}</th>
             </tr>
           </thead>
 
@@ -361,7 +363,7 @@ const AdminPage: React.FC = () => {
             ))}
           </tbody>
         </table>
-        <Tooltip id="selectAllTip" place="top" content={selectedSongs.length === songs.length ? "בטל בחירה" : "בחר את כל השירים"} />
+        <Tooltip id="selectAllTip" place="top" content={selectedSongs.length === songs.length ? t('songs.cancel_selection') : t('songs.select_all_songs')} />
 
       </div>
       <div className="relative flex justify-center items-center gap-2 mt-6">
@@ -371,15 +373,15 @@ const AdminPage: React.FC = () => {
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          Prev
+          {t('songs.prev')}
         </button>
-        <span className="mx-2">Page {currentPage} of {totalPages}</span>
+        <span className="mx-2">{t('songs.page')} {currentPage} {t('songs.of')} {totalPages}</span>
         <button
           className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          Next
+          {t('songs.next')}
         </button>
 
         {/* page size */}
@@ -401,7 +403,7 @@ const AdminPage: React.FC = () => {
         {/*  total songs on the left */}
         <div className="flex items-center gap-2 absolute left-0">
 
-          <span className="text-sm text-gray-500">שירים בטבלה: {totalSongs}</span>
+          <span className="text-sm text-gray-500">{t('songs.songs_in_table')}: {totalSongs}</span>
         </div>
       </div>
 

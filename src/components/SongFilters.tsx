@@ -3,7 +3,7 @@ import AsyncSelect from 'react-select/async';
 import type { MultiValue } from 'react-select';
 import type { SongFilters } from '../types/song';
 import { supabase } from '../supabaseClient';
-
+import { useTranslation } from 'react-i18next';
 interface SongFiltersProps {
     filters: SongFilters;
     onFilterChange: (filters: SongFilters) => void;
@@ -18,6 +18,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
     filters = {},
     onFilterChange,
 }) => {
+    const { t } = useTranslation();
     // const [selectedAuthorOptions, setSelectedAuthorOptions] = React.useState<SelectOption[]>([]);
     // const [selectedKeywordOptions, setSelectedKeywordOptions] = React.useState<SelectOption[]>([]);
     // const [selectedGenreOptions, setSelectedGenreOptions] = React.useState<SelectOption[]>([]);
@@ -123,12 +124,12 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                 {/* Search */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Search
+                        {t('filters.search')}
                     </label>
                     <input
                         type="text"
                         className="w-full px-3 py-2 border rounded-md"
-                        placeholder="Search by title or lyrics..."
+                        placeholder={t('filters.search_placeholder')}
                         value={filters?.searchText || ''}
                         onChange={e => handleSearchChange(e.target.value)}
                     />
@@ -137,7 +138,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                 {/* Authors */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Authors
+                        {t('filters.authors')}
                     </label>
                     <AsyncSelect
                         isMulti
@@ -146,14 +147,14 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                         loadOptions={loadAuthorOptions}
                         value={filters.authors?.map(a => ({ value: a, label: a })) || []}
                         onChange={handleAuthorChange}
-                        placeholder="Search and select authors..."
+                        placeholder={t('filters.search_and_select_authors')}
                     />
                 </div>
 
                 {/* Artists */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Artists
+                        {t('filters.artists')}
                     </label>
                     <AsyncSelect
                         isMulti
@@ -162,14 +163,14 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                         loadOptions={loadArtistOptions}
                         value={filters?.artists?.map(a => ({ value: a, label: a })) || []}
                         onChange={handleArtistChange}
-                        placeholder="Search and select artists..."
+                        placeholder={t('filters.search_and_select_artists')}
                     />
                 </div>
 
                 {/* Keywords */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Keywords
+                        {t('filters.keywords')}
                     </label>
                     <AsyncSelect
                         isMulti
@@ -178,7 +179,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                         loadOptions={loadKeywordOptions}
                         value={filters.keywords?.map(k => ({ value: k, label: k })) || []}
                         onChange={handleKeywordChange}
-                        placeholder="Search and select keywords..."
+                        placeholder={t('filters.search_and_select_keywords')}
                         classNamePrefix="tagselect"
 
                         
@@ -207,7 +208,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                     className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
                     onClick={handleClearFilters}
                 >
-                    Clear Filters
+                    {t('filters.clear_filters')}
                 </button>
             </div>
         </div>

@@ -3,7 +3,7 @@ import TagList from './TagList';
 import { supabase } from '../supabaseClient';
 // import jsPDF from 'jspdf';
 import { useInView } from 'react-intersection-observer';
-
+import { useTranslation } from 'react-i18next';
 interface ManageSiteProps {
   onSave?: () => void; // Callback to refresh data in parent
 }
@@ -82,6 +82,7 @@ function useInfiniteTags(tableName: string, search: string) {
 }
 
 const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
+  const { t } = useTranslation();
   // Tag states
   const [authors, setAuthors] = useState<Tag[]>([]);
   const [artists, setArtists] = useState<Tag[]>([]);
@@ -386,8 +387,8 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-bold mb-4">Confirm Delete</h3>
-            <p className="mb-4">You are about to delete the following tags. This will affect the listed songs:</p>
+            <h3 className="text-lg font-bold mb-4">{t('manage_site.delete_confirmation')}</h3>
+            <p className="mb-4">{t('manage_site.delete_confirmation_text')}</p>
             <div className="space-y-6 max-h-[60vh] overflow-y-auto">
               {deleteConfirmData.map(({ type, tag, affectedSongs }) => (
                 <div key={type + tag.id} className="border rounded p-3">
@@ -404,7 +405,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
                       </ul>
                     </div>
                   ) : (
-                    <div className="text-xs text-gray-400">No songs affected.</div>
+                    <div className="text-xs text-gray-400">{t('manage_site.no_songs_affected')}</div>
                   )}
                 </div>
               ))}
@@ -415,14 +416,14 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
                 className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
                 disabled={isSaving}
               >
-                Cancel
+                {t('manage_site.cancel')}
               </button>
               <button
                 onClick={confirmDeleteAll}
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                 disabled={isSaving}
               >
-                {isSaving ? 'Deleting...' : 'Delete Anyway'}
+                {isSaving ? t('manage_site.deleting') : t('manage_site.delete_anyway')}
               </button>
             </div>
           </div>
@@ -434,21 +435,21 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
           disabled={isSaving}
           className="bg-green-600 text-white px-6 py-2 rounded text-sm font-semibold hover:bg-green-700 disabled:opacity-50"
         >
-          {isSaving ? 'Saving...' : 'Save All Changes'}
+          {isSaving ? t('manage_site.saving') : t('manage_site.save')}
         </button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Authors */}
         <div>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">Authors:</h3>
+            <h3 className="font-semibold">{t('manage_site.authors')}:</h3>
           </div>
           <div className="mb-2">
             <input
               type="text"
               value={searchAuthor}
               onChange={e => setSearchAuthor(e.target.value)}
-              placeholder="Search authors..."
+              placeholder={t('manage_site.search_authors')}
               className="w-full px-3 py-1 border border-gray-300 rounded text-sm"
             />
           </div>
@@ -458,7 +459,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
               value={newAuthorInput}
               onChange={e => setNewAuthorInput(e.target.value)}
               onKeyPress={e => e.key === 'Enter' && addNewTag('author')}
-              placeholder="Add new author..."
+              placeholder={t('manage_site.add_new_author')}
               className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
             />
             <button
@@ -470,7 +471,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
           </div>
           {newAuthors.length > 0 && (
             <div className="mb-2">
-              <span className="text-sm text-gray-600">New authors to add:</span>
+              <span className="text-sm text-gray-600">{t('manage_site.new_authors_to_add')}:</span>
               <TagList
                 items={newAuthors}
                 colorClass="bg-yellow-100 text-yellow-800"
@@ -493,12 +494,12 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
             <div ref={authorsRef} />
             {loadingAuthors && (
               <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">Loading...</span>
+                <span className="text-xs text-gray-400">{t('manage_site.loading')}</span>
               </div>
             )}
             {!hasMoreAuthors && authorsTags.length > 0 && (
               <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">No more authors</span>
+                <span className="text-xs text-gray-400">{t('manage_site.no_more_authors')}</span>
               </div>
             )}
           </div>
@@ -506,14 +507,14 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
         {/* Artists */}
         <div>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">Artists:</h3>
+            <h3 className="font-semibold">{t('manage_site.artists')}:</h3>
           </div>
           <div className="mb-2">
             <input
               type="text"
               value={searchArtist}
               onChange={e => setSearchArtist(e.target.value)}
-              placeholder="Search artists..."
+              placeholder={t('manage_site.search_artists')}
               className="w-full px-3 py-1 border border-gray-300 rounded text-sm"
             />
           </div>
@@ -523,7 +524,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
               value={newArtistInput}
               onChange={e => setNewArtistInput(e.target.value)}
               onKeyPress={e => e.key === 'Enter' && addNewTag('artist')}
-              placeholder="Add new artist..."
+              placeholder={t('manage_site.add_new_artist')}
               className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
             />
             <button
@@ -535,7 +536,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
           </div>
           {newArtists.length > 0 && (
             <div className="mb-2">
-              <span className="text-sm text-gray-600">New artists to add:</span>
+              <span className="text-sm text-gray-600">{t('manage_site.new_artists_to_add')}:</span>
               <TagList
                 items={newArtists}
                 colorClass="bg-yellow-100 text-yellow-800"
@@ -558,12 +559,12 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
             <div ref={artistsRef} />
             {loadingArtists && (
               <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">Loading...</span>
+                <span className="text-xs text-gray-400">{t('manage_site.loading')}</span>
               </div>
             )}
             {!hasMoreArtists && artistsTags.length > 0 && (
               <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">No more artists</span>
+                <span className="text-xs text-gray-400">{t('manage_site.no_more_artists')}</span>
               </div>
             )}
           </div>
@@ -571,14 +572,14 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
         {/* Keywords */}
         <div>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">Keywords:</h3>
+            <h3 className="font-semibold">{t('manage_site.keywords')}:</h3>
           </div>
           <div className="mb-2">
             <input
               type="text"
               value={searchKeyword}
               onChange={e => setSearchKeyword(e.target.value)}
-              placeholder="Search keywords..."
+              placeholder={t('manage_site.search_keywords')}
               className="w-full px-3 py-1 border border-gray-300 rounded text-sm"
             />
           </div>
@@ -588,7 +589,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
               value={newKeywordInput}
               onChange={e => setNewKeywordInput(e.target.value)}
               onKeyPress={e => e.key === 'Enter' && addNewTag('keyword')}
-              placeholder="Add new keyword..."
+              placeholder={t('manage_site.add_new_keyword')}
               className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
             />
             <button
@@ -600,7 +601,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
           </div>
           {newKeywords.length > 0 && (
             <div className="mb-2">
-              <span className="text-sm text-gray-600">New keywords to add:</span>
+              <span className="text-sm text-gray-600">{t('manage_site.new_keywords_to_add')}:</span>
               <TagList
                 items={newKeywords}
                 colorClass="bg-yellow-100 text-yellow-800"
@@ -623,12 +624,12 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
             <div ref={keywordsRef} />
             {loadingKeywords && (
               <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">Loading...</span>
+                <span className="text-xs text-gray-400">{t('manage_site.loading')}</span>
               </div>
             )}
             {!hasMoreKeywords && keywordsTags.length > 0 && (
               <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">No more keywords</span>
+                <span className="text-xs text-gray-400">{t('manage_site.no_more_keywords')}</span>
               </div>
             )}
           </div>
@@ -636,14 +637,14 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
         {/* Genres */}
         <div>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">Genres:</h3>
+            <h3 className="font-semibold">{t('manage_site.genres')}:</h3>
           </div>
           <div className="mb-2">
             <input
               type="text"
               value={searchGenre}
               onChange={e => setSearchGenre(e.target.value)}
-              placeholder="Search genres..."
+              placeholder={t('manage_site.search_genres')}
               className="w-full px-3 py-1 border border-gray-300 rounded text-sm"
             />
           </div>
@@ -653,7 +654,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
               value={newGenreInput}
               onChange={e => setNewGenreInput(e.target.value)}
               onKeyPress={e => e.key === 'Enter' && addNewTag('genre')}
-              placeholder="Add new genre..."
+              placeholder={t('manage_site.add_new_genre')}
               className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
             />
             <button
@@ -665,7 +666,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
           </div>
           {newGenres.length > 0 && (
             <div className="mb-2">
-              <span className="text-sm text-gray-600">New genres to add:</span>
+              <span className="text-sm text-gray-600">{t('manage_site.new_genres_to_add')}:</span>
               <TagList
                 items={newGenres}
                 colorClass="bg-yellow-100 text-yellow-800"
@@ -688,12 +689,12 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
             <div ref={genresRef} />
             {loadingGenres && (
               <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">Loading...</span>
+                <span className="text-xs text-gray-400">{t('manage_site.loading')}</span>
               </div>
             )}
             {!hasMoreGenres && genresTags.length > 0 && (
               <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">No more genres</span>
+                <span className="text-xs text-gray-400">{t('manage_site.no_more_genres')}</span>
               </div>
             )}
           </div>

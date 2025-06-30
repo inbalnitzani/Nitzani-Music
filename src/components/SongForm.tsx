@@ -3,7 +3,7 @@ import type { Song } from '../types/song';
 import { supabase } from '../supabaseClient';
 import AsyncSelect from 'react-select/async';
 import type { MultiValue } from 'react-select';
-
+import { useTranslation } from 'react-i18next';
 type SongFormProps = {
   onClose: () => void;
   onSuccess: () => void;
@@ -17,6 +17,7 @@ const SongForm: React.FC<SongFormProps> = ({
   onSuccess,
   song
 }) => {
+  const { t } = useTranslation();
   const isEditMode = !!song;
   const [formData, setFormData] = useState<Partial<Song>>({
     title: song?.title || '',
@@ -245,7 +246,7 @@ const SongForm: React.FC<SongFormProps> = ({
         {/* Title and Link */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700">{t('song_form.title')}</label>
             <input
               type="text"
               id="title"
@@ -256,7 +257,7 @@ const SongForm: React.FC<SongFormProps> = ({
             />
           </div>
           <div>
-            <label htmlFor="link" className="block text-sm font-medium text-gray-700">Link</label>
+            <label htmlFor="link" className="block text-sm font-medium text-gray-700">{t('song_form.link')}</label>
             <input
               type="url"
               id="link"
@@ -270,7 +271,7 @@ const SongForm: React.FC<SongFormProps> = ({
 
         {/* Each select in its own row */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Artists</label>
+          <label className="block text-sm font-medium text-gray-700">{t('song_form.artists')}</label>
           <AsyncSelect
             isMulti
             loadOptions={loadArtistOptions}
@@ -278,12 +279,12 @@ const SongForm: React.FC<SongFormProps> = ({
             onChange={handleArtistsChange}
             className="mt-1"
             classNamePrefix="tagselect"
-            placeholder="Search and select or add artists..."
+            placeholder={t('song_form.search_and_select_artists')}
             
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Authors</label>
+          <label className="block text-sm font-medium text-gray-700">{t('song_form.authors')}</label>
           <AsyncSelect
             isMulti
             loadOptions={loadAuthorOptions}
@@ -291,11 +292,11 @@ const SongForm: React.FC<SongFormProps> = ({
             onChange={opts => setSelectedAuthorOptions(opts as ArtistOption[])}
             className="mt-1"
             classNamePrefix="tagselect"
-            placeholder="Search and select or add authors..."
+            placeholder={t('song_form.search_and_select_authors')}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Genres</label>
+          <label className="block text-sm font-medium text-gray-700">{t('song_form.genres')}</label>
           <AsyncSelect
             isMulti
             loadOptions={loadGenreOptions}
@@ -303,11 +304,11 @@ const SongForm: React.FC<SongFormProps> = ({
             onChange={opts => setSelectedGenreOptions(opts as ArtistOption[])}
             className="mt-1"  
             classNamePrefix="tagselect"
-            placeholder="Search and select genres..."
+            placeholder={t('song_form.search_and_select_genres')}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Keywords</label>
+            <label className="block text-sm font-medium text-gray-700">{t('song_form.keywords')}</label>
           <AsyncSelect
             isMulti
             loadOptions={loadKeywordOptions}
@@ -315,13 +316,13 @@ const SongForm: React.FC<SongFormProps> = ({
             onChange={opts => setSelectedKeywordOptions(opts as ArtistOption[])}
             className="mt-1"
             classNamePrefix="tagselect"
-            placeholder="Search and select keywords..."
+            placeholder={t('song_form.search_and_select_keywords')}
           />
         </div>
 
         {/* Lyrics */}
         <div>
-          <label htmlFor="lyrics" className="block text-sm font-medium text-gray-700">Lyrics</label>
+          <label htmlFor="lyrics" className="block text-sm font-medium text-gray-700">{t('song_form.lyrics')}</label>
           <textarea
             id="lyrics"
             name="lyrics"
@@ -334,7 +335,7 @@ const SongForm: React.FC<SongFormProps> = ({
         {/* Year, Score, Free */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label htmlFor="year" className="block text-sm font-medium text-gray-700">Year</label>
+            <label htmlFor="year" className="block text-sm font-medium text-gray-700">{t('song_form.year')}</label>
             <input
               type="number"
               id="year"
@@ -347,7 +348,7 @@ const SongForm: React.FC<SongFormProps> = ({
             />
           </div>
           <div>
-            <label htmlFor="score" className="block text-sm font-medium text-gray-700">Score</label>
+            <label htmlFor="score" className="block text-sm font-medium text-gray-700">{t('song_form.score')}</label>
             <input
               type="number"
               id="score"
@@ -366,7 +367,7 @@ const SongForm: React.FC<SongFormProps> = ({
               onChange={e => setFormData({ ...formData, is_free: e.target.checked })}
               className="h-4 w-4 text-blue-600 border-gray-300 rounded"
             />
-            <label htmlFor="is_free" className="ml-2 text-sm font-medium text-gray-700">Free</label>
+            <label htmlFor="is_free" className="ml-2 text-sm font-medium text-gray-700">{t('song_form.free')}</label>
           </div>
         </div>
 
@@ -378,14 +379,14 @@ const SongForm: React.FC<SongFormProps> = ({
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Cancel
+              {t('song_form.cancel')}
             </button>
             <button
               type="submit"
               disabled={isLoading}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? (isEditMode ? 'Saving...' : 'Creating...') : (isEditMode ? 'Save Changes' : 'Create Song')}
+              {isLoading ? (isEditMode ? t('song_form.saving') : t('song_form.creating')) : (isEditMode ? t('song_form.save_changes') : t('song_form.create_song'))}
             </button>
 
           </div>
@@ -396,7 +397,7 @@ const SongForm: React.FC<SongFormProps> = ({
               className="px-4 py-2 text-sm font-medium text-white bg-red-500 border border-transparent rounded-md hover:bg-red-600"
               disabled={isLoading}
             >
-              {isLoading ? 'Deleting...' : 'Delete'}
+              {isLoading ? t('song_form.deleting') : t('song_form.delete')}
             </button>
           )}
         </div>

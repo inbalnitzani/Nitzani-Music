@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import type { Song } from '../types/song';
+import { useTranslation } from 'react-i18next';
 
 export default function HomePage() {
+  const { t } = useTranslation();
   const [searchPrompt, setSearchPrompt] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,14 +90,14 @@ export default function HomePage() {
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">חיפוש שירים</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('home.search_title')}</h1>
         </div>
 
         {/* Search Section */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">מצא את השיר המושלם</h2>
+          <h2 className="text-xl font-semibold mb-4">{t('home.find_perfect_song')}</h2>
           <p className="text-gray-600 mb-6 text-right">
-            תאר מה אתה מחפש בשפה טבעית. הבינה המלאכותית שלנו תעזור למצוא את השירים המושלמים לצרכים שלך.
+            {t('home.describe_what_you_are_looking_for')}
           </p>
           
           <form onSubmit={handleSearch} className="mb-6">
@@ -113,14 +115,14 @@ export default function HomePage() {
                 disabled={isLoading || !searchPrompt.trim()}
                 className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? 'מחפש...' : 'חפש'}
+                {isLoading ? t('home.searching') : t('home.search')}
               </button>
             </div>
           </form>
 
           {/* Example Prompts */}
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-700 mb-2 text-right">נסה דוגמאות אלה:</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2 text-right">{t('home.try_these_examples')}:</h3>
             <div className="flex flex-wrap gap-2 justify-end">
               {examplePrompts.map((prompt, index) => (
                 <button
@@ -151,7 +153,7 @@ export default function HomePage() {
         {songs.length > 0 && (
           <div className="bg-white rounded-lg shadow-md">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-right">נמצאו {songs.length} שירים</h3>
+                <h3 className="text-lg font-semibold text-right">{t('home.found_songs', { count: songs.length })}</h3>
             </div>
             <div className="divide-y divide-gray-200">
               {songs.map((song) => (
@@ -160,14 +162,14 @@ export default function HomePage() {
                     <div className="flex-1 text-right">
                       <h4 className="text-lg font-medium text-gray-900 mb-2">{song.title}</h4>
                       <div className="text-sm text-gray-600 space-y-1">
-                        <p><span className="font-medium">אמנים:</span> {song.artists?.join(', ') || 'לא ידוע'}</p>
-                        <p><span className="font-medium">מחברים:</span> {song.authors?.join(', ') || 'לא ידוע'}</p>
-                        <p><span className="font-medium">שנה:</span> {song.year || 'לא ידוע'}</p>
-                        <p><span className="font-medium">ז'אנרים:</span> {song.genres?.join(', ') || 'לא ידוע'}</p>
-                        <p><span className="font-medium">מילות מפתח:</span> {song.keywords?.join(', ') || 'אין'}</p>
+                        <p><span className="font-medium">{t('home.artists')}:</span> {song.artists?.join(', ') || 'לא ידוע'}</p>
+                        <p><span className="font-medium">{t('home.authors')}:</span> {song.authors?.join(', ') || 'לא ידוע'}</p>
+                        <p><span className="font-medium">{t('home.year')}:</span> {song.year || 'לא ידוע'}</p>
+                        <p><span className="font-medium">{t('home.genres')}:</span> {song.genres?.join(', ') || 'לא ידוע'}</p>
+                        <p><span className="font-medium">{t('home.keywords')}:</span> {song.keywords?.join(', ') || 'אין'}</p>
                         {song.lyrics && (
                           <p className="mt-2 text-gray-700 line-clamp-2">
-                            <span className="font-medium">מילים:</span> {song.lyrics.substring(0, 200)}...
+                            <span className="font-medium">{t('home.lyrics')}:</span> {song.lyrics.substring(0, 200)}...
                           </p>
                         )}
                       </div>
@@ -180,7 +182,7 @@ export default function HomePage() {
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:text-blue-800 text-sm"
                         >
-                          האזן →
+                          {t('home.listen')}
                         </a>
                       )}
                       <div className="text-xs text-gray-500">
@@ -195,8 +197,8 @@ export default function HomePage() {
 
         {!isLoading && songs.length === 0 && searchPrompt && !error && (
           <div className="text-center py-12 text-gray-500">
-            <p>לא נמצאו שירים התואמים לקריטריונים שלך.</p>
-            <p className="text-sm mt-2">נסה לשנות את מונחי החיפוש או להיות יותר ספציפי.</p>
+            <p>{t('home.no_songs_found')}</p>
+            <p className="text-sm mt-2">{t('home.try_different_search')}</p>
           </div>
         )}
       </div>

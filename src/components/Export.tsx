@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import type { Song } from "../types/song";
+import { useTranslation } from 'react-i18next';
 // import jsPDF from "jspdf";
 import ExcelJS from "exceljs";
 // import autoTable from "jspdf-autotable";
@@ -57,22 +58,22 @@ Font.register({
   });
 const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
     const [fileName, setFileName] = useState("songs_export");
-    
+    const { t } = useTranslation();
     const fieldOptions = [
-        { key: "title", label: "שם השיר" },
-        { key: "artists", label: "מבצעים" },
-        { key: "authors", label: "מחברים" },
-        { key: "keywords", label: "מילות מפתח" },
-        { key: "genres", label: "ז'אנרים" },
-        { key: "lyrics", label: "מילים" },
-        { key: "score", label: "ניקוד" },
-        { key: "year", label: "שנה" },
-        { key: "link", label: "קישור" },
+        { key: "title", label: t('export.title') },
+        { key: "artists", label: t('export.artists') },
+        { key: "authors", label: t('export.authors') },
+        { key: "keywords", label: t('export.keywords') },
+        { key: "genres", label: t('export.genres') },
+        { key: "lyrics", label: t('export.lyrics') },
+        { key: "score", label: t('export.score') },
+        { key: "year", label: t('export.year') },
+        { key: "link", label: t('export.link') },
     ];
     const formatsOptions = [
-        { key: "pdf", label: "PDF" },
-        { key: "excel", label: "Excel" },
-        { key: "word", label: "Word" },
+        { key: "pdf", label: t('export.pdf') },
+        { key: "excel", label: t('export.excel') },
+        { key: "word", label: t('export.word') },
     ];
     const [formats, setFormats] = useState<{ [key: string]: boolean }>({
         pdf: false,
@@ -248,7 +249,7 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
                     className="block text-sm font-medium text-gray-700 mb-1"
                     htmlFor="export-filename"
                 >
-                    שם קובץ
+                    {t('export.file_name')}
                 </label>
                 <input
                     id="export-filename"
@@ -263,7 +264,7 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
             {/* formats */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                    פורמטים
+                    {t('export.formats')}
                 </label>
                 <div className="flex flex-wrap gap-4">
                     {formatsOptions.map(opt => (
@@ -282,7 +283,7 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
             {/* fields */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                    שדות
+                      {t('export.fields')}
                 </label>
                 <div className="flex flex-wrap gap-4">
                     {fieldOptions.map(opt => (
@@ -303,7 +304,7 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
                 className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
                 onClick={handleExport}
             >
-                ייצא
+                {t('export.export')}
             </button>
         </div>
     );
