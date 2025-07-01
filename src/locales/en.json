@@ -74,7 +74,7 @@
         "export_tooltip": "Export the songs you selected to a file"
     },
     "filters": {
-        "search": "Search by title or keywords",
+        "search": "Search by title or lyrics",
         "search_placeholder": "Search by title or keywords",
         "search_button": "Search",
         "search_button_tooltip": "Search by title or keywords",

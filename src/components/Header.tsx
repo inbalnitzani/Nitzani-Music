@@ -22,7 +22,7 @@ export default function Header() {
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-white shadow">
       <div className="flex items-center gap-2">
-        <img src={logo} alt="Logo" className="h-20 pr-10" />
+        <img src={logo} alt="Logo" className="h-12 md:h-20 pr-4 md:pr-10" />
         {/* <span className="font-bold text-xl">Nitzani Music</span> */}       
 
       </div>
