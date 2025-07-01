@@ -27,7 +27,7 @@ export default function Header() {
 
       </div>
 
-      <nav className="flex items-center gap-4">
+      <nav className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 mt-2 md:mt-0">
         <Link to="/" className="text-blue-600 hover:underline">{t('header.home')}</Link>
         {role === 'admin' && (
           <>
@@ -35,7 +35,7 @@ export default function Header() {
             <Link to="/calculator" className="text-blue-600 hover:underline">{t('header.calculator')}</Link>
           </>
         )}
-                <div className="flex gap-2 justify-end">
+        <div className="flex gap-2 justify-end">
           <button onClick={() => i18n.changeLanguage('he')}>
             <img src={hebrew} alt="Hebrew" className="h-6" />
           </button>
