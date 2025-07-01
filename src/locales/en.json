@@ -18,7 +18,24 @@
         "duration_2": "Up to 2 minutes",
         "duration_3": "Up to 3 minutes",
         "duration_4": "Up to 4 minutes",
-        "duration_5": "Up to 5 minutes"
+        "duration_5": "Up to 5 minutes",
+        "עלילתי": "Featured",
+        "דוקומנטרי": "Documentary",
+        "פסטיבלים": "Festivals",
+        "קולנוע": "Movies",
+        "אינטרנט": "Internet",
+        "טלויזיה": "TV",
+        "DVD": "DVD",
+        "פסטיבלים + טלויזיה": "Festivals + TV",
+        "פסטיבלים + הקרנות לא מסחריות": "Festivals + Non-commercial events",
+        "פסטיבלים (ישראל + עולם) + בתי קולנוע בארץ": "Festivals (Israel + World) + Cinemas in Israel",
+        "בתי קולנוע": "Cinemas",
+        "כל המדיות בארץ + פסטיבלים בעולם": "All festivals in Israel + Festivals in the world",
+        "כל המדיות": "all media",
+        "חבילת בסיס" : "Basic Package",
+        "ישראל": "Israel",
+        "עולם": "World"
+        
     },
     "header": {
         "home": "Home",

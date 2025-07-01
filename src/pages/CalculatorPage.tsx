@@ -97,11 +97,13 @@ const CalculatorPage: React.FC = () => {
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 text-center">
                     {t('calculator.title')}
                 </h1>
+                {/* work name */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">{t('calculator.work_name')}</label>
                         <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white"  />
                     </div>
+                    {/* production type */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             {t('calculator.production_type')}
@@ -123,8 +125,8 @@ const CalculatorPage: React.FC = () => {
                             }}
                             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                         >
-                            <option value="עלילתי">עלילתי</option>
-                            <option value="דוקומנטרי">דוקומנטרי</option>
+                            <option value="עלילתי">{t('calculator.עלילתי')}</option>
+                            <option value="דוקומנטרי">{t('calculator.דוקומנטרי')}</option>
                         </select>
                     </div>
                     <div>
@@ -138,7 +140,7 @@ const CalculatorPage: React.FC = () => {
                         >
                             <option value="">{t('calculator.select_media')}</option>
                             {mediaOptions.map(media => (
-                                <option key={media} value={media}>{media}</option>
+                                <option key={media} value={media}>{t(`calculator.${media}`)}</option>
                             ))}
                         </select>
                     </div>
@@ -154,7 +156,7 @@ const CalculatorPage: React.FC = () => {
                         >
                             <option value="">{t('calculator.select_territory')}</option>
                             {territoryOptions.map(territory => (
-                                <option key={territory} value={territory}>{territory}</option>
+                                <option key={territory} value={territory}>{t(`calculator.${territory}`)}</option>
                             ))}
                         </select>
                     </div>
