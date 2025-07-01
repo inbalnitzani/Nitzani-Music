@@ -192,6 +192,12 @@ const CalculatorPage: React.FC = () => {
                         </p>
                     </div>
                 )}
+                {media === "חבילת בסיס" && (
+                    <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-gray-800">
+                        <p className="font-semibold mb-1">{t('calculator.media_explanation_title')}</p>
+                        <p>{t('calculator.media_explanation')}</p>
+                    </div>
+                )}
             </div>
 
         </div>

@@ -34,7 +34,9 @@
         "כל המדיות": "all media",
         "חבילת בסיס" : "Basic Package",
         "ישראל": "Israel",
-        "עולם": "World"
+        "עולם": "World",
+        "media_explanation_title": "What is Basic package?",
+        "media_explanation": "Basic package includes all media in Israel and the world."
         
     },
     "header": {
