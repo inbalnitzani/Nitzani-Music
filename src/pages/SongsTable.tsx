@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { Song, SongFilters } from '../types/song';
 import { supabase } from '../supabaseClient';
@@ -48,14 +48,28 @@ const AdminPage: React.FC = () => {
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
 
+      // Dynamically build the select string based on active filters
+      const artistJoin = (filters.artists?.length)
+        ? 'song_artists!inner(artist_id, artists (id, name))'
+        : 'song_artists(artist_id, artists (id, name))';
+
+      const authorJoin = (filters.authors?.length)
+        ? 'song_authors!inner(author_id, authors (id, name))'
+        : 'song_authors(author_id, authors (id, name))';
+
+      const keywordJoin = (filters.keywords?.length)
+        ? 'song_keywords!inner(keyword_id, keywords (id, name))'
+        : 'song_keywords(keyword_id, keywords (id, name))';
+
+      // Genres are not filtered, so it's always a left join
+      const genreJoin = 'song_genres(genre_id, genres (id, name))';
+
+      const selectString = `*, ${artistJoin}, ${authorJoin}, ${keywordJoin}, ${genreJoin}`;
+
+
       let query = supabase
-        .from('songs')
-        .select(`*,
-          song_artists!inner(position, artist_id, artists (id, name)),
-          song_authors!inner(position, author_id, authors (id, name)),
-          song_keywords!inner(keyword_id, keywords (id, name)),
-          song_genres (genre_id, genres (id, name))
-        `, { count: 'exact' });
+      .from('songs')
+      .select(selectString, { count: 'exact' });
 
       // Filter by artists
       if (filters.artists?.length && filters.artists.length > 0) {
@@ -65,7 +79,7 @@ const AdminPage: React.FC = () => {
           .select('id')
           .in('name', filters.artists);
         if (artistError) throw artistError;
-        const artistIds = (artistRows || []).map(a => a.id);
+        const artistIds = (artistRows || []).map((a: { id: string }) => a.id);
         if (artistIds.length > 0) {
           query = query.in('song_artists.artist_id', artistIds);
         } else {
@@ -84,7 +98,7 @@ const AdminPage: React.FC = () => {
           .select('id')
           .in('name', filters.authors);
         if (authorError) throw authorError;
-        const authorIds = (authorRows || []).map(a => a.id);
+        const authorIds = (authorRows || []).map((a: { id: string }) => a.id);
         if (authorIds.length > 0) {
           query = query.in('song_authors.author_id', authorIds);
         } else {
@@ -103,8 +117,7 @@ const AdminPage: React.FC = () => {
           .select('id')
           .in('name', filters.keywords);
         if (keywordError) throw keywordError;
-        const keywordIds = (keywordRows || []).map(k => k.id);
-        if (keywordIds.length > 0) {
+        const keywordIds = (keywordRows || []).map((k: { id: string }) => k.id);        if (keywordIds.length > 0) {
           query = query.in('song_keywords.keyword_id', keywordIds);
         } else {
           setSongs([]);
@@ -128,7 +141,7 @@ const AdminPage: React.FC = () => {
 
       // Map artists for display
       if (songsData && songsData.length > 0) {
-        const songsWithDetails = songsData.map(song => ({
+        const songsWithDetails = songsData.map((song: Song) => ({
           ...song,
           artists: (song.song_artists || [])
             .map((sa: { artists?: { name?: string } | null }) => sa.artists?.name)
@@ -388,7 +401,7 @@ const AdminPage: React.FC = () => {
         <select
           value={songsPerPage}
           onChange={e => {
-            const newSize = Number(e.target.value);
+            const newSize = Number((e.target as HTMLSelectElement).value);
             setSongsPerPage(newSize);
             setCurrentPage(1);
             fetchSongs(currentFilters, 1, newSize);

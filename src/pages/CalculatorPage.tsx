@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../supabaseClient";
+import { useAuth } from "../hooks/useAuth";
 
 export interface PriceRow {
   id: number;
@@ -28,6 +29,7 @@ const CalculatorPage: React.FC = () => {
     const [result, setResult] = useState<null | { total: number }>(null);
     const [name, setName] = useState("");
     const [priceTable, setPriceTable] = useState<PriceTable>([]);
+    const { user } = useAuth();
 
     // set price table
     const fetchPriceTable = async () => {
@@ -70,6 +72,7 @@ const CalculatorPage: React.FC = () => {
         }
         const total = base * SERVICE_FEE;
         setResult({ total });
+        console.log("user:", user?.email, "Composition's name:", name, "production type:", productionType, "media:", media, "territory:", territory, "duration:", duration, "total:", total);
     };
 
     const mediaOptions = Array.from(
