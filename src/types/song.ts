@@ -19,3 +19,17 @@ export interface SongFilters {
   searchText?: string;
   genres?: string[];
 }
+
+export interface RawSongFromSupabase {
+  id: string;
+  title: string;
+  lyrics: string;
+  year: number;
+  link: string;
+  is_free: boolean;
+  score: number;
+  song_artists?: { artists?: { name?: string } | null }[];
+  song_authors?: { authors?: { name?: string } | null }[];
+  song_keywords?: { keywords?: { name?: string } | null }[];
+  song_genres?: { genres?: { name?: string } | null }[];
+}
