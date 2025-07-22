@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import type { Song, SongFilters } from '../types/song';
-import { supabase } from '../supabaseClient';
-import SongFiltersComponent from '../components/SongFilters';
-import Modal from '../components/Modal';
-import SongForm from '../components/SongForm';
-import Export from '../components/Export';
+import type { Song, SongFilters, RawSongFromSupabase  } from '../types/song.ts';
+import { supabase } from '../supabaseClient.ts';
+import SongFiltersComponent from '../components/SongFilters.tsx';
+import Modal from '../components/Modal.tsx';
+import SongForm from '../components/SongForm.tsx';
+import Export from '../components/Export.tsx';
 import { Tooltip } from 'react-tooltip';
-import TagList from '../components/TagList';
-import ManageSite from '../components/ManageSite';
+import TagList from '../components/TagList.tsx';
+import ManageSite from '../components/ManageSite.tsx';
 import { useTranslation } from 'react-i18next';
 
 const AdminPage: React.FC = () => {
@@ -68,8 +68,8 @@ const AdminPage: React.FC = () => {
 
 
       let query = supabase
-      .from('songs')
-      .select(selectString, { count: 'exact' });
+        .from('songs')
+        .select(selectString, { count: 'exact' });
 
       // Filter by artists
       if (filters.artists?.length && filters.artists.length > 0) {
@@ -117,7 +117,7 @@ const AdminPage: React.FC = () => {
           .select('id')
           .in('name', filters.keywords);
         if (keywordError) throw keywordError;
-        const keywordIds = (keywordRows || []).map((k: { id: string }) => k.id);        if (keywordIds.length > 0) {
+        const keywordIds = (keywordRows || []).map((k: { id: string }) => k.id); if (keywordIds.length > 0) {
           query = query.in('song_keywords.keyword_id', keywordIds);
         } else {
           setSongs([]);
@@ -140,22 +140,33 @@ const AdminPage: React.FC = () => {
       }
 
       // Map artists for display
-      if (songsData && songsData.length > 0) {
-        const songsWithDetails = songsData.map((song: Song) => ({
-          ...song,
+      if (Array.isArray(songsData) && songsData.length > 0) {
+        const songsWithDetails: Song[] = (songsData as unknown as RawSongFromSupabase[]).map(song => ({
+          id: song.id,
+          title: song.title,
+          lyrics: song.lyrics,
+          year: Number(song.year),
+          link: song.link,
+          is_free: song.is_free === true,
+          score: Number(song.score),
+          
           artists: (song.song_artists || [])
-            .map((sa: { artists?: { name?: string } | null }) => sa.artists?.name)
-            .filter(Boolean),
+          .map((sa: { artists?: { name?: string } | null }) => sa.artists?.name)
+          .filter((name: string | undefined): name is string => Boolean(name)),
+        
           authors: (song.song_authors || [])
-            .map((sa: { authors?: { name?: string } | null }) => sa.authors?.name)
-            .filter(Boolean),
-          keywords: (song.song_keywords || [])
-            .map((sk: { keywords?: { name?: string } | null }) => sk.keywords?.name)
-            .filter(Boolean),
-          genres: (song.song_genres || [])
-            .map((sg: { genres?: { name?: string } | null }) => sg.genres?.name)
-            .filter(Boolean),
+          .map((sa: { authors?: { name?: string } | null }) => sa.authors?.name)
+          .filter((name: string | undefined): name is string => Boolean(name)),
+        
+        keywords: (song.song_keywords || [])
+          .map((sk: { keywords?: { name?: string } | null }) => sk.keywords?.name)
+          .filter((name: string | undefined): name is string => Boolean(name)),
+        
+        genres: (song.song_genres || [])
+        .map((sg: { genres?: { name?: string } | null }) => sg.genres?.name)
+        .filter((name: string | undefined): name is string => Boolean(name))
         }));
+        
         setSongs(songsWithDetails);
       } else {
         setSongs([]);
