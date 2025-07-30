@@ -32,7 +32,6 @@ export default function Header() {
         {role === 'admin' && (
           <>
             <Link to="/songs" className="text-blue-600 hover:underline">{t('header.songs')}</Link>
-            <Link to="/calculator" className="text-blue-600 hover:underline">{t('header.calculator')}</Link>
           </>
         )}
         <div className="flex gap-2 justify-end">

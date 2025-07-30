@@ -29,7 +29,7 @@ function App() {
         <Header />
           <Routes>
             <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/" />} />
-            <Route path="/" element={user ? <HomePage /> : <Navigate to="/login" />} />
+            <Route path="/" element={user ? <CalculatorPage /> : <Navigate to="/login" />} />
             <Route path="/songs" element={user && isAdmin ? <AdminPage /> : <Navigate to="/login" />} />
             <Route path="/calculator" element={user && isAdmin ? <CalculatorPage /> : <Navigate to="/login" />} />
           </Routes>
