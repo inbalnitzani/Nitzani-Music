@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
-import HomePage from './pages/HomePage';
 import AdminPage from './pages/SongsTable';
+import MonitoringPage from './pages/MonitoringPage'
 import CalculatorPage from './pages/CalculatorPage';
 import { useAuth } from './hooks/useAuth';
 import Header from './components/Header';
@@ -31,7 +31,9 @@ function App() {
             <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/" />} />
             <Route path="/" element={user ? <CalculatorPage /> : <Navigate to="/login" />} />
             <Route path="/songs" element={user && isAdmin ? <AdminPage /> : <Navigate to="/login" />} />
-            <Route path="/calculator" element={user && isAdmin ? <CalculatorPage /> : <Navigate to="/login" />} />
+            <Route path="/calculator" element={user ? <CalculatorPage /> : <Navigate to="/login" />} />
+            <Route path="/monitoring" element={user && isAdmin ? <MonitoringPage /> : <Navigate to="/login" />} />
+
           </Routes>
           <script src="./assets/vendor/preline/dist/preline.js"></script>
       </Router>

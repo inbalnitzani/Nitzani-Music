@@ -10,7 +10,7 @@
         "select_media": "Select Media",
         "select_territory": "Select Territory",
         "usage_years": "Usage Period",
-        "work_name": "Composition’s name",
+        "work_name": "Composition",
         "result_note": "This is an automatic mechanism and the price is an estimated price only",
         "hebrew": "עברית",
         "english": "English",
@@ -32,13 +32,12 @@
         "בתי קולנוע": "Cinemas",
         "כל המדיות בארץ + פסטיבלים בעולם": "All festivals in Israel + Festivals in the world",
         "כל המדיות": "all media",
-        "חבילת בסיס" : "Basic Package",
+        "חבילת בסיס": "Basic Package",
         "ישראל": "Israel",
         "עולם": "World",
         "ישראל + עולם": "Israel + World",
         "media_explanation_title": "What is Basic package?",
         "media_explanation": "Basic package includes all media in Israel and the world."
-        
     },
     "header": {
         "home": "Home",
@@ -46,7 +45,8 @@
         "calculator": "Calculator",
         "sign_out": "Sign Out",
         "hebrew": "עברית",
-        "english": "English"
+        "english": "English",
+        "monitor": "Monitor"
     },
     "home": {
         "search_title": "Search Songs",
@@ -169,6 +169,16 @@
         "search_and_select_authors": "Search and select authors",
         "search_and_select_genres": "Search and select genres",
         "search_and_select_keywords": "Search and select keywords"
+    },
+    "monitoring": {
+        "monitoring": "Monitoring",
+        "email": "Email",
+        "search_time": "Calculated At",
+        "PDF":"PDF",
+        "name": "Name",
+        "phone": "Phone",
+        "company_name" : "Company",
+        "price": "Price",
+        "user": "User"
     }
-   
-  }
+}

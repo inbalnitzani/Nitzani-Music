@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { supabase } from "../supabaseClient.ts";
 
 const LoginPage: React.FC = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [companyName, setCompanyName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
@@ -14,20 +17,22 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     setError('');
     setInfo('');
-  
+
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ 
-          email, 
+        const { error } = await supabase.auth.signUp({
+          email,
           password,
           options: {
             data: {
-              full_name: email.split('@')[0], // Use email prefix as full_name
-              username: email.split('@')[0], // Use email prefix as username
+              full_name: name,
+              username: name,
+              phone: phoneNumber,
+              company: companyName
             }
           }
         });
-  
+
         if (error) {
           setError(error.message);
         } else {
@@ -35,7 +40,7 @@ const LoginPage: React.FC = () => {
         }
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-  
+
         if (signInError) {
           setError(signInError.message);
         } else {
@@ -49,11 +54,11 @@ const LoginPage: React.FC = () => {
         setError('An unknown error occurred');
       }
     }
-  
+
     setLoading(false);
   };
-  
-  
+
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
@@ -62,6 +67,13 @@ const LoginPage: React.FC = () => {
           {isSignUp ? 'Sign Up' : 'Login'}
         </h2>
         <form className="space-y-4" onSubmit={handleAuth}>
+          {isSignUp && (<input
+            className="w-full px-3 py-2 border rounded"
+            placeholder="Full Name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            required
+          />)}
           <input
             className="w-full px-3 py-2 border rounded"
             placeholder="Email"
@@ -69,7 +81,21 @@ const LoginPage: React.FC = () => {
             onChange={e => setEmail(e.target.value)}
             required
           />
-
+          {isSignUp && (<input
+            className="w-full px-3 py-2 border rounded"
+            placeholder="phone Number"
+            value={phoneNumber}
+            onChange={e => setPhoneNumber(e.target.value)}
+            required
+          />)}
+          {isSignUp && (
+          <input
+            className="w-full px-3 py-2 border rounded"
+            placeholder="Company, Production or Project Name"
+            value={companyName}
+            onChange={e => setCompanyName(e.target.value)}
+            required
+          />)}
           <input
             className="w-full px-3 py-2 border rounded"
             placeholder="Password"

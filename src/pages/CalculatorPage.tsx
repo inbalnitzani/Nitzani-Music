@@ -51,7 +51,7 @@ const CalculatorPage: React.FC = () => {
     }, []);
 
     // calculate price
-    const handleCalculate = () => {
+    const handleCalculate = async() => {
         if (!productionType || !media || !territory || !name || !duration) {
             alert("יש למלא את כל השדות");
             return;
@@ -72,7 +72,23 @@ const CalculatorPage: React.FC = () => {
         }
         const total = base * SERVICE_FEE;
         setResult({ total });
-        console.log("user:", user?.email, "Composition's name:", name, "production type:", productionType, "media:", media, "territory:", territory, "duration:", duration, "total:", total);
+        const log = {
+            name: user?.user_metadata.full_name,
+            email: user?.user_metadata.email,
+            phone: user?.user_metadata.phone,
+            company: user?.user_metadata.company,
+            composition_name: name,
+            production_type: productionType,
+            media: media,
+            territory: territory,
+            usage_duration_seconds: duration,
+            total: total
+        };
+        const {error: insertError } = await supabase
+        .from('calc_logs')
+        .insert(log)
+      if (insertError)
+        throw new Error('Failed to create log');
     };
 
     const mediaOptions = Array.from(
