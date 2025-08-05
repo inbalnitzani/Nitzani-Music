@@ -4,15 +4,15 @@ import { supabase } from "../supabaseClient";
 import { useAuth } from "../hooks/useAuth";
 
 export interface PriceRow {
-  id: number;
-  license_type: string;   // "עלילתי" or "דוקומנטרי"
-  media_type: string;     // e.g. "פסטיבלים"
-  territory: string;      // e.g. "ישראל"
-  level_1: number;
-  level_2: number;
-  level_3: number;
-  level_4: number;
-  vat_amount: number;
+    id: number;
+    license_type: string;   // "עלילתי" or "דוקומנטרי"
+    media_type: string;     // e.g. "פסטיבלים"
+    territory: string;      // e.g. "ישראל"
+    level_1: number;
+    level_2: number;
+    level_3: number;
+    level_4: number;
+    vat_amount: number;
 }
 
 type PriceTable = PriceRow[];
@@ -51,7 +51,7 @@ const CalculatorPage: React.FC = () => {
     }, []);
 
     // calculate price
-    const handleCalculate = async() => {
+    const handleCalculate = async () => {
         if (!productionType || !media || !territory || !name || !duration) {
             alert("יש למלא את כל השדות");
             return;
@@ -84,30 +84,30 @@ const CalculatorPage: React.FC = () => {
             usage_duration_seconds: duration,
             total: total
         };
-        const {error: insertError } = await supabase
-        .from('calc_logs')
-        .insert(log)
-      if (insertError)
-        throw new Error('Failed to create log');
+        const { error: insertError } = await supabase
+            .from('calc_logs')
+            .insert(log)
+        if (insertError)
+            throw new Error('Failed to create log');
     };
 
     const mediaOptions = Array.from(
-      new Set(
-        priceTable
-          .filter(row => row.license_type === productionType)
-          .map(row => row.media_type)
-      )
+        new Set(
+            priceTable
+                .filter(row => row.license_type === productionType)
+                .map(row => row.media_type)
+        )
     );
 
     const territoryOptions = priceTable.length
-      ? Array.from(
-          new Set(
-            priceTable
-              .filter(row => row.license_type === productionType && row.media_type === media)
-              .map(row => row.territory)
-          )
+        ? Array.from(
+            new Set(
+                priceTable
+                    .filter(row => row.license_type === productionType && row.media_type === media)
+                    .map(row => row.territory)
+            )
         )
-      : [];
+        : [];
 
     return (
         <div className="max-w-xl mx-auto py-8 px-4 text-right rtl">
@@ -118,9 +118,9 @@ const CalculatorPage: React.FC = () => {
                 </h1>
                 {/* work name */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="col-span-2">
+                    <div className="sm:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">{t('calculator.work_name')}</label>
-                        <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white"  />
+                        <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white" />
                     </div>
                     {/* production type */}
                     <div>
