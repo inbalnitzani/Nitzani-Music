@@ -179,6 +179,7 @@
         "phone": "Phone",
         "company_name" : "Company",
         "price": "Price",
-        "user": "User"
+        "user": "User",
+        "contacted":"Contacted"
     }
 }

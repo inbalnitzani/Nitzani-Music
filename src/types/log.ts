@@ -11,4 +11,5 @@ export interface Log {
     territory: string;
     calculated_at: Date;
     total: number;
+    contacted?: boolean;
   }; 

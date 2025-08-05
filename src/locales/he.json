@@ -190,6 +190,7 @@
         "phone": "טלפון",
         "company_name" : "חברה",
         "price" : "מחיר",
-        "user" : "משתמש"
+        "user" : "משתמש",
+        "contacted" : "נוצר קשר"
     }
 }

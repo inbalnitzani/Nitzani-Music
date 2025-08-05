@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React,{ useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../supabaseClient';
 import { FileText } from 'lucide-react';
@@ -21,7 +21,7 @@ export default function MonitoringPage() {
             const from = (page - 1) * pageSize;
             const to = from + pageSize - 1;
 
-            const { data, error,count } = await supabase.from('calc_logs').select('*', { count: 'exact' }).range(from, to).order('calculated_at', { ascending: false });
+            const { data, error, count } = await supabase.from('calc_logs').select('*', { count: 'exact' }).range(from, to).order('calculated_at', { ascending: false });
             if (error) {
                 console.error('Error fetching logs table:', error);
             } else {
@@ -32,13 +32,13 @@ export default function MonitoringPage() {
             console.error('Error fetching price table:', error);
 
         } finally {
-        setIsLoading(false);
-      }
+            setIsLoading(false);
+        }
     }
 
     // fetch logs table
     useEffect(() => {
-        fetchLogs(1,logsPerPage);
+        fetchLogs(1, logsPerPage);
     }, []);
 
     // handle pagination
@@ -74,6 +74,7 @@ export default function MonitoringPage() {
                             <th scope="col" className="px-6 py-3">{t('monitoring.search_time')}</th>
                             <th scope="col" className="px-6 py-3">{t('monitoring.price')}</th>
                             <th scope="col" className="px-6 py-3">{t('monitoring.PDF')}</th>
+                            <th scope="col" className="px-6 py-3">{t('monitoring.contacted')}</th>
                         </tr>
                     </thead>
 
@@ -98,6 +99,32 @@ export default function MonitoringPage() {
                                 }</td>
                                 <td className="px-6 py-4">{item.total}</td>
                                 <td className="px-6 py-4"><FileText /></td>
+                                <td className="px-6 py-4 text-center">
+                                    <input
+                                        type="checkbox"
+                                        checked={item.contacted ?? false}
+                                        onChange={async () => {
+                                            const { error } = await supabase
+                                                .from('calc_logs')
+                                                .update({ contacted: !item.contacted })
+                                                .eq('id', item.id);
+
+                                            if (error) {
+                                                console.error('Error updating contacted status:', error.message);
+                                                return;
+                                            }
+
+                                           
+                                            setSearchingHistory(prev =>
+                                                prev.map(log =>
+                                                    log.id === item.id ? { ...log, contacted: !item.contacted } : log
+                                                )
+                                            );
+                                        }}
+                                        className="w-4 h-4 cursor-pointer accent-blue-600"
+                                    />
+                                </td>
+
 
                             </tr>
                         ))}
