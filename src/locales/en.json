@@ -180,6 +180,7 @@
         "company_name" : "Company",
         "price": "Price",
         "user": "User",
-        "contacted":"Contacted"
+        "contacted":"Contacted",
+        "logs_in_table": "Logs in Table"
     }
 }

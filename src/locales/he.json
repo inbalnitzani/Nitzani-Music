@@ -191,6 +191,8 @@
         "company_name" : "חברה",
         "price" : "מחיר",
         "user" : "משתמש",
-        "contacted" : "נוצר קשר"
+        "contacted" : "נוצר קשר",
+        "logs_in_table": "לוגים בטבלה"
+
     }
 }

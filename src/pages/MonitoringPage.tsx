@@ -197,7 +197,7 @@ export default function MonitoringPage() {
                 {/*  total songs on the left */}
                 <div className="flex items-center gap-2 absolute left-0">
 
-                    <span className="text-sm text-gray-500">{t('songs.songs_in_table')}: {totalLogs}</span>
+                    <span className="text-sm text-gray-500">{t('monitoring.logs_in_table')}: {totalLogs}</span>
                 </div>
             </div>
         </div>
