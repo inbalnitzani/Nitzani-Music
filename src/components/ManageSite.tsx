@@ -413,14 +413,14 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
             <div className="flex gap-3 justify-end mt-6">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                className="btn btn-neutral"
                 disabled={isSaving}
               >
                 {t('manage_site.cancel')}
               </button>
               <button
                 onClick={confirmDeleteAll}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                className="btn btn-danger"
                 disabled={isSaving}
               >
                 {isSaving ? t('manage_site.deleting') : t('manage_site.delete_anyway')}
@@ -433,7 +433,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
         <button
           onClick={handleSaveAll}
           disabled={isSaving}
-          className="bg-green-600 text-white px-6 py-2 rounded text-sm font-semibold hover:bg-green-700 disabled:opacity-50"
+          className="btn btn-primary"
         >
           {isSaving ? t('manage_site.saving') : t('manage_site.save')}
         </button>
@@ -441,9 +441,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Authors */}
         <div>
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">{t('manage_site.authors')}:</h3>
-          </div>
+
           <div className="mb-2">
             <input
               type="text"
@@ -464,7 +462,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
             />
             <button
               onClick={() => addNewTag('author')}
-              className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+              className="btn btn-secondary"
             >
               Add
             </button>
@@ -506,9 +504,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
         </div>
         {/* Artists */}
         <div>
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">{t('manage_site.artists')}:</h3>
-          </div>
+
           <div className="mb-2">
             <input
               type="text"
@@ -529,7 +525,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
             />
             <button
               onClick={() => addNewTag('artist')}
-              className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+              className="btn btn-secondary"
             >
               Add
             </button>
@@ -571,9 +567,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
         </div>
         {/* Keywords */}
         <div>
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">{t('manage_site.keywords')}:</h3>
-          </div>
+
           <div className="mb-2">
             <input
               type="text"
@@ -594,7 +588,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
             />
             <button
               onClick={() => addNewTag('keyword')}
-              className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+              className="btn btn-secondary"
             >
               Add
             </button>
@@ -636,9 +630,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
         </div>
         {/* Genres */}
         <div>
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">{t('manage_site.genres')}:</h3>
-          </div>
+
           <div className="mb-2">
             <input
               type="text"
@@ -659,7 +651,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
             />
             <button
               onClick={() => addNewTag('genre')}
-              className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+              className="btn btn-secondary"
             >
               Add
             </button>

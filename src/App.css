@@ -30,6 +30,94 @@
 .btn-danger {
   @apply bg-red-100 text-red-600 border border-red-300 hover:bg-red-600 hover:text-white;
 }
+
+.nav-link {
+  @apply text-[var(--color-primary)] font-medium transition-transform duration-200 ease-in-out;
+}
+
+.nav-link:hover {
+  @apply scale-110 text-[var(--color-primary)];
+}
+
+.input-base {
+  @apply border border-[var(--color-border)] rounded-md px-3 py-2 text-sm 
+         focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] 
+         bg-white text-[var(--color-text)] transition duration-150 ease-in-out;
+}
+
+.select-base {
+  @apply border border-[var(--color-border)] rounded px-3 py-2 text-sm 
+         focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-[var(--color-primary)] 
+         bg-white text-[var(--color-text)] transition duration-150 ease-in-out;
+}
+@layer components {
+  .checkbox-base {
+    @apply appearance-none w-5 h-5 border border-[var(--color-border)] rounded-md 
+           bg-white cursor-pointer transition-colors duration-150 ease-in-out align-middle;
+  }
+
+  .checkbox-base:checked {
+    @apply border-[var(--color-primary)] bg-[var(--color-primary)];
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='none' stroke='%23ffffff' stroke-width='3' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 10l3 3 7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 70%;
+  }
+}
+@layer components {
+  /* הקונטיינר הראשי */
+  .rs__control {
+    @apply rounded-md border border-[var(--color-border)] bg-gray-50 min-h-[42px]
+           px-1 py-0 transition-shadow duration-150 ease-in-out;
+    direction: rtl; /* אם צריך RTL */
+    box-shadow: none;
+  }
+  .rs__control--is-focused {
+    @apply border-[var(--color-primary)];
+    box-shadow: 0 0 0 1px var(--color-primary);
+  }
+
+  /* אזור הטקסט/תגיות והאינדיקטורים */
+  .rs__value-container { @apply px-2 gap-1; }
+  .rs__single-value { @apply text-[var(--color-text)]; }
+  .rs__placeholder { @apply text-[var(--color-muted)]; }
+  .rs__indicators { @apply text-[var(--color-text)]; }
+  .rs__dropdown-indicator { @apply hover:text-[var(--color-primary)]; }
+  .rs__clear-indicator { @apply text-[var(--color-muted)] hover:text-[var(--color-primary)]; }
+
+  /* תגיות במצב multi */
+  .rs__multi-value { @apply bg-[var(--color-primary-light)] rounded-md; }
+  .rs__multi-value__label { @apply text-[var(--color-primary)] font-medium pr-1; }
+  .rs__multi-value__remove { @apply text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white rounded-r-md; }
+
+  /* התפריט */
+  .rs__menu {
+    @apply rounded-md border border-[var(--color-border)] overflow-hidden;
+    direction: rtl;
+    z-index: 60; /* עובד גם כשהתפריט בפורטל */
+  }
+  .rs__menu-list { @apply py-1; }
+
+  /* אפשרויות */
+  .rs__option {
+    @apply cursor-pointer text-[var(--color-text)];
+    background-color: white;
+  }
+  .rs__option--is-focused {
+    background-color: #e5f3fb; /* הובר עדין */
+  }
+  .rs__option--is-selected {
+    background-color: var(--color-primary-light) !important;
+    color: var(--color-primary) !important;
+  }
+
+  /* קלט פנימי */
+  .rs__input input { @apply text-[var(--color-text)]; }
+}
+
+
+
+
 /* ===== Tailwind components ===== */
 @tailwind components;
 
@@ -38,7 +126,7 @@
 
 /* ===== Optional: base font and background ===== */
 body {
-  background-color: var(--color-neutral);
+  background-color: #f8f9fc;
   color: var(--color-text);
   font-family: 'Inter', sans-serif;
 }

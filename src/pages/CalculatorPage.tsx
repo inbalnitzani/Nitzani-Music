@@ -138,7 +138,7 @@ const CalculatorPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="sm:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">{t('calculator.work_name')}</label>
-                        <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white" />
+                        <input type="text" value={name} onChange={e => setName(e.target.value)} className="input-base w-full" />
                     </div>
                     {/* production type */}
                     <div>
@@ -160,7 +160,7 @@ const CalculatorPage: React.FC = () => {
                                 setMedia(newMediaOptions[0] || "");
                                 setTerritory("");
                             }}
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                            className="select-base w-full"
                         >
                             <option value="עלילתי">{t('calculator.עלילתי')}</option>
                             <option value="דוקומנטרי">{t('calculator.דוקומנטרי')}</option>
@@ -173,7 +173,7 @@ const CalculatorPage: React.FC = () => {
                         <select
                             value={media}
                             onChange={e => setMedia(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                            className="select-base w-full"
                         >
                             <option value="">{t('calculator.select_media')}</option>
                             {mediaOptions.map(media => (
@@ -188,7 +188,7 @@ const CalculatorPage: React.FC = () => {
                         <select
                             value={territory}
                             onChange={e => setTerritory(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                            className="select-base w-full"
                             disabled={!media}
                         >
                             <option value="">{t('calculator.select_territory')}</option>
@@ -204,7 +204,7 @@ const CalculatorPage: React.FC = () => {
                         <select
                             value={duration}
                             onChange={e => setDuration(Number(e.target.value))}
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                            className="select-base w-full"
                         >
                             <option value="1">{t('calculator.duration_1')}</option>
                             <option value="2">{t('calculator.duration_2')}</option>
@@ -217,7 +217,7 @@ const CalculatorPage: React.FC = () => {
                 <div className="flex justify-center mt-6">
                     <button
                         onClick={handleCalculate}
-                        className="px-8 py-2 text-lg rounded-lg bg-blue-600 hover:bg-blue-700 transition text-white shadow-md"
+                        className="btn btn-primary"
                     >
                         {t('calculator.calculate')}
                     </button>

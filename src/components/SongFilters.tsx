@@ -123,12 +123,10 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Search */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {t('filters.search')}
-                    </label>
+
                     <input
                         type="text"
-                        className="w-full px-3 py-2 border rounded-md"
+                        className="input-base w-full"
                         placeholder={t('filters.search_placeholder')}
                         value={filters?.searchText || ''}
                         onChange={e => handleSearchChange(e.target.value)}
@@ -137,9 +135,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
 
                 {/* Authors */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {t('filters.authors')}
-                    </label>
+
                     <AsyncSelect
                         isMulti
                         cacheOptions
@@ -148,14 +144,13 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                         value={filters.authors?.map(a => ({ value: a, label: a })) || []}
                         onChange={handleAuthorChange}
                         placeholder={t('filters.search_and_select_authors')}
+                        
                     />
                 </div>
 
                 {/* Artists */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {t('filters.artists')}
-                    </label>
+
                     <AsyncSelect
                         isMulti
                         cacheOptions
@@ -169,9 +164,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
 
                 {/* Keywords */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {t('filters.keywords')}
-                    </label>
+
                     <AsyncSelect
                         isMulti
                         cacheOptions

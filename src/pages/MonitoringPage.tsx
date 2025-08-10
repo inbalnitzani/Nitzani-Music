@@ -121,7 +121,7 @@ export default function MonitoringPage() {
                                 <td className="px-6 py-4">
                                     <button
                                         onClick={() => handelPDFDownload(item)}
-                                        className="text-blue-600 hover:text-blue-800 transition-colors"
+                                        className="text-[var(--color-primary)] hover:text-white hover:bg-[var(--color-primary)] p-2 rounded-full transition-colors"
                                         title="הורד PDF"
                                     >
                                         <FileText />
@@ -149,7 +149,7 @@ export default function MonitoringPage() {
                                                 )
                                             );
                                         }}
-                                        className="w-4 h-4 cursor-pointer accent-blue-600"
+                                        className="checkbox-base"
                                     />
                                 </td>
 
@@ -163,7 +163,7 @@ export default function MonitoringPage() {
             <div className="relative flex justify-center items-center gap-2 mt-6">
                 {/* Pagination controls (centered) */}
                 <button
-                    className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                    className="btn btn-primary"
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
                 >
@@ -171,7 +171,7 @@ export default function MonitoringPage() {
                 </button>
                 <span className="mx-2">{t('songs.page')} {currentPage} {t('songs.of')} {totalPages}</span>
                 <button
-                    className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                    className="btn btn-primary"
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
                 >
@@ -187,7 +187,7 @@ export default function MonitoringPage() {
                         setCurrentPage(1);
                         fetchLogs(1, newSize);
                     }}
-                    className="border rounded px-2 py-1 w-24"
+                    className="select-base w-24"
                 >
                     {[5, 10, 20, 50, 100].map(size => (
                         <option key={size} value={size}>{size}</option>

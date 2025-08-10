@@ -28,11 +28,11 @@ export default function Header() {
       </div>
 
       <nav className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 mt-2 md:mt-0">
-        <Link to="/" className="text-blue-600 hover:underline">{t('header.home')}</Link>
+        <Link to="/" className="nav-link">{t('header.home')}</Link>
         {role === 'admin' && (
           <>
-            <Link to="/songs" className="text-blue-600 hover:underline">{t('header.songs')}</Link>
-            <Link to="/monitoring" className="text-blue-600 hover:underline">{t('header.monitor')}</Link>
+            <Link to="/songs" className="nav-link">{t('header.songs')}</Link>
+            <Link to="/monitoring" className="nav-link">{t('header.monitor')}</Link>
 
           </>
         )}
@@ -47,7 +47,7 @@ export default function Header() {
         {user && (
           <button
             onClick={handleSignOut}
-            className="ml-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+            className="btn btn-danger"
           >
             {t('header.sign_out')}
           </button>

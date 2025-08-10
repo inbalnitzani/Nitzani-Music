@@ -153,7 +153,7 @@
         "delete_confirmation": "איתחול מחיקה",
         "delete_confirmation_text": "אתה עומד למחוק את התגים הבאים. זה ישפיע על השירים המופיעים בכפתורים הבאים:",
         "affected_songs": "שירים מופיעים בכפתורים הבאים:",
-        "no_songs_affected": "אין שירים מופיעים בכפתורים הבאים.",
+        "no_songs_affected": "אין שירים שיושפעו ממחיקה זו.",
         "deleting": "מחק...",
         "delete_anyway": "מחק בכל זאת",
         "cancel": "בטל"

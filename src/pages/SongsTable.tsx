@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import type { Song, SongFilters, RawSongFromSupabase  } from '../types/song.ts';
+import type { Song, SongFilters, RawSongFromSupabase } from '../types/song.ts';
 import { supabase } from '../supabaseClient.ts';
 import SongFiltersComponent from '../components/SongFilters.tsx';
 import Modal from '../components/Modal.tsx';
@@ -149,24 +149,24 @@ const AdminPage: React.FC = () => {
           link: song.link,
           is_free: song.is_free === true,
           score: Number(song.score),
-          
+
           artists: (song.song_artists || [])
-          .map((sa: { artists?: { name?: string } | null }) => sa.artists?.name)
-          .filter((name: string | undefined): name is string => Boolean(name)),
-        
+            .map((sa: { artists?: { name?: string } | null }) => sa.artists?.name)
+            .filter((name: string | undefined): name is string => Boolean(name)),
+
           authors: (song.song_authors || [])
-          .map((sa: { authors?: { name?: string } | null }) => sa.authors?.name)
-          .filter((name: string | undefined): name is string => Boolean(name)),
-        
-        keywords: (song.song_keywords || [])
-          .map((sk: { keywords?: { name?: string } | null }) => sk.keywords?.name)
-          .filter((name: string | undefined): name is string => Boolean(name)),
-        
-        genres: (song.song_genres || [])
-        .map((sg: { genres?: { name?: string } | null }) => sg.genres?.name)
-        .filter((name: string | undefined): name is string => Boolean(name))
+            .map((sa: { authors?: { name?: string } | null }) => sa.authors?.name)
+            .filter((name: string | undefined): name is string => Boolean(name)),
+
+          keywords: (song.song_keywords || [])
+            .map((sk: { keywords?: { name?: string } | null }) => sk.keywords?.name)
+            .filter((name: string | undefined): name is string => Boolean(name)),
+
+          genres: (song.song_genres || [])
+            .map((sg: { genres?: { name?: string } | null }) => sg.genres?.name)
+            .filter((name: string | undefined): name is string => Boolean(name))
         }));
-        
+
         setSongs(songsWithDetails);
       } else {
         setSongs([]);
@@ -269,14 +269,14 @@ const AdminPage: React.FC = () => {
             data-tooltip-id="exportTip"
             onClick={() => setIsExportModalOpen(true)}
             className="btn btn-secondary">
-                                     {t('songs.export')}
+            {t('songs.export')}
           </button>
           <Tooltip id="exportTip" place="top" content={t('songs.export_tooltip')} />
           {/* Add Song Button */}
           <button
             onClick={() => setIsEditSongModalOpen(true)}
             className="btn btn-secondary">
-                          {t('songs.add_song')}
+            {t('songs.add_song')}
           </button>
           <button
             onClick={() => setIsManageSiteModalOpen(true)}
@@ -369,7 +369,7 @@ const AdminPage: React.FC = () => {
                   <label key={song.id} className="inline-flex items-center">
                     <input
                       type="checkbox"
-                      className="form-checkbox text-blue-600"
+                      className="checkbox-base"
                       checked={selectedSongs.some(s => s.id === song.id)}
                       onClick={e => e.stopPropagation()}
                       onChange={() => handleSelectSong(song)}
@@ -387,7 +387,7 @@ const AdminPage: React.FC = () => {
       <div className="relative flex justify-center items-center gap-2 mt-6">
         {/* Pagination controls (centered) */}
         <button
-          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+          className="btn btn-secondary"
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
@@ -395,7 +395,7 @@ const AdminPage: React.FC = () => {
         </button>
         <span className="mx-2">{t('songs.page')} {currentPage} {t('songs.of')} {totalPages}</span>
         <button
-          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+          className="btn btn-secondary"
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
@@ -411,7 +411,7 @@ const AdminPage: React.FC = () => {
             setCurrentPage(1);
             fetchSongs(currentFilters, 1, newSize);
           }}
-          className="border rounded px-2 py-1 w-24"
+          className="select-base w-24"
         >
           {[5, 10, 20, 50, 100].map(size => (
             <option key={size} value={size}>{size}</option>
