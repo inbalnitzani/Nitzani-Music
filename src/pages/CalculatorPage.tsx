@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../hooks/useAuth";
+import { exportUsageReportPDF } from "../utils/exportUsageReportPDF";
 
 export interface PriceRow {
     id: number;
@@ -89,6 +90,23 @@ const CalculatorPage: React.FC = () => {
             .insert(log)
         if (insertError)
             throw new Error('Failed to create log');
+
+        await exportUsageReportPDF(
+            [log],
+            ["name", "company", "composition_name", "media", "production_type", "usage_duration_seconds", "territory", "total"],
+            {
+              name: "שם משתמש",
+              company: "חברה",
+              composition_name: "שם היצירה",
+              media: "מדיה",
+              production_type: "סוג הפקה",
+              usage_duration_seconds: "משך שימוש (שניות)",
+              territory: "טריטוריה",
+              total: "מחיר"
+            },
+            `דו"ח שימוש - ${log.name}`
+          );
+          
     };
 
     const mediaOptions = Array.from(

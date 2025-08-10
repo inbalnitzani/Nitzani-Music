@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import type { Song } from "../types/song";
 import { useTranslation } from 'react-i18next';
-// import jsPDF from "jspdf";
 import ExcelJS from "exceljs";
-// import autoTable from "jspdf-autotable";
 import { Document, Packer, Paragraph, Table, TableCell, TableRow, ExternalHyperlink, TextRun } from "docx";
 import { pdf, Document as PDFDocument, Page, Text, View, StyleSheet, Font, Link } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
@@ -309,5 +307,7 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
         </div>
     );
 };
+
+
 
 export default Export;

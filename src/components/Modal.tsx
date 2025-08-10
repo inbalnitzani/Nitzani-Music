@@ -5,27 +5,31 @@ type ModalProps = {
     onClose: () => void;
     children: React.ReactNode;
     title?: string;
-    size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+    align?: 'bottom' | 'center'
 };
 
-export default function Modal({ isOpen, onClose, children, title, size = 'md' }: ModalProps) {
+export default function Modal({ isOpen, onClose, children, title, align = 'center' }: ModalProps) {
     if (!isOpen) return null;
-    
-    const sizeClasses = {
-        sm: 'max-w-sm',
-        md: 'max-w-lg',
-        lg: 'max-w-2xl',
-        xl: 'max-w-4xl',
-        '2xl': 'max-w-6xl',
-    };
+
 
     return (
-        <div 
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm"
-            onClick={onClose}
+        <div
+           className={`fixed inset-0 z-50 flex justify-center
+                          ${align === 'center' ? 'items-center' : 'items-end sm:items-start'}
+                          bg-black bg-opacity-40 backdrop-blur-sm
+                         sm:overflow-y-auto sm:p-4`}          onClick={onClose}
         >
-            <div 
-                className={`bg-white rounded-lg shadow-lg w-full p-6 relative ${sizeClasses[size]}`}
+            <div
+                className={`bg-white rounded-lg shadow-lg relative
+                w-[calc(100vw-2rem)] sm:w-auto
+                p-3 md:p-4 lg:p-6
+                sm:my-0
+               sm:rounded-2xl
+               /* רוחב רספונסיבי שמרני במסכים רגילים */
+            sm:max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl
+               /* גלילה: רק במובייל פנימה, ב-sm+ אין גלילה פנימית */
+                max-h-[90vh] lg:max-h-[95vh] xl:max-h-[97vh] overflow-y-auto
+`}
                 onClick={e => e.stopPropagation()} // Prevent close when clicking inside modal
             >
                 <button

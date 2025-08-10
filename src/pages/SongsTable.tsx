@@ -268,22 +268,19 @@ const AdminPage: React.FC = () => {
           <button
             data-tooltip-id="exportTip"
             onClick={() => setIsExportModalOpen(true)}
-            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-          >
-            {t('songs.export')}
+            className="btn btn-secondary">
+                                     {t('songs.export')}
           </button>
           <Tooltip id="exportTip" place="top" content={t('songs.export_tooltip')} />
           {/* Add Song Button */}
           <button
             onClick={() => setIsEditSongModalOpen(true)}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            {t('songs.add_song')}
+            className="btn btn-secondary">
+                          {t('songs.add_song')}
           </button>
           <button
             onClick={() => setIsManageSiteModalOpen(true)}
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-          >
+            className="btn btn-secondary">
             {t('songs.manage_site')}
           </button>
         </div>
@@ -294,7 +291,6 @@ const AdminPage: React.FC = () => {
       />
       {/* Edit Song Modal */}
       <Modal
-        size="2xl"
         isOpen={isEditSongModalOpen}
         onClose={handleCloseModal}
         title={selectedSongForEdit ? t('songs.edit_song') : t('songs.create_song')}
@@ -307,7 +303,6 @@ const AdminPage: React.FC = () => {
       </Modal>
       {/* Export Modal */}
       <Modal
-        size="lg"
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
         title={t('songs.export_songs')}
@@ -316,7 +311,6 @@ const AdminPage: React.FC = () => {
       </Modal>
       {/* Manage Site Modal */}
       <Modal
-        size="xl"
         isOpen={isManageSiteModalOpen}
         onClose={() => setIsManageSiteModalOpen(false)}
         title={t('songs.manage_site')}

@@ -235,8 +235,8 @@ const SongForm: React.FC<SongFormProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-8">
+    <div className="w-full max-w-full sm:max-w-3xl md:max-w-4xl mx-auto px-2 sm:px-0">
+      <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
         {error && (
           <div className="p-3 bg-red-50 text-red-500 rounded-md text-sm">
             {error}
@@ -244,8 +244,8 @@ const SongForm: React.FC<SongFormProps> = ({
         )}
 
         {/* Title and Link */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700">{t('song_form.title')}</label>
             <input
               type="text"
@@ -280,7 +280,9 @@ const SongForm: React.FC<SongFormProps> = ({
             className="mt-1"
             classNamePrefix="tagselect"
             placeholder={t('song_form.search_and_select_artists')}
-            
+            menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+            menuPosition="fixed"
+            styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
           />
         </div>
         <div>
@@ -293,6 +295,9 @@ const SongForm: React.FC<SongFormProps> = ({
             className="mt-1"
             classNamePrefix="tagselect"
             placeholder={t('song_form.search_and_select_authors')}
+            menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+            menuPosition="fixed"
+            styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
           />
         </div>
         <div>
@@ -302,13 +307,16 @@ const SongForm: React.FC<SongFormProps> = ({
             loadOptions={loadGenreOptions}
             value={selectedGenreOptions}
             onChange={opts => setSelectedGenreOptions(opts as ArtistOption[])}
-            className="mt-1"  
+            className="mt-1"
             classNamePrefix="tagselect"
             placeholder={t('song_form.search_and_select_genres')}
+            menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+            menuPosition="fixed"
+            styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
           />
         </div>
         <div>
-            <label className="block text-sm font-medium text-gray-700">{t('song_form.keywords')}</label>
+          <label className="block text-sm font-medium text-gray-700">{t('song_form.keywords')}</label>
           <AsyncSelect
             isMulti
             loadOptions={loadKeywordOptions}
@@ -374,7 +382,7 @@ const SongForm: React.FC<SongFormProps> = ({
         {/* Actions */}
         <div className="flex flex-row-reverse justify-between items-center gap-4 pt-6">
           <div className="flex gap-2">
-          <button
+            <button
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

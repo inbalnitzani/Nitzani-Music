@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../supabaseClient';
 import { FileText } from 'lucide-react';
 import type { Log } from '../types/log.ts';
+import { exportUsageReportPDF } from "../utils/exportUsageReportPDF";
+
 export default function MonitoringPage() {
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +50,24 @@ export default function MonitoringPage() {
     };
 
     const totalPages = Math.ceil(totalLogs / logsPerPage)
+
+    const handelPDFDownload = async (log: Log) => {
+        await exportUsageReportPDF(
+            [log],
+            ["name", "company", "composition_name", "media", "production_type", "usage_duration_seconds", "territory", "total"],
+            {
+                name: "שם משתמש",
+                company: "חברה",
+                composition_name: "שם היצירה",
+                media: "מדיה",
+                production_type: "סוג הפקה",
+                usage_duration_seconds: "משך שימוש (שניות)",
+                territory: "טריטוריה",
+                total: "מחיר"
+            },
+            `דו"ח שימוש - ${log.name}`
+        );
+    };
 
     return (
         <div className="p-4 sm:p-8">
@@ -98,7 +118,15 @@ export default function MonitoringPage() {
                                     })
                                 }</td>
                                 <td className="px-6 py-4">{item.total}</td>
-                                <td className="px-6 py-4"><FileText /></td>
+                                <td className="px-6 py-4">
+                                    <button
+                                        onClick={() => handelPDFDownload(item)}
+                                        className="text-blue-600 hover:text-blue-800 transition-colors"
+                                        title="הורד PDF"
+                                    >
+                                        <FileText />
+                                    </button>
+                                </td>
                                 <td className="px-6 py-4 text-center">
                                     <input
                                         type="checkbox"
@@ -114,7 +142,7 @@ export default function MonitoringPage() {
                                                 return;
                                             }
 
-                                           
+
                                             setSearchingHistory(prev =>
                                                 prev.map(log =>
                                                     log.id === item.id ? { ...log, contacted: !item.contacted } : log
