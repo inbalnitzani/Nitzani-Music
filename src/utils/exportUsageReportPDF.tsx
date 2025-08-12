@@ -6,9 +6,11 @@ import {
   View,
   StyleSheet,
   Font,
-  pdf
+  pdf,
+  Image
 } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
+import appLogo from "../assets/logo.png";
 
 Font.register({
   family: "Noto Sans Hebrew",
@@ -23,8 +25,22 @@ const styles = StyleSheet.create({
     direction: "rtl",
     fontFamily: "Noto Sans Hebrew",
   },
+  logo: {
+    width: 100,
+    height: 100,
+    alignSelf: "center",
+    marginBottom: 10,
+    objectFit: "contain"
+  },
   title: {
     fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 16,
+    textAlign: "center",
+    color: "#1e293b",
+  },
+  text: {
+    fontSize: 15,
     fontWeight: "bold",
     marginBottom: 16,
     textAlign: "center",
@@ -34,13 +50,6 @@ const styles = StyleSheet.create({
     display: "flex",
     width: "auto",
     marginBottom: 10,
-  },
-  text:{
-    fontSize: 15,
-    fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
-    color: "#1e293b",
   },
   tableRow: {
     flexDirection: "row",
@@ -71,17 +80,21 @@ export const exportUsageReportPDF = async (
   fieldLabels: Record<string, string>,
   fileName: string
 ) => {
+  const logoUrl = appLogo;
+
   const content = (
     <PDFDocument>
       <Page size="A4" style={styles.page}>
-        <Text style={styles.text}>השימוש במחשבון אינו מהווה אישור או רישיון לשימוש ביצירה, ואינו מחייב את בעלי הזכויות בכל דרך שהיא.
-המחשבון נועד לצרכים אינפורמטיביים בלבד ומשמש כאומדן ראשוני להערכת עלות אפשרית, בהתבסס על הנתונים שהוזנו על ידי המשתמש.
+        <Image style={styles.logo} src={logoUrl} />
 
-הסכום הסופי והתנאים לשימוש ביצירה יקבעו רק לאחר פנייה מסודרת אלינו, קבלת הסכמת בעלי הזכויות, וקבלת הצעת מחיר רשמית הכוללת טיוטת הסכם לשימוש ביצירה.
+        <Text style={styles.text}>
+          השימוש במחשבון אינו מהווה אישור או רישיון לשימוש ביצירה, ואינו מחייב את בעלי הזכויות בכל דרך שהיא.
+          {"\n"}המחשבון נועד לצרכים אינפורמטיביים בלבד ומשמש כאומדן ראשוני להערכת עלות אפשרית, בהתבסס על הנתונים שהוזנו על ידי המשתמש.
+          {"\n\n"}הסכום הסופי והתנאים לשימוש ביצירה יקבעו רק לאחר פנייה מסודרת אלינו, קבלת הסכמת בעלי הזכויות, וקבלת הצעת מחיר רשמית הכוללת טיוטת הסכם לשימוש ביצירה.
+          {"\n\n"}למידע נוסף או להגשת בקשה לשימוש ביצירה, ניתן ליצור קשר באמצעות הדוא"ל:
+          {"\n"}yair@nitzani.co.il
+        </Text>
 
-למידע נוסף או להגשת בקשה לשימוש ביצירה, ניתן ליצור קשר באמצעות הדוא"ל:
- yair@nitzani.co.il 
-</Text>
         <Text style={styles.title}>{fileName || "דו\"ח שימוש ביצירות"}</Text>
 
         <View style={styles.table}>
