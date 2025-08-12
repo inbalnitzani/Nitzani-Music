@@ -4,6 +4,7 @@ import { supabase } from '../supabaseClient';
 import { FileText } from 'lucide-react';
 import type { Log } from '../types/log.ts';
 import { exportUsageReportPDF } from "../utils/exportUsageReportPDF";
+import Pagination from '../components/Pagination.tsx';
 
 export default function MonitoringPage() {
     const { t } = useTranslation();
@@ -85,14 +86,14 @@ export default function MonitoringPage() {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th scope="col" className="px-6 py-3">{t('monitoring.user')}</th>
-                            <th scope="col" className="px-6 py-3">{t('monitoring.company_name')}</th>
-                            <th scope="col" className="px-6 py-3">{t('calculator.work_name')}</th>
-                            <th scope="col" className="px-6 py-3">{t('calculator.media')}</th>
-                            <th scope="col" className="px-6 py-3">{t('calculator.production_type')}</th>
-                            <th scope="col" className="px-6 py-3">{t('calculator.duration')}</th>
-                            <th scope="col" className="px-6 py-3">{t('calculator.territory')}</th>
-                            <th scope="col" className="px-6 py-3">{t('monitoring.search_time')}</th>
-                            <th scope="col" className="px-6 py-3">{t('monitoring.price')}</th>
+                            <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('monitoring.company_name')}</th>
+                            <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('calculator.work_name')}</th>
+                            <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('calculator.media')}</th>
+                            <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('calculator.production_type')}</th>
+                            <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('calculator.duration')}</th>
+                            <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('calculator.territory')}</th>
+                            <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('monitoring.search_time')}</th>
+                            <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('monitoring.price')}</th>
                             <th scope="col" className="px-6 py-3">{t('monitoring.PDF')}</th>
                             <th scope="col" className="px-6 py-3">{t('monitoring.contacted')}</th>
                         </tr>
@@ -104,20 +105,20 @@ export default function MonitoringPage() {
                                 key={item.id}
                                 className="bg-white border-b hover:bg-gray-50 cursor-pointer">
                                 <td className="px-6 py-4">{item.name}<br />{item.phone}<br />{item.email}</td>
-                                <td className="px-6 py-4">{item.company}</td>
-                                <td className="px-6 py-4">{item.composition_name}</td>
-                                <td className="px-6 py-4">{item.media}</td>
-                                <td className="px-6 py-4">{item.production_type}</td>
-                                <td className="px-6 py-4 truncate max-w-xs">{item.usage_duration_seconds}</td>
-                                <td className="px-6 py-4">{item.territory}</td>
-                                <td className="px-6 py-4">{
+                                <td className="hidden sm:table-cell px-6 py-4">{item.company}</td>
+                                <td className="hidden sm:table-cell px-6 py-4">{item.composition_name}</td>
+                                <td className="hidden sm:table-cell px-6 py-4">{item.media}</td>
+                                <td className="hidden sm:table-cell px-6 py-4">{item.production_type}</td>
+                                <td className="hidden sm:table-cell px-6 py-4 truncate max-w-xs">{item.usage_duration_seconds}</td>
+                                <td className="hidden sm:table-cell px-6 py-4">{item.territory}</td>
+                                <td className="hidden sm:table-cell px-6 py-4">{
                                     new Date(item.calculated_at).toLocaleDateString('he-IL', {
                                         day: '2-digit',
                                         month: '2-digit',
                                         year: '2-digit'
                                     })
                                 }</td>
-                                <td className="px-6 py-4">{item.total}</td>
+                                <td className="hidden sm:table-cell px-6 py-4">{item.total}</td>
                                 <td className="px-6 py-4">
                                     <button
                                         onClick={() => handelPDFDownload(item)}
@@ -159,47 +160,20 @@ export default function MonitoringPage() {
                     </tbody>
                 </table>
 
-            </div>
-            <div className="relative flex justify-center items-center gap-2 mt-6">
-                {/* Pagination controls (centered) */}
-                <button
-                    className="btn btn-primary"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                >
-                    {t('songs.prev')}
-                </button>
-                <span className="mx-2">{t('songs.page')} {currentPage} {t('songs.of')} {totalPages}</span>
-                <button
-                    className="btn btn-primary"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                >
-                    {t('songs.next')}
-                </button>
-
-                {/* page size */}
-                <select
-                    value={logsPerPage}
-                    onChange={e => {
-                        const newSize = Number((e.target as HTMLSelectElement).value);
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalLogs}
+                    pageSize={logsPerPage}
+                    onPrev={() => handlePageChange(currentPage - 1)}
+                    onNext={() => handlePageChange(currentPage + 1)}
+                    onPageSizeChange={(newSize) => {
                         setLogsPerPage(newSize);
                         setCurrentPage(1);
                         fetchLogs(1, newSize);
                     }}
-                    className="select-base w-24"
-                >
-                    {[5, 10, 20, 50, 100].map(size => (
-                        <option key={size} value={size}>{size}</option>
-                    ))}
-                </select>
-
-                {/*  total songs on the left */}
-                <div className="flex items-center gap-2 absolute left-0">
-
-                    <span className="text-sm text-gray-500">{t('monitoring.logs_in_table')}: {totalLogs}</span>
-                </div>
+                />
             </div>
-        </div>
-    )
+            </div>
+            )
 }

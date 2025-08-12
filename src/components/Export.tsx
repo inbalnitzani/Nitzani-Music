@@ -89,6 +89,11 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
     year: true,
     link: true
   });
+  const [note] = useState<string>(`רשימת היצירות המוצעת באתר ניתנת לצרכים קריאטיביים והשראתיים בלבד, ואינה מהווה אישור, היתר, רישיון או התחייבות מכל סוג לשימוש ביצירות אלה.
+    כל שימוש ביצירה כלשהי מהרשימה  לרבות שידור, פרסום, הפצה, עריכה או סינכרון עם תוכן ויזואלי או אחר  מחייב קבלת אישור מראש ובכתב מבעלי הזכויות הרלוונטיים.
+    
+    לצורך קבלת הצעת מחיר והסדרת זכויות השימוש ביצירה, יש לפנות אלינו בדוא"ל: yair@nitzani.co.il`);
+
 
   const handleFormatChange = (format: string) => {
     setFormats(prev => ({ ...prev, [format]: !prev[format] }));
@@ -124,6 +129,11 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
     const doc = (
       <PDFDocument>
         <Page size="A4" style={pdfStyles.page}>
+          {note?.trim() && (
+            <Text style={{ fontSize: 11, marginBottom: 10, textAlign: 'right' }}>
+              {note}
+            </Text>
+          )}
           <Text style={styles.title}>{fileName || "שירים"}</Text>
           <View style={pdfStyles.table}>
             <View style={pdfStyles.table}>
@@ -171,6 +181,13 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
   const exportExcel = async (data: Partial<Song>[], selectedFieldKeys: string[], fileName: string) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Sheet1");
+
+    if (note?.trim()) {
+      worksheet.addRow([note]);
+      worksheet.mergeCells(1, 1, 1, selectedFieldKeys.length);
+      worksheet.getCell(1, 1).alignment = { horizontal: 'right', vertical: 'middle' };
+      worksheet.addRow([]);
+    }
     worksheet.addRow(selectedFieldKeys.map(key => fieldOptions.find(f => f.key === key)?.label || key));
     worksheet.addRows(
       data.map(row =>
@@ -191,15 +208,17 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
   };
   const exportWord = async (data: Partial<Song>[], selectedFieldKeys: string[], fileName: string) => {
     const tableRows = [
-      // Header row with Hebrew labels
       new TableRow({
         children: selectedFieldKeys.map(key =>
           new TableCell({
-            children: [new Paragraph({ children: [new TextRun({ text: fieldOptions.find(f => f.key === key)?.label || key, font: "Arial", })] })]
+            children: [
+              new Paragraph({
+                children: [new TextRun({ text: fieldOptions.find(f => f.key === key)?.label || key, font: "Arial", bold: true })]
+              })
+            ]
           })
         )
       }),
-      // Data rows
       ...data.map(row =>
         new TableRow({
           children: selectedFieldKeys.map(key =>
@@ -207,15 +226,13 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
               children: [
                 new Paragraph({
                   bidirectional: true,
-
-                  children: [
+                  children:
                     key === "link" && row[key as keyof Song]
-                      ? new ExternalHyperlink({
+                      ? [new ExternalHyperlink({
+                        link: String(row[key as keyof Song]),
                         children: [new TextRun({ text: "קישור", style: "Hyperlink", font: "Arial" })],
-                        link: String(row[key as keyof Song])
-                      })
-                      : new TextRun({ text: String(row[key as keyof Song] ?? ""), font: "Arial" })
-                  ]
+                      })]
+                      : [new TextRun({ text: String(row[key as keyof Song] ?? ""), font: "Arial" })]
                 })
               ]
             })
@@ -223,13 +240,21 @@ const Export: React.FC<{ songsForExport: Song[] }> = ({ songsForExport }) => {
         })
       )
     ];
-    const doc = new Document({
-      sections: [
-        {
-          children: [new Table({ rows: tableRows })]
-        }
-      ]
-    });
+
+    const children = [];
+
+    if (note?.trim()) {
+      children.push(
+        new Paragraph({
+          bidirectional: true,
+          children: [new TextRun({ text: note, font: "Arial" })],
+        })
+      );
+    }
+
+    children.push(new Table({ rows: tableRows }));
+
+    const doc = new Document({ sections: [{ children }] });
     const blob = await Packer.toBlob(doc);
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");

@@ -45,6 +45,23 @@ const CalculatorPage: React.FC = () => {
             console.error('Error fetching price table:', error);
         }
     }
+    useEffect(() => {
+        const saved = localStorage.getItem('calcState');
+        if (saved) {
+          const s = JSON.parse(saved);
+          setProductionType(s.productionType ?? "עלילתי");
+          setMedia(s.media ?? "");
+          setTerritory(s.territory ?? "");
+          setDuration(s.duration ?? 60);
+          setName(s.name ?? "");
+          setResult(s.result ?? null);
+        }
+      }, []);
+      
+      useEffect(() => {
+        const state = { productionType, media, territory, duration, name, result };
+        localStorage.setItem('calcState', JSON.stringify(state));
+      }, [productionType, media, territory, duration, name, result]);
 
     // fetch price table
     useEffect(() => {

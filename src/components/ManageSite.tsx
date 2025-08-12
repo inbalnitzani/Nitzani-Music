@@ -397,7 +397,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
                   </div>
                   {affectedSongs.length > 0 ? (
                     <div className="text-sm text-gray-700">
-                      <div className="mb-1">Affected songs ({affectedSongs.length}):</div>
+                      <div className="mb-1">{t('manage_site.affected_songs')} ({affectedSongs.length}):</div>
                       <ul className="list-disc ml-6">
                         {affectedSongs.map(song => (
                           <li key={song.id}>{song.title}</li>

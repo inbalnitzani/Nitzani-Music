@@ -145,7 +145,15 @@
         "add_new_genre": "Add new genre",
         "new_genres_to_add": "New genres to add",
         "no_more_genres": "No more genres",
-        "save": "Save all changes"
+        "save": "Save all changes",
+        "delete_confirmation": "Delete Confirmation",
+        "delete_confirmation_text": "Saving these changes will affect the songs listed below. Are you sure you want to proceed",
+        "affected_songs": "The following songs will be affected",
+        "no_songs_affected": "No songs will be affected by this deletion.",
+        "deleting": "Deleting...",
+        "delete_anyway": "Delete anyway",
+        "cancel": "Cancel",
+        "saving": "Saving..."
     },
     "song_form": {
         "title": "Title",
@@ -174,13 +182,33 @@
         "monitoring": "Monitoring",
         "email": "Email",
         "search_time": "Calculated At",
-        "PDF":"PDF",
+        "PDF": "PDF",
         "name": "Name",
         "phone": "Phone",
-        "company_name" : "Company",
+        "company_name": "Company",
         "price": "Price",
         "user": "User",
-        "contacted":"Contacted",
+        "contacted": "Contacted",
         "logs_in_table": "Logs in Table"
+    },
+    "login": {
+        "login": "Login",
+        "sign_up_msg": "Don't have an account? Sign Up",
+        "sign_up": "Sign Up",
+        "login_msg": "Already have an account? Login",
+        "check_email": "Check your email to verify your account.",
+        "name": "Full Name",
+        "email": "Email",
+        "phone": "Phone Number",
+        "company": "Company, Production or Project Name",
+        "password": "password"
+    },
+    "pagination": {
+        "page":"Page",
+        "next":"Next",
+        "prev":"Back",
+        "rows_in_page": "Rows in page",
+        "total": "Total",
+        "of":"Of"
     }
 }

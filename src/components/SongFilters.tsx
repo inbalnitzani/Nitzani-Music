@@ -134,7 +134,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                 </div>
 
                 {/* Authors */}
-                <div>
+                <div className="hidden sm:block">
 
                     <AsyncSelect
                         isMulti
@@ -149,7 +149,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                 </div>
 
                 {/* Artists */}
-                <div>
+                <div className="hidden sm:block">
 
                     <AsyncSelect
                         isMulti
@@ -163,7 +163,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                 </div>
 
                 {/* Keywords */}
-                <div>
+                <div className="hidden sm:block">
 
                     <AsyncSelect
                         isMulti

@@ -150,9 +150,9 @@
         "delete": "מחק",
         "delete_anyway": "מחק בכל זאת",
         "cancel": "בטל",
-        "delete_confirmation": "איתחול מחיקה",
-        "delete_confirmation_text": "אתה עומד למחוק את התגים הבאים. זה ישפיע על השירים המופיעים בכפתורים הבאים:",
-        "affected_songs": "שירים מופיעים בכפתורים הבאים:",
+        "delete_confirmation": "אישור מחיקה",
+        "delete_confirmation_text": "שמירת השינויים תשפיע על השירים המופיעים למטה. האם אתה בטוח שברצונך להמשיך?",
+        "affected_songs": "שירים מושפעים::",
         "no_songs_affected": "אין שירים שיושפעו ממחיקה זו.",
         "deleting": "מחק...",
         "delete_anyway": "מחק בכל זאת",
@@ -194,5 +194,25 @@
         "contacted" : "נוצר קשר",
         "logs_in_table": "לוגים בטבלה"
 
+    },
+    "login":{
+        "login": "כניסה",
+        "sign_up_msg": "אין לך חשבון? הירשם",
+        "sign_up":"הרשמה",
+        "login_msg": "יש לך כבר חשבון? היכנס",
+        "check_email": "בדוק את המייל שלך כדי לאשר הרשמה.",
+        "name": "שם מלא",
+        "email": "מייל",
+        "phone": "מספר טלפון",
+        "company": "חברה, הפקה או שם פרוייקט",
+        "password": "סיסמה"
+    },
+    "pagination": {
+        "page":"עמוד",
+        "next":"הבא",
+        "prev":"הקודם",
+        "rows_in_page": "שורות בעמוד",
+        "total": "סה\"כ",
+        "of":"מתוך"
     }
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from "../supabaseClient.ts";
+import { useTranslation } from 'react-i18next';
 
 const LoginPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -11,6 +12,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [info, setInfo] = useState('');
+  const { t } = useTranslation();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,64 +66,64 @@ const LoginPage: React.FC = () => {
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white rounded shadow">
         <h2 className="text-2xl font-bold mb-6 text-center">
-          {isSignUp ? 'Sign Up' : 'Login'}
+          {isSignUp ? t('login.sign_up') : t('login.login')}
         </h2>
         <form className="space-y-4" onSubmit={handleAuth}>
           {isSignUp && (<input
-            className="w-full px-3 py-2 border rounded"
-            placeholder="Full Name"
+            className="w-full input-base"
+            placeholder={t('login.name')}
             value={name}
             onChange={e => setName(e.target.value)}
             required
           />)}
           <input
-            className="w-full px-3 py-2 border rounded"
-            placeholder="Email"
+            className="w-full input-base"
+            placeholder={t('login.email')}
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
           />
           {isSignUp && (<input
-            className="w-full px-3 py-2 border rounded"
-            placeholder="phone Number"
+            className="w-full input-base"
+            placeholder={t('login.phone')}
             value={phoneNumber}
             onChange={e => setPhoneNumber(e.target.value)}
             required
           />)}
           {isSignUp && (
           <input
-            className="w-full px-3 py-2 border rounded"
-            placeholder="Company, Production or Project Name"
+            className="w-full input-base"
+            placeholder={t('login.company')}
             value={companyName}
             onChange={e => setCompanyName(e.target.value)}
             required
           />)}
           <input
-            className="w-full px-3 py-2 border rounded"
-            placeholder="Password"
+            className="input-base w-full  "
+            placeholder={t('login.password')}
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
           />
           <button
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+            className="btn btn-primary w-full"
             disabled={loading}
           >
-            {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Login'}
+            {loading ? 'Loading...' : isSignUp ? t('login.sign_up') : t('login.login')}
           </button>
         </form>
         {error && <div className="text-red-500 mt-2">{error}</div>}
         {info && <div className="text-green-600 mt-2">{info}</div>}
         <div className="mt-4 text-center">
           <button
-            className="text-blue-600 hover:underline"
+            className="nav-link"
             onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
             type="button"
           >
             {isSignUp
-              ? 'Already have an account? Login'
-              : "Don't have an account? Sign Up"}
+              ? t('login.login_msg')
+              : t('login.sign_up_msg')}
           </button>
         </div>
       </div>

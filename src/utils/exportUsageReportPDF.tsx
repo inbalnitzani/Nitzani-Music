@@ -35,6 +35,13 @@ const styles = StyleSheet.create({
     width: "auto",
     marginBottom: 10,
   },
+  text:{
+    fontSize: 15,
+    fontWeight: "bold",
+    marginBottom: 16,
+    textAlign: "center",
+    color: "#1e293b",
+  },
   tableRow: {
     flexDirection: "row",
   },
@@ -67,6 +74,14 @@ export const exportUsageReportPDF = async (
   const content = (
     <PDFDocument>
       <Page size="A4" style={styles.page}>
+        <Text style={styles.text}>השימוש במחשבון אינו מהווה אישור או רישיון לשימוש ביצירה, ואינו מחייב את בעלי הזכויות בכל דרך שהיא.
+המחשבון נועד לצרכים אינפורמטיביים בלבד ומשמש כאומדן ראשוני להערכת עלות אפשרית, בהתבסס על הנתונים שהוזנו על ידי המשתמש.
+
+הסכום הסופי והתנאים לשימוש ביצירה יקבעו רק לאחר פנייה מסודרת אלינו, קבלת הסכמת בעלי הזכויות, וקבלת הצעת מחיר רשמית הכוללת טיוטת הסכם לשימוש ביצירה.
+
+למידע נוסף או להגשת בקשה לשימוש ביצירה, ניתן ליצור קשר באמצעות הדוא"ל:
+ yair@nitzani.co.il 
+</Text>
         <Text style={styles.title}>{fileName || "דו\"ח שימוש ביצירות"}</Text>
 
         <View style={styles.table}>

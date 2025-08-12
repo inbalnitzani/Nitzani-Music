@@ -10,6 +10,7 @@ import { Tooltip } from 'react-tooltip';
 import TagList from '../components/TagList.tsx';
 import ManageSite from '../components/ManageSite.tsx';
 import { useTranslation } from 'react-i18next';
+import Pagination from '../components/Pagination';
 
 const AdminPage: React.FC = () => {
   const { t } = useTranslation();
@@ -260,15 +261,19 @@ const AdminPage: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-8">
-      <div className="flex justify-between items-center mb-4 sm:mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold">{t('songs.songs_table')}</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6">
+        {/* כותרת */}
+        <h1 className="text-xl sm:text-2xl font-bold hidden sm:block">
+          {t('songs.songs_table')}
+        </h1>
 
-        <div className="flex gap-2">
+        {/* כפתורים */}
+        <div className="flex flex-wrap justify-center gap-2 mt-2 sm:mt-0 sm:justify-end">
           {/* Export button */}
           <button
             data-tooltip-id="exportTip"
             onClick={() => setIsExportModalOpen(true)}
-            className="btn btn-secondary">
+            className="btn btn-secondary sm:w-auto">
             {t('songs.export')}
           </button>
           <Tooltip id="exportTip" place="top" content={t('songs.export_tooltip')} />
@@ -327,16 +332,16 @@ const AdminPage: React.FC = () => {
         </div>
       )}
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table className="w-full text-sm text-left text-gray-500">
+        <table className="min-w-full table-auto text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
               <th scope="col" className="px-6 py-3">{t('songs.title')}</th>
-              <th scope="col" className="px-6 py-3">{t('songs.artists')}</th>
-              <th scope="col" className="px-6 py-3">{t('songs.authors')}</th>
-              <th scope="col" className="px-6 py-3">{t('songs.keywords')}</th>
-              <th scope="col" className="px-6 py-3">{t('songs.genres')}</th>
-              <th scope="col" className="px-6 py-3">{t('songs.lyrics')}</th>
-              <th scope="col" className="px-6 py-3">{t('songs.year')}</th>
+              <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('songs.artists')}</th>
+              <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('songs.authors')}</th>
+              <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('songs.keywords')}</th>
+              <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('songs.genres')}</th>
+              <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('songs.lyrics')}</th>
+              <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('songs.year')}</th>
               <th scope="col" className="px-6 py-3">{t('songs.link')}</th>
               <th scope="col" className="px-6 py-3 cursor-pointer hover:bg-gray-100 hover:text-blue-600" data-tooltip-id="selectAllTip" onClick={() => handleSelectAllSongs()}>{t('songs.select')}</th>
             </tr>
@@ -349,20 +354,20 @@ const AdminPage: React.FC = () => {
                 className="bg-white border-b hover:bg-gray-50 cursor-pointer"
                 onClick={() => handleEditSong(song)}
               >                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{song.title}</td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 hidden sm:table-cell">
                   <TagList items={song.artists} />
                 </td>
-                <td className="px-6 py-4">
+                <td className="hidden sm:table-cell px-6 py-4">
                   <TagList items={song.authors} colorClass="bg-green-100 text-green-800" />
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 hidden sm:table-cell">
                   <TagList items={song.keywords} colorClass="bg-pink-100 text-pink-800" />
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 hidden sm:table-cell">
                   <TagList items={song.genres} colorClass="bg-yellow-100 text-yellow-800" />
                 </td>
-                <td className="px-6 py-4 truncate max-w-xs">{song.lyrics}</td>
-                <td className="px-6 py-4">{song.year}</td>
+                <td className="px-6 py-4 truncate max-w-xs hidden sm:table-cell">{song.lyrics}</td>
+                <td className="px-6 py-4 hidden sm:table-cell">{song.year}</td>
                 <td className="px-6 py-4"><a href={song.link} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{song.link ? 'Link' : ''}</a></td>
                 <td className="px-6 py-4">
 
@@ -384,46 +389,19 @@ const AdminPage: React.FC = () => {
         <Tooltip id="selectAllTip" place="top" content={selectedSongs.length === songs.length ? t('songs.cancel_selection') : t('songs.select_all_songs')} />
 
       </div>
-      <div className="relative flex justify-center items-center gap-2 mt-6">
-        {/* Pagination controls (centered) */}
-        <button
-          className="btn btn-secondary"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          {t('songs.prev')}
-        </button>
-        <span className="mx-2">{t('songs.page')} {currentPage} {t('songs.of')} {totalPages}</span>
-        <button
-          className="btn btn-secondary"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          {t('songs.next')}
-        </button>
-
-        {/* page size */}
-        <select
-          value={songsPerPage}
-          onChange={e => {
-            const newSize = Number((e.target as HTMLSelectElement).value);
-            setSongsPerPage(newSize);
-            setCurrentPage(1);
-            fetchSongs(currentFilters, 1, newSize);
-          }}
-          className="select-base w-24"
-        >
-          {[5, 10, 20, 50, 100].map(size => (
-            <option key={size} value={size}>{size}</option>
-          ))}
-        </select>
-
-        {/*  total songs on the left */}
-        <div className="flex items-center gap-2 absolute left-0">
-
-          <span className="text-sm text-gray-500">{t('songs.songs_in_table')}: {totalSongs}</span>
-        </div>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalSongs}
+        pageSize={songsPerPage}
+        onPrev={() => handlePageChange(currentPage - 1)}
+        onNext={() => handlePageChange(currentPage + 1)}
+        onPageSizeChange={(newSize) => {
+          setSongsPerPage(newSize);
+          setCurrentPage(1);
+          fetchSongs(currentFilters, 1, newSize);
+        }}
+      />
 
     </div>
   );
