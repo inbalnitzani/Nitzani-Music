@@ -159,6 +159,7 @@ export default function MonitoringPage() {
                         ))}
                     </tbody>
                 </table>
+                </div>
 
                 <Pagination
                     currentPage={currentPage}
@@ -173,7 +174,6 @@ export default function MonitoringPage() {
                         fetchLogs(1, newSize);
                     }}
                 />
-            </div>
             </div>
             )
 }
