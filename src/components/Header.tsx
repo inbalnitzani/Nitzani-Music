@@ -92,7 +92,6 @@ export default function Header() {
         aria-modal="true"
       >
         <div className="flex items-center justify-between p-4 border-b">
-          <span className="text-lg font-semibold">{t('header.menu') || 'תפריט'}</span>
           <button
             className="text-2xl leading-none px-2 py-1 rounded-md hover:bg-gray-100"
             aria-label={t('header.close_menu') || 'סגור תפריט'}

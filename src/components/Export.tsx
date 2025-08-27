@@ -157,7 +157,7 @@ const Export: React.FC<Props> = ({ songsForExport }) => {
 
       <div className="flex justify-center">
         <button className="btn btn-primary" onClick={handleExport} disabled={isRunning}>
-          {isRunning ? (t("export.working") || "מייצא...") : t("export.export")}
+           {t('export.export')}
         </button>
       </div>
     </div>

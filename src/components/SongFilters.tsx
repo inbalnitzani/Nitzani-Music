@@ -4,6 +4,7 @@ import type { MultiValue } from 'react-select';
 import type { SongFilters } from '../types/song';
 import { supabase } from '../supabaseClient';
 import { useTranslation } from 'react-i18next';
+
 interface SongFiltersProps {
     filters: SongFilters;
     onFilterChange: (filters: SongFilters) => void;
@@ -19,9 +20,6 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
     onFilterChange,
 }) => {
     const { t } = useTranslation();
-    // const [selectedAuthorOptions, setSelectedAuthorOptions] = React.useState<SelectOption[]>([]);
-    // const [selectedKeywordOptions, setSelectedKeywordOptions] = React.useState<SelectOption[]>([]);
-    // const [selectedGenreOptions, setSelectedGenreOptions] = React.useState<SelectOption[]>([]);
     const [allKeywordOptions, setAllKeywordOptions] = React.useState<SelectOption[]>([]);
     
 

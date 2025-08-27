@@ -4,6 +4,9 @@ import { supabase } from '../supabaseClient';
 import AsyncSelect from 'react-select/async';
 import type { MultiValue } from 'react-select';
 import { useTranslation } from 'react-i18next';
+import Checkbox from './Checkbox.tsx';
+import TagSection from './tagSection.tsx';
+
 type SongFormProps = {
   onClose: () => void;
   onSuccess: () => void;
@@ -25,7 +28,8 @@ const SongForm: React.FC<SongFormProps> = ({
     year: song?.year || undefined,
     link: song?.link || '',
     is_free: song?.is_free || false,
-    score: song?.score || 0
+    score: song?.score || 0,
+    artists: song?.artists
   });
   const [selectedArtistIds, setSelectedArtistIds] = useState<string[]>([]);
   const [selectedArtistOptions, setSelectedArtistOptions] = useState<ArtistOption[]>([]);
@@ -275,7 +279,7 @@ const SongForm: React.FC<SongFormProps> = ({
           <AsyncSelect
             isMulti
             loadOptions={loadArtistOptions}
-            value={selectedArtistOptions}
+            value={selectedArtistOptions, song.artists}
             onChange={handleArtistsChange}
             className="mt-1"
             classNamePrefix="tagselect"
@@ -367,14 +371,17 @@ const SongForm: React.FC<SongFormProps> = ({
             />
           </div>
           <div className="flex items-center mt-6">
-            <input
+            <Checkbox               id="is_free"               checked={formData.is_free || false}
+              onChange={e => setFormData({ ...formData, is_free: e.target.checked })}
+            ></Checkbox>
+            {/* <input
               type="checkbox"
               id="is_free"
               name="is_free"
               checked={formData.is_free || false}
               onChange={e => setFormData({ ...formData, is_free: e.target.checked })}
               className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-            />
+            /> */}
             <label htmlFor="is_free" className="ml-2 text-sm font-medium text-gray-700">{t('song_form.free')}</label>
           </div>
         </div>

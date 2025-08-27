@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import TagList from './TagList';
-import { supabase } from '../supabaseClient';
+import TagList from './TagList.tsx';
+import { supabase } from '../supabaseClient.ts';
+import TagSection from './tagSection.tsx';
 // import jsPDF from 'jspdf';
 import { useInView } from 'react-intersection-observer';
 import { useTranslation } from 'react-i18next';
@@ -211,7 +212,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
       for (const type of tagTypes) {
         await handleSaveTags(type, false); // pass false to suppress per-type alerts
       }
-    //   alert('All tag changes saved successfully!');
+      //   alert('All tag changes saved successfully!');
       onSave?.(); // Close modal after save
     } catch (error) {
       console.error('Error saving tags:', error);
@@ -440,70 +441,67 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Authors */}
-        <div>
+        <TagSection
+          typeKey="author"
+          searchValue={searchAuthor}
+          onSearchChange={setSearchAuthor}
+          newInput={newAuthorInput}
+          onNewInputChange={setNewAuthorInput}
+          onAddNew={(type) => addNewTag(type ?? "author")}
+          newItems={newAuthors}
+          onDeleteNewItem={(deletedItem) =>
+            setNewAuthors((prev) => prev.filter((item) => item !== deletedItem))
+          }
+          items={authorsTags} // [{id,name}]
+          deletedNames={deletedNames(authorsTags, deletedAuthors.map((a) => a.id))}
+          onDeleteExisting={(name) => {
+            const tag = authorsTags.find((a) => a.name === name);
+            if (tag) setDeletedAuthors((prev) => [...prev, tag]);
+          }}
+          sentinelRef={authorsRef}
+          loading={loadingAuthors}
+          hasMore={hasMoreAuthors}
+          texts={{
+            searchPlaceholder: t("manage_site.search_authors"),
+            addPlaceholder: t("manage_site.add_new_author"),
+            newItemsTitle: t("manage_site.new_authors_to_add"),
+            loadingText: t("manage_site.loading"),
+            noMoreText: t("manage_site.no_more_authors"),
+            addButtonLabel: "Add",
+          }}
+        />
 
-          <div className="mb-2">
-            <input
-              type="text"
-              value={searchAuthor}
-              onChange={e => setSearchAuthor(e.target.value)}
-              placeholder={t('manage_site.search_authors')}
-              className="w-full px-3 py-1 border border-gray-300 rounded text-sm"
-            />
-          </div>
-          <div className="flex gap-2 mb-2">
-            <input
-              type="text"
-              value={newAuthorInput}
-              onChange={e => setNewAuthorInput(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && addNewTag('author')}
-              placeholder={t('manage_site.add_new_author')}
-              className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
-            />
-            <button
-              onClick={() => addNewTag('author')}
-              className="btn btn-secondary"
-            >
-              Add
-            </button>
-          </div>
-          {newAuthors.length > 0 && (
-            <div className="mb-2">
-              <span className="text-sm text-gray-600">{t('manage_site.new_authors_to_add')}:</span>
-              <TagList
-                items={newAuthors}
-                colorClass="bg-yellow-100 text-yellow-800"
-                deleteable={true}
-                onDelete={deletedItem => setNewAuthors(prev => prev.filter(item => item !== deletedItem))}
-              />
-            </div>
-          )}
-          <div className="relative border border-gray-300 rounded-md bg-white h-64 overflow-y-auto p-3">
-            <TagList
-              items={authorsTags.map(a => a.name)}
-              deletedItems={deletedNames(authorsTags, deletedAuthors.map(a => a.id))}
-              colorClass="bg-green-100 text-green-800"
-              deleteable={true}
-              onDelete={name => {
-                const tag = authorsTags.find(a => a.name === name);
-                if (tag) setDeletedAuthors(prev => [...prev, tag]);
-              }}
-            />
-            <div ref={authorsRef} />
-            {loadingAuthors && (
-              <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">{t('manage_site.loading')}</span>
-              </div>
-            )}
-            {!hasMoreAuthors && authorsTags.length > 0 && (
-              <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">{t('manage_site.no_more_authors')}</span>
-              </div>
-            )}
-          </div>
-        </div>
         {/* Artists */}
-        <div>
+        <TagSection
+          typeKey="artist"
+          searchValue={searchArtist}
+          onSearchChange={setSearchArtist}
+          newInput={newArtistInput}
+          onNewInputChange={setNewArtistInput}
+          onAddNew={(type) => addNewTag(type ?? "artist")}
+          newItems={newArtists}
+          onDeleteNewItem={(deletedItem) =>
+            setNewArtists((prev) => prev.filter((item) => item !== deletedItem))
+          }
+          items={artistsTags} // [{id,name}]
+          deletedNames={deletedNames(artistsTags, deletedArtists.map((a) => a.id))}
+          onDeleteExisting={(name) => {
+            const tag = artistsTags.find((a) => a.name === name);
+            if (tag) setDeletedArtists((prev) => [...prev, tag]);
+          }}
+          sentinelRef={artistsRef}
+          loading={loadingArtists}
+          hasMore={hasMoreArtists}
+          texts={{
+            searchPlaceholder: t("manage_site.search_artists"),
+            addPlaceholder: t("manage_site.add_new_artist"),
+            newItemsTitle: t("manage_site.new_artists_to_add"),
+            loadingText: t("manage_site.loading"),
+            noMoreText: t("manage_site.no_more_artists"),
+            addButtonLabel: "Add",
+          }}
+        />
+        {/* <div>
 
           <div className="mb-2">
             <input
@@ -564,9 +562,38 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
         {/* Keywords */}
-        <div>
+        <TagSection
+          typeKey="keyword"
+          searchValue={searchKeyword}
+          onSearchChange={setSearchKeyword}
+          newInput={newKeywordInput}
+          onNewInputChange={setNewKeywordInput}
+          onAddNew={(type) => addNewTag(type ?? "keyword")}
+          newItems={newKeywords}
+          onDeleteNewItem={(deletedItem) =>
+            setNewKeywords((prev) => prev.filter((item) => item !== deletedItem))
+          }
+          items={keywordsTags} // [{id,name}]
+          deletedNames={deletedNames(keywordsTags, deletedKeywords.map((a) => a.id))}
+          onDeleteExisting={(name) => {
+            const tag = keywordsTags.find((a) => a.name === name);
+            if (tag) setDeletedKeywords((prev) => [...prev, tag]);
+          }}
+          sentinelRef={keywordsRef}
+          loading={loadingKeywords}
+          hasMore={hasMoreKeywords}
+          texts={{
+            searchPlaceholder: t("manage_site.search_keywords"),
+            addPlaceholder: t("manage_site.add_new_keyword"),
+            newItemsTitle: t("manage_site.new_keywords_to_add"),
+            loadingText: t("manage_site.loading"),
+            noMoreText: t("manage_site.no_more_keywords"),
+            addButtonLabel: "Add",
+          }}
+        />
+        {/* <div>
 
           <div className="mb-2">
             <input
@@ -627,9 +654,39 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
         {/* Genres */}
-        <div>
+
+        <TagSection
+          typeKey="artist"
+          searchValue={searchGenre}
+          onSearchChange={setSearchGenre}
+          newInput={newGenreInput}
+          onNewInputChange={setNewGenreInput}
+          onAddNew={(type) => addNewTag(type ?? "Genre")}
+          newItems={newGenres}
+          onDeleteNewItem={(deletedItem) =>
+            setNewGenres((prev) => prev.filter((item) => item !== deletedItem))
+          }
+          items={genresTags} // [{id,name}]
+          deletedNames={deletedNames(genresTags, deletedGenres.map((a) => a.id))}
+          onDeleteExisting={(name) => {
+            const tag = genresTags.find((a) => a.name === name);
+            if (tag) setDeletedGenres((prev) => [...prev, tag]);
+          }}
+          sentinelRef={genresRef}
+          loading={loadingGenres}
+          hasMore={hasMoreGenres}
+          texts={{
+            searchPlaceholder: t("manage_site.genres"),
+            addPlaceholder: t("manage_site.add_new_genre"),
+            newItemsTitle: t("manage_site.new_genres_to_add"),
+            loadingText: t("manage_site.loading"),
+            noMoreText: t("manage_site.no_more_genres"),
+            addButtonLabel: "Add",
+          }}
+        />
+        {/* <div>
 
           <div className="mb-2">
             <input
@@ -690,7 +747,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
