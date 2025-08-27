@@ -1,13 +1,15 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
-import { useAuth } from '../hooks/useAuth';
-import { useProfile } from '../hooks/useProfile';
+import { supabase } from '../supabaseClient.ts';
+import { useAuth } from '../hooks/useAuth.ts';
+import { useProfile } from '../hooks/useProfile.ts';
 import logo from '../assets/logo.png'; // Uncomment if you put logo in src/assets
 import { useTranslation } from 'react-i18next';
-import i18n from '../i18n';
+import i18n from '../i18n.ts';
 import hebrew from '../assets/israel.png';
 import english from '../assets/united-kingdom.png';
 import { useState, useEffect } from 'react';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import { Tooltip } from 'react-tooltip';
 
 export default function Header() {
   const { t } = useTranslation();
@@ -66,9 +68,13 @@ export default function Header() {
         {user && (
           <button
             onClick={handleSignOut}
-            className="btn btn-danger"
+            className="text-gray-600 hover:text-red-600 p-2 rounded-full hover:bg-gray-100 transition-colors"
+            data-tooltip-id="signOutTip"
+            data-tooltip-place="top"
+          style={{color: 'red'}}
           >
-            {t('header.sign_out')}
+            <LogoutOutlinedIcon />
+            <Tooltip id="signOutTip" content={t('header.sign_out')} />
           </button>
         )}
       </nav>

@@ -275,27 +275,27 @@ const AdminPage: React.FC = () => {
         {/* buttons */}
         <div className="flex flex-wrap justify-center gap-2 mt-2 sm:mt-0 sm:justify-end">
           {/* Export button */}
-                     <button
-             data-tooltip-id="exportTip"
-             onClick={() => setIsExportModalOpen(true)}
-             className="btn btn-secondary rounded-full w-12 h-12 flex items-center justify-center">
-             <AudioFileIcon />
-           </button>
+          <button
+            data-tooltip-id="exportTip"
+            onClick={() => setIsExportModalOpen(true)}
+            className="btn btn-secondary rounded-full w-12 h-12 flex items-center justify-center">
+            <AudioFileIcon />
+          </button>
           <Tooltip id="exportTip" place="top" content={t('songs.export_tooltip')} />
           {/* Add Song Button */}
-                     <button
-             onClick={() => setIsEditSongModalOpen(true)}
-             className="btn btn-secondary rounded-full w-12 h-12 flex items-center justify-center" 
-             data-tooltip-id="addTip">
-             <AddIcon />
-           </button>
+          <button
+            onClick={() => setIsEditSongModalOpen(true)}
+            className="btn btn-secondary rounded-full w-12 h-12 flex items-center justify-center"
+            data-tooltip-id="addTip">
+            <AddIcon />
+          </button>
           <Tooltip id="addTip" place="top" content={t('songs.add_tooltip')} />
-                     <button
-             onClick={() => setIsManageSiteModalOpen(true)}
-             className="btn btn-secondary rounded-full w-12 h-12 flex items-center justify-center" 
-             data-tooltip-id="manageTip">
-             <EditIcon />
-           </button>
+          <button
+            onClick={() => setIsManageSiteModalOpen(true)}
+            className="btn btn-secondary rounded-full w-12 h-12 flex items-center justify-center"
+            data-tooltip-id="manageTip">
+            <EditIcon />
+          </button>
           <Tooltip id="manageTip" place="top" content={t('songs.manage_tooltip')} />
         </div>
       </div>
@@ -378,14 +378,14 @@ const AdminPage: React.FC = () => {
                 <td className="px-6 py-4 truncate max-w-xs hidden sm:table-cell">{song.lyrics}</td>
                 <td className="px-6 py-4 hidden sm:table-cell">{song.year}</td>
                 <td className="px-6 py-4"><a href={song.link}
-                 className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
-                  {song.link ? <YouTubeIcon style={{color: 'red'}} /> : ''}</a></td>
+                  className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+                  {song.link ? <YouTubeIcon style={{ color: 'red' }} /> : ''}</a></td>
                 <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
-  <Checkbox
-    id={`song-${song.id}`}
-    checked={selectedSongs.some((s) => s.id === song.id)}
-    onChange={() => handleSelectSong(song)}
-  />
+                  <Checkbox
+                    id={`song-${song.id}`}
+                    checked={selectedSongs.some((s) => s.id === song.id)}
+                    onChange={() => handleSelectSong(song)}
+                  />
 
 
 

@@ -168,6 +168,7 @@
         "year": "Year",
         "score": "Score",
         "free": "Free",
+        "not_free": "Not Free",
         "saving": "Saving...",
         "creating": "Creating...",
         "save_changes": "Save Changes",

@@ -501,68 +501,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
             addButtonLabel: "Add",
           }}
         />
-        {/* <div>
 
-          <div className="mb-2">
-            <input
-              type="text"
-              value={searchArtist}
-              onChange={e => setSearchArtist(e.target.value)}
-              placeholder={t('manage_site.search_artists')}
-              className="w-full px-3 py-1 border border-gray-300 rounded text-sm"
-            />
-          </div>
-          <div className="flex gap-2 mb-2">
-            <input
-              type="text"
-              value={newArtistInput}
-              onChange={e => setNewArtistInput(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && addNewTag('artist')}
-              placeholder={t('manage_site.add_new_artist')}
-              className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
-            />
-            <button
-              onClick={() => addNewTag('artist')}
-              className="btn btn-secondary"
-            >
-              Add
-            </button>
-          </div>
-          {newArtists.length > 0 && (
-            <div className="mb-2">
-              <span className="text-sm text-gray-600">{t('manage_site.new_artists_to_add')}:</span>
-              <TagList
-                items={newArtists}
-                colorClass="bg-yellow-100 text-yellow-800"
-                deleteable={true}
-                onDelete={deletedItem => setNewArtists(prev => prev.filter(item => item !== deletedItem))}
-              />
-            </div>
-          )}
-          <div className="relative border border-gray-300 rounded-md bg-white h-64 overflow-y-auto p-3">
-            <TagList
-              items={artistsTags.map(a => a.name)}
-              deletedItems={deletedNames(artistsTags, deletedArtists.map(a => a.id))}
-              colorClass="bg-blue-100 text-blue-800"
-              deleteable={true}
-              onDelete={name => {
-                const tag = artistsTags.find(a => a.name === name);
-                if (tag) setDeletedArtists(prev => [...prev, tag]);
-              }}
-            />
-            <div ref={artistsRef} />
-            {loadingArtists && (
-              <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">{t('manage_site.loading')}</span>
-              </div>
-            )}
-            {!hasMoreArtists && artistsTags.length > 0 && (
-              <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">{t('manage_site.no_more_artists')}</span>
-              </div>
-            )}
-          </div>
-        </div> */}
         {/* Keywords */}
         <TagSection
           typeKey="keyword"
@@ -593,68 +532,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
             addButtonLabel: "Add",
           }}
         />
-        {/* <div>
-
-          <div className="mb-2">
-            <input
-              type="text"
-              value={searchKeyword}
-              onChange={e => setSearchKeyword(e.target.value)}
-              placeholder={t('manage_site.search_keywords')}
-              className="w-full px-3 py-1 border border-gray-300 rounded text-sm"
-            />
-          </div>
-          <div className="flex gap-2 mb-2">
-            <input
-              type="text"
-              value={newKeywordInput}
-              onChange={e => setNewKeywordInput(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && addNewTag('keyword')}
-              placeholder={t('manage_site.add_new_keyword')}
-              className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
-            />
-            <button
-              onClick={() => addNewTag('keyword')}
-              className="btn btn-secondary"
-            >
-              Add
-            </button>
-          </div>
-          {newKeywords.length > 0 && (
-            <div className="mb-2">
-              <span className="text-sm text-gray-600">{t('manage_site.new_keywords_to_add')}:</span>
-              <TagList
-                items={newKeywords}
-                colorClass="bg-yellow-100 text-yellow-800"
-                deleteable={true}
-                onDelete={deletedItem => setNewKeywords(prev => prev.filter(item => item !== deletedItem))}
-              />
-            </div>
-          )}
-          <div className="relative border border-gray-300 rounded-md bg-white h-64 overflow-y-auto p-3">
-            <TagList
-              items={keywordsTags.map(a => a.name)}
-              deletedItems={deletedNames(keywordsTags, deletedKeywords.map(a => a.id))}
-              colorClass="bg-pink-100 text-pink-800"
-              deleteable={true}
-              onDelete={name => {
-                const tag = keywordsTags.find(a => a.name === name);
-                if (tag) setDeletedKeywords(prev => [...prev, tag]);
-              }}
-            />
-            <div ref={keywordsRef} />
-            {loadingKeywords && (
-              <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">{t('manage_site.loading')}</span>
-              </div>
-            )}
-            {!hasMoreKeywords && keywordsTags.length > 0 && (
-              <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">{t('manage_site.no_more_keywords')}</span>
-              </div>
-            )}
-          </div>
-        </div> */}
+   
         {/* Genres */}
 
         <TagSection
@@ -686,68 +564,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
             addButtonLabel: "Add",
           }}
         />
-        {/* <div>
-
-          <div className="mb-2">
-            <input
-              type="text"
-              value={searchGenre}
-              onChange={e => setSearchGenre(e.target.value)}
-              placeholder={t('manage_site.search_genres')}
-              className="w-full px-3 py-1 border border-gray-300 rounded text-sm"
-            />
-          </div>
-          <div className="flex gap-2 mb-2">
-            <input
-              type="text"
-              value={newGenreInput}
-              onChange={e => setNewGenreInput(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && addNewTag('genre')}
-              placeholder={t('manage_site.add_new_genre')}
-              className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
-            />
-            <button
-              onClick={() => addNewTag('genre')}
-              className="btn btn-secondary"
-            >
-              Add
-            </button>
-          </div>
-          {newGenres.length > 0 && (
-            <div className="mb-2">
-              <span className="text-sm text-gray-600">{t('manage_site.new_genres_to_add')}:</span>
-              <TagList
-                items={newGenres}
-                colorClass="bg-yellow-100 text-yellow-800"
-                deleteable={true}
-                onDelete={deletedItem => setNewGenres(prev => prev.filter(item => item !== deletedItem))}
-              />
-            </div>
-          )}
-          <div className="relative border border-gray-300 rounded-md bg-white h-64 overflow-y-auto p-3">
-            <TagList
-              items={genresTags.map(a => a.name)}
-              deletedItems={deletedNames(genresTags, deletedGenres.map(a => a.id))}
-              colorClass="bg-purple-100 text-purple-800"
-              deleteable={true}
-              onDelete={name => {
-                const tag = genresTags.find(a => a.name === name);
-                if (tag) setDeletedGenres(prev => [...prev, tag]);
-              }}
-            />
-            <div ref={genresRef} />
-            {loadingGenres && (
-              <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">{t('manage_site.loading')}</span>
-              </div>
-            )}
-            {!hasMoreGenres && genresTags.length > 0 && (
-              <div className="absolute bottom-2 left-0 w-full flex justify-center">
-                <span className="text-xs text-gray-400">{t('manage_site.no_more_genres')}</span>
-              </div>
-            )}
-          </div>
-        </div> */}
+  
       </div>
     </div>
   );

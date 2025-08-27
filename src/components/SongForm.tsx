@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import type { Song } from '../types/song';
-import { supabase } from '../supabaseClient';
+import type { Song } from '../types/song.ts';
+import { supabase } from '../supabaseClient.ts';
 import AsyncSelect from 'react-select/async';
 import type { MultiValue } from 'react-select';
 import { useTranslation } from 'react-i18next';
-import Checkbox from './Checkbox.tsx';
-import TagSection from './tagSection.tsx';
+import Rating from '@mui/material/Rating';
+import Switch from '@mui/material/Switch';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 
 type SongFormProps = {
   onClose: () => void;
@@ -85,6 +87,38 @@ const SongForm: React.FC<SongFormProps> = ({
       }
     }
   }, [isEditMode, song?.id, song?.song_artists, song?.song_authors, song?.song_keywords, song?.song_genres]);
+
+  // Also handle song.artists, song.authors, etc. for direct array data
+  useEffect(() => {
+    if (song?.artists && song.artists.length > 0) {
+      const artistOptions = song.artists.map(artistName => ({ 
+        value: artistName, // Use name as value for new items
+        label: artistName 
+      }));
+      setSelectedArtistOptions(prev => [...prev, ...artistOptions]);
+    }
+    if (song?.authors && song.authors.length > 0) {
+      const authorOptions = song.authors.map(authorName => ({ 
+        value: authorName, 
+        label: authorName 
+      }));
+      setSelectedAuthorOptions(prev => [...prev, ...authorOptions]);
+    }
+    if (song?.keywords && song.keywords.length > 0) {
+      const keywordOptions = song.keywords.map(keywordName => ({ 
+        value: keywordName, 
+        label: keywordName 
+      }));
+      setSelectedKeywordOptions(prev => [...prev, ...keywordOptions]);
+    }
+    if (song?.genres && song.genres.length > 0) {
+      const genreOptions = song.genres.map(genreName => ({ 
+        value: genreName, 
+        label: genreName 
+      }));
+      setSelectedGenreOptions(prev => [...prev, ...genreOptions]);
+    }
+  }, [song?.artists, song?.authors, song?.keywords, song?.genres]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -248,8 +282,8 @@ const SongForm: React.FC<SongFormProps> = ({
         )}
 
         {/* Title and Link */}
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        <div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700">{t('song_form.title')}</label>
             <input
               type="text"
@@ -276,18 +310,20 @@ const SongForm: React.FC<SongFormProps> = ({
         {/* Each select in its own row */}
         <div>
           <label className="block text-sm font-medium text-gray-700">{t('song_form.artists')}</label>
-          <AsyncSelect
-            isMulti
-            loadOptions={loadArtistOptions}
-            value={selectedArtistOptions, song.artists}
-            onChange={handleArtistsChange}
-            className="mt-1"
-            classNamePrefix="tagselect"
-            placeholder={t('song_form.search_and_select_artists')}
-            menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
-            menuPosition="fixed"
-            styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
-          />
+                     <AsyncSelect
+             isMulti
+             loadOptions={loadArtistOptions}
+             value={selectedArtistOptions}
+             onChange={handleArtistsChange}
+             className="mt-1"
+             classNamePrefix="tagselect"
+             placeholder={t('song_form.search_and_select_artists')}
+             menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+             menuPosition="fixed"
+             styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
+             isClearable
+             isSearchable
+           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">{t('song_form.authors')}</label>
@@ -361,28 +397,29 @@ const SongForm: React.FC<SongFormProps> = ({
           </div>
           <div>
             <label htmlFor="score" className="block text-sm font-medium text-gray-700">{t('song_form.score')}</label>
-            <input
-              type="number"
-              id="score"
+            <Rating
               name="score"
-              value={formData.score || ''}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
+              value={formData.score || 0}
+              onChange={(_, newValue) => {
+                setFormData({ ...formData, score: newValue || 0 });
+              }}
+              max={3}
+              size="large"
             />
           </div>
           <div className="flex items-center mt-6">
-            <Checkbox               id="is_free"               checked={formData.is_free || false}
-              onChange={e => setFormData({ ...formData, is_free: e.target.checked })}
-            ></Checkbox>
-            {/* <input
-              type="checkbox"
-              id="is_free"
-              name="is_free"
+            {/* <Checkbox id="is_free" name="is_free"
               checked={formData.is_free || false}
               onChange={e => setFormData({ ...formData, is_free: e.target.checked })}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-            /> */}
-            <label htmlFor="is_free" className="ml-2 text-sm font-medium text-gray-700">{t('song_form.free')}</label>
+            ></Checkbox> */}
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+              <Typography>{t('song_form.not_free')}</Typography>
+              <Switch defaultChecked inputProps={{ 'aria-label': 'ant design' }}  id="is_free" name="is_free"
+                checked={formData.is_free || false}
+                onChange={e => setFormData({ ...formData, is_free: e.target.checked })}
+              />
+              <Typography>{t('song_form.free')}</Typography>
+            </Stack>
           </div>
         </div>
 
