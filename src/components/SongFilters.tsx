@@ -81,7 +81,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
         <div className="bg-white p-4 rounded-lg shadow mb-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Search */}
-                <div >
+                <div className='pt-4'>
                     <TextField
                         fullWidth
                         variant="standard"
