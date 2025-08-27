@@ -91,7 +91,9 @@
         "prev": "Prev",
         "next": "Next",
         "songs_in_table": "Songs in Table",
-        "export_tooltip": "Export the songs you selected to a file"
+        "export_tooltip": "Export the songs you selected to a file",
+        "add_tooltip": "Add a new song",
+        "manage_tooltip": "Manage the site"
     },
     "filters": {
         "search": "Search by title or lyrics",

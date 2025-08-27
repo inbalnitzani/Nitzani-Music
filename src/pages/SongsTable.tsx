@@ -13,6 +13,9 @@ import { useTranslation } from 'react-i18next';
 import Pagination from '../components/Pagination';
 import Checkbox from '../components/Checkbox.tsx'
 import YouTubeIcon from '@mui/icons-material/YouTube';
+import AudioFileIcon from '@mui/icons-material/AudioFile';
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 
 const AdminPage: React.FC = () => {
   const { t } = useTranslation();
@@ -264,32 +267,36 @@ const AdminPage: React.FC = () => {
   return (
     <div className="p-4 sm:p-8">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6">
-        {/* כותרת */}
+        {/* title */}
         <h1 className="text-xl sm:text-2xl font-bold hidden sm:block">
           {t('songs.songs_table')}
         </h1>
 
-        {/* כפתורים */}
+        {/* buttons */}
         <div className="flex flex-wrap justify-center gap-2 mt-2 sm:mt-0 sm:justify-end">
           {/* Export button */}
-          <button
-            data-tooltip-id="exportTip"
-            onClick={() => setIsExportModalOpen(true)}
-            className="btn btn-secondary sm:w-auto">
-            {t('songs.export')}
-          </button>
+                     <button
+             data-tooltip-id="exportTip"
+             onClick={() => setIsExportModalOpen(true)}
+             className="btn btn-secondary rounded-full w-12 h-12 flex items-center justify-center">
+             <AudioFileIcon />
+           </button>
           <Tooltip id="exportTip" place="top" content={t('songs.export_tooltip')} />
           {/* Add Song Button */}
-          <button
-            onClick={() => setIsEditSongModalOpen(true)}
-            className="btn btn-secondary">
-            {t('songs.add_song')}
-          </button>
-          <button
-            onClick={() => setIsManageSiteModalOpen(true)}
-            className="btn btn-secondary">
-            {t('songs.manage_site')}
-          </button>
+                     <button
+             onClick={() => setIsEditSongModalOpen(true)}
+             className="btn btn-secondary rounded-full w-12 h-12 flex items-center justify-center" 
+             data-tooltip-id="addTip">
+             <AddIcon />
+           </button>
+          <Tooltip id="addTip" place="top" content={t('songs.add_tooltip')} />
+                     <button
+             onClick={() => setIsManageSiteModalOpen(true)}
+             className="btn btn-secondary rounded-full w-12 h-12 flex items-center justify-center" 
+             data-tooltip-id="manageTip">
+             <EditIcon />
+           </button>
+          <Tooltip id="manageTip" place="top" content={t('songs.manage_tooltip')} />
         </div>
       </div>
       <SongFiltersComponent

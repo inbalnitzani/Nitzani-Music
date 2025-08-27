@@ -91,7 +91,9 @@
         "prev": "הקודם",
         "next": "הבא",
         "songs_in_table": "שירים בטבלה",
-        "export_tooltip": "יצא את השירים שבחרת לקובץ"
+        "export_tooltip": "יצא את השירים שבחרת לקובץ",
+        "add_tooltip": "הוסף שיר חדש",
+        "manage_tooltip": "ניהול אתר"
     },
     "filters": {
         "search": "חיפוש לפי כותרת או מילים",
