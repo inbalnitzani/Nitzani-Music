@@ -197,7 +197,6 @@ async function exportExcel(
     worksheet.getCell(worksheet.lastRow!.number, 1).alignment = {
       horizontal: "right",
       vertical: "middle",
-      readingOrder: 2,
       wrapText: true,
     };
     worksheet.addRow([]);
@@ -238,7 +237,11 @@ async function exportWord(
     children.push(
       new Paragraph({
         children: [
-          new ImageRun({ data: bytes, transformation: { width: 180, height: 60 } }),
+          new ImageRun({ 
+            data: bytes, 
+            transformation: { width: 180, height: 60 },
+            type: 'png',
+          }),
         ],
       })
     );

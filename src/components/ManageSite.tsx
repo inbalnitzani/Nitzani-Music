@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import TagList from './TagList.tsx';
 import { supabase } from '../supabaseClient.ts';
 import TagSection from './tagSection.tsx';
 // import jsPDF from 'jspdf';
@@ -447,7 +446,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
           onSearchChange={setSearchAuthor}
           newInput={newAuthorInput}
           onNewInputChange={setNewAuthorInput}
-          onAddNew={(type) => addNewTag(type ?? "author")}
+          onAddNew={(type) => addNewTag(type as "author")}
           newItems={newAuthors}
           onDeleteNewItem={(deletedItem) =>
             setNewAuthors((prev) => prev.filter((item) => item !== deletedItem))
@@ -478,7 +477,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
           onSearchChange={setSearchArtist}
           newInput={newArtistInput}
           onNewInputChange={setNewArtistInput}
-          onAddNew={(type) => addNewTag(type ?? "artist")}
+          onAddNew={(type) => addNewTag(type as "artist")}
           newItems={newArtists}
           onDeleteNewItem={(deletedItem) =>
             setNewArtists((prev) => prev.filter((item) => item !== deletedItem))
@@ -509,7 +508,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
           onSearchChange={setSearchKeyword}
           newInput={newKeywordInput}
           onNewInputChange={setNewKeywordInput}
-          onAddNew={(type) => addNewTag(type ?? "keyword")}
+          onAddNew={(type) => addNewTag(type as "keyword")}
           newItems={newKeywords}
           onDeleteNewItem={(deletedItem) =>
             setNewKeywords((prev) => prev.filter((item) => item !== deletedItem))
@@ -541,7 +540,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
           onSearchChange={setSearchGenre}
           newInput={newGenreInput}
           onNewInputChange={setNewGenreInput}
-          onAddNew={(type) => addNewTag(type ?? "Genre")}
+          onAddNew={(type) => addNewTag(type as "genre")}
           newItems={newGenres}
           onDeleteNewItem={(deletedItem) =>
             setNewGenres((prev) => prev.filter((item) => item !== deletedItem))

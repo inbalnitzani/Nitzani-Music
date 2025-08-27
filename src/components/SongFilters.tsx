@@ -20,7 +20,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
     type Artist = { id: string; name: string };
     const [artistOptions, setArtistOptions] = React.useState<Artist[]>([]);
     const [artistLoading, setArtistLoading] = React.useState(false);
-    const artistDebounceRef = React.useRef<number | null>(null);
+    const artistDebounceRef = React.useRef<NodeJS.Timeout | null>(null);
 
     const fetchTopArtists = React.useCallback(async () => {
         setArtistLoading(true);
@@ -37,7 +37,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
     type Author = { id: string; name: string };
     const [authorOptions, setAuthorOptions] = React.useState<Author[]>([]);
     const [authorLoading, setAuthorLoading] = React.useState(false);
-    const authorDebounceRef = React.useRef<number | null>(null);
+    const authorDebounceRef = React.useRef<NodeJS.Timeout | null>(null);
 
     const fetchTopAuthors = React.useCallback(async () => {
         setAuthorLoading(true);
@@ -54,7 +54,7 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
     type Keyword = { id: string; name: string };
     const [keywordOptions, setKeywordOptions] = React.useState<Keyword[]>([]);
     const [keywordLoading, setKeywordLoading] = React.useState(false);
-    const keywordDebounceRef = React.useRef<number | null>(null);
+    const keywordDebounceRef = React.useRef<NodeJS.Timeout | null>(null);
 
     const fetchTopKeywords = React.useCallback(async () => {
         setKeywordLoading(true);

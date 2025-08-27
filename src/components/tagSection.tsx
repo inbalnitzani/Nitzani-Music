@@ -1,4 +1,4 @@
-import React, { KeyboardEvent } from "react";
+import React, {  type KeyboardEvent } from "react";
 import TagList from "./TagList.tsx";
 import AddIcon from '@mui/icons-material/Add';
 
@@ -34,7 +34,7 @@ interface TagSectionProps {
     deletedNames: string[];
     onDeleteExisting: (name: string) => void;
 
-    sentinelRef?: React.RefObject<HTMLDivElement>;
+    sentinelRef?: React.RefObject<HTMLDivElement> | ((node?: Element | null) => void);
     loading?: boolean;
     hasMore?: boolean;
 
@@ -71,7 +71,7 @@ export default function TagSection({
                 <input
                     type="text"
                     value={searchValue}
-                    onChange={(e) => onSearchChange(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearchChange(e.target.value)}
                     placeholder={texts.searchPlaceholder}
                     className="w-full px-3 py-1 border border-gray-300 rounded text-sm"
                 />
@@ -83,7 +83,7 @@ export default function TagSection({
                     <input
                         type="text"
                         value={newInput}
-                        onChange={(e) => onNewInputChange(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onNewInputChange(e.target.value)}
                         onKeyPress={handleEnter}
                         placeholder={texts.addPlaceholder}
                         className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm"
@@ -118,7 +118,7 @@ export default function TagSection({
                     onDelete={onDeleteExisting}
                 />
 
-                <div ref={sentinelRef as any} />
+                <div ref={sentinelRef} />
 
                 {loading && (
                     <div className="absolute bottom-2 left-0 w-full flex justify-center">

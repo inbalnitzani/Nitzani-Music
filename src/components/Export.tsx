@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import type { Song } from "../types/song";
+import type { Song } from "../types/song.ts";
 import { useTranslation } from "react-i18next";
-import { exportSongs } from "../utils/exportSongs";
-import logo from "../assets/logo.png"; // נשתמש ב־URL שנוצר ע"י הבילד
+import { exportSongs } from "../utils/exportSongs.tsx";
+// import logo from "../assets/logo.png"; // נשתמש ב־URL שנוצר ע"י הבילד
 
 type Props = { songsForExport: Song[] };
 
@@ -85,10 +85,10 @@ const Export: React.FC<Props> = ({ songsForExport }) => {
         fields: fieldsMeta,
         note,
         formats,
-        title: t("export.report_title") || "דוח שירים",
-        logoUrl: logo,                        // להשתמש ב-import
-        pdfFontUrl: "/fonts/Heebo-VariableFont_wght.ttf", // שם פרמטר לפי ה-utils הקיים
-        pdfFontFamily: "Heebo",
+        // title: t("export.report_title") || "דוח שירים",
+        // logoUrl: logo,                        // להשתמש ב-import
+        // pdfFontUrl: "/fonts/Heebo-VariableFont_wght.ttf", // שם פרמטר לפי ה-utils הקיים
+        // pdfFontFamily: "Heebo",
       });
       
     } catch (err) {
