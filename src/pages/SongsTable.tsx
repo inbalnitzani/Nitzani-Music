@@ -12,7 +12,7 @@ import ManageSite from '../components/ManageSite.tsx';
 import { useTranslation } from 'react-i18next';
 import Pagination from '../components/Pagination';
 import Checkbox from '../components/Checkbox.tsx'
-
+import YouTubeIcon from '@mui/icons-material/YouTube';
 
 const AdminPage: React.FC = () => {
   const { t } = useTranslation();
@@ -370,7 +370,9 @@ const AdminPage: React.FC = () => {
                 </td>
                 <td className="px-6 py-4 truncate max-w-xs hidden sm:table-cell">{song.lyrics}</td>
                 <td className="px-6 py-4 hidden sm:table-cell">{song.year}</td>
-                <td className="px-6 py-4"><a href={song.link} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{song.link ? 'Link' : ''}</a></td>
+                <td className="px-6 py-4"><a href={song.link}
+                 className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+                  {song.link ? <YouTubeIcon style={{color: 'red'}} /> : ''}</a></td>
                 <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
   <Checkbox
     id={`song-${song.id}`}
