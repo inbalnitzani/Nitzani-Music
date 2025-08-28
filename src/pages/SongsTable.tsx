@@ -258,7 +258,8 @@ const AdminPage: React.FC = () => {
     if ((filters.artists ?? []).length) params.artists = (filters.artists ?? []).join(',');
     if (filters.searchText) params.searchText = filters.searchText;
     setSearchParams(params);
-    // fetchSongs will be called by useEffect
+    // Immediately fetch with new filters
+    fetchSongs(filters, 1, songsPerPage);
   };
 
   // handle pagination

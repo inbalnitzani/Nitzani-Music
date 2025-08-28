@@ -72,7 +72,12 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
     }
 
     const handleClearFilters = () => {
-        onFilterChange({})
+        onFilterChange({
+            authors: [],
+            keywords: [],
+            artists: [],
+            searchText: ''
+        })
     }
 
     // Loaders for Autocomplete are defined inline in onInputChange
