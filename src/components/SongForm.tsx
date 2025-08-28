@@ -19,7 +19,10 @@ type SongFormProps = {
   song?: Song & { song_artists?: { artist_id: string }[], song_authors?: { author_id: string }[], song_keywords?: { keyword_id: string }[], song_genres?: { genre_id: string }[] };
 };
 
-type ArtistOption = { value: string; label: string };
+type ArtistOption = {
+  value: string;
+  label: string;
+};
 
 const SongForm: React.FC<SongFormProps> = ({
   onClose,
@@ -448,6 +451,7 @@ const SongForm: React.FC<SongFormProps> = ({
               <textarea
                 id="lyrics"
                 name="lyrics"
+                rows={10}
                 value={formData.lyrics || ''}
                 onChange={handleChange}
                 className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
@@ -468,7 +472,7 @@ const SongForm: React.FC<SongFormProps> = ({
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="year" className="block text-sm font-medium text-gray-700">{t('song_form.year')}</label>
             <input
@@ -482,6 +486,7 @@ const SongForm: React.FC<SongFormProps> = ({
               className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
             />
           </div>
+
           <div>
             <label htmlFor="score" className="block text-sm font-medium text-gray-700">{t('song_form.score')}</label>
             <Rating
@@ -494,7 +499,7 @@ const SongForm: React.FC<SongFormProps> = ({
               size="large"
             />
           </div>
-          <div className="flex items-center mt-6">
+          <div className="flex items-center ">
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
               <Typography>{t('song_form.not_free')}</Typography>
               <Switch inputProps={{ 'aria-label': 'ant design' }} id="is_free" name="is_free"

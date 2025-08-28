@@ -6,6 +6,8 @@ import CalculatorPage from './pages/CalculatorPage';
 import { useAuth } from './hooks/useAuth';
 import Header from './components/Header';
 import { useProfile } from './hooks/useProfile';
+import { useRTL } from './hooks/useRTL';
+import { RTLProvider } from './theme/RTLProvider';
 import { useEffect, useMemo } from 'react';
 
 import './App.css'
@@ -20,6 +22,10 @@ function App() {
   useEffect(() => {
     window.HSStaticMethods?.autoInit();
   }, []);
+  
+  // Enable RTL/LTR switching based on language
+  const { isRTL } = useRTL();
+  
   const { user, loading: authLoading } = useAuth();
   const { role, loading: profileLoading } = useProfile(user);
   
@@ -30,6 +36,7 @@ function App() {
   if (isLoading) return <div>Loading...</div>;
   
   return (
+    <RTLProvider isRTL={isRTL}>
       <Router>
         <Header />
           <Routes>
@@ -43,6 +50,7 @@ function App() {
           </Routes>
           <script src="./assets/vendor/preline/dist/preline.js"></script>
       </Router>
+    </RTLProvider>
   );
 }
 

@@ -1,3 +1,168 @@
+/* RTL Support */
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl .flex {
+  flex-direction: row-reverse;
+}
+
+.rtl .flex-row {
+  flex-direction: row-reverse;
+}
+
+.rtl .flex-row-reverse {
+  flex-direction: row;
+}
+
+.rtl .text-left {
+  text-align: right;
+}
+
+.rtl .text-right {
+  text-align: left;
+}
+
+.rtl .ml-auto {
+  margin-left: unset;
+  margin-right: auto;
+}
+
+.rtl .mr-auto {
+  margin-right: unset;
+  margin-left: auto;
+}
+
+.rtl .pl-4 {
+  padding-left: unset;
+  padding-right: 1rem;
+}
+
+.rtl .pr-4 {
+  padding-right: unset;
+  padding-left: 1rem;
+}
+
+.rtl .border-l {
+  border-left: unset;
+  border-right: 1px solid;
+}
+
+.rtl .border-r {
+  border-right: unset;
+  border-left: 1px solid;
+}
+
+/* RTL for specific components */
+.rtl .btn {
+  flex-direction: row-reverse;
+}
+
+.rtl .modal-content {
+  text-align: right;
+}
+
+.rtl .form-input {
+  text-align: right;
+}
+
+.rtl .form-textarea {
+  text-align: right;
+}
+
+/* RTL for MUI components */
+.rtl .MuiTextField-root {
+  direction: rtl;
+}
+
+.rtl .MuiAutocomplete-root {
+  direction: rtl;
+}
+
+.rtl .MuiInputBase-input {
+  text-align: right;
+}
+
+/* RTL for react-select components */
+.rtl .tagselect__control {
+  direction: rtl;
+}
+
+.rtl .tagselect__input-container {
+  direction: rtl;
+}
+
+.rtl .tagselect__input {
+  text-align: right !important;
+}
+
+.rtl .tagselect__placeholder {
+  text-align: right;
+}
+
+.rtl .tagselect__menu {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl .tagselect__option {
+  text-align: right;
+}
+
+.rtl .tagselect__multi-value {
+  direction: rtl;
+}
+
+.rtl .tagselect__multi-value__label {
+  text-align: right;
+}
+
+/* RTL for MUI Autocomplete specific styles */
+.rtl .MuiAutocomplete-input {
+  text-align: right !important;
+}
+
+.rtl .MuiAutocomplete-endAdornment {
+  left: 12px !important;
+  right: auto !important;
+}
+
+.rtl .MuiAutocomplete-popupIndicator {
+  transform: scaleX(-1);
+}
+
+.rtl .MuiAutocomplete-clearIndicator {
+  left: 12px !important;
+  right: auto !important;
+}
+
+/* RTL for table headers */
+.rtl th {
+  text-align: right;
+}
+
+.rtl td {
+  text-align: right;
+}
+
+/* RTL for navigation */
+.rtl .nav-item {
+  margin-left: unset;
+  margin-right: 1rem;
+}
+
+/* RTL for icons and buttons */
+.rtl .icon-left {
+  margin-left: unset;
+  margin-right: 0.5rem;
+}
+
+.rtl .icon-right {
+  margin-right: unset;
+  margin-left: 0.5rem;
+}
+
 /* ===== Tailwind base styles ===== */
 @tailwind base;
 
