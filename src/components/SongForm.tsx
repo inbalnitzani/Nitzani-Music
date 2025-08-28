@@ -308,7 +308,7 @@ const SongForm: React.FC<SongFormProps> = ({
   };
 
   const handleAccordionChange =
-    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    (panel: string) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? panel : false);
     };
 
