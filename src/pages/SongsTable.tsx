@@ -10,7 +10,7 @@ import { Tooltip } from 'react-tooltip';
 import TagList from '../components/TagList.tsx';
 import ManageSite from '../components/ManageSite.tsx';
 import { useTranslation } from 'react-i18next';
-import Pagination from '../components/Pagination';
+import Pagination from '../components/Pagination.tsx';
 import Checkbox from '../components/Checkbox.tsx'
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import AudioFileIcon from '@mui/icons-material/AudioFile';
@@ -145,9 +145,9 @@ const AdminPage: React.FC = () => {
         console.error('Error fetching songs:', songsError);
       }
 
-      // Map artists for display
+      // Map for display, and also keep join-table IDs for editing
       if (Array.isArray(songsData) && songsData.length > 0) {
-        const songsWithDetails: Song[] = (songsData as unknown as RawSongFromSupabase[]).map(song => ({
+        const songsWithDetails = (songsData as unknown as RawSongFromSupabase[]).map((song: RawSongFromSupabase) => ({
           id: song.id,
           title: song.title,
           lyrics: song.lyrics,
@@ -159,21 +159,24 @@ const AdminPage: React.FC = () => {
           artists: (song.song_artists || [])
             .map((sa: { artists?: { name?: string } | null }) => sa.artists?.name)
             .filter((name: string | undefined): name is string => Boolean(name)),
-
           authors: (song.song_authors || [])
             .map((sa: { authors?: { name?: string } | null }) => sa.authors?.name)
             .filter((name: string | undefined): name is string => Boolean(name)),
-
           keywords: (song.song_keywords || [])
             .map((sk: { keywords?: { name?: string } | null }) => sk.keywords?.name)
             .filter((name: string | undefined): name is string => Boolean(name)),
-
           genres: (song.song_genres || [])
             .map((sg: { genres?: { name?: string } | null }) => sg.genres?.name)
-            .filter((name: string | undefined): name is string => Boolean(name))
+            .filter((name: string | undefined): name is string => Boolean(name)),
+
+          // Provide IDs for SongForm preload
+          song_artists: ((song.song_artists as unknown as { artist_id: string }[]) || []).map((sa) => ({ artist_id: sa.artist_id })),
+          song_authors: ((song.song_authors as unknown as { author_id: string }[]) || []).map((sa) => ({ author_id: sa.author_id })),
+          song_keywords: ((song.song_keywords as unknown as { keyword_id: string }[]) || []).map((sk) => ({ keyword_id: sk.keyword_id })),
+          song_genres: ((song.song_genres as unknown as { genre_id: string }[]) || []).map((sg) => ({ genre_id: sg.genre_id })),
         }));
 
-        setSongs(songsWithDetails);
+        setSongs(songsWithDetails as unknown as Song[]);
       } else {
         setSongs([]);
       }
@@ -276,6 +279,7 @@ const AdminPage: React.FC = () => {
         <div className="flex flex-wrap justify-center gap-2 mt-2 sm:mt-0 sm:justify-end">
           {/* Export button */}
           <button
+            type="button"
             data-tooltip-id="exportTip"
             onClick={() => setIsExportModalOpen(true)}
             className="btn btn-secondary rounded-full w-12 h-12 flex items-center justify-center">
@@ -284,6 +288,7 @@ const AdminPage: React.FC = () => {
           <Tooltip id="exportTip" place="top" content={t('songs.export_tooltip')} />
           {/* Add Song Button */}
           <button
+            type="button"
             onClick={() => setIsEditSongModalOpen(true)}
             className="btn btn-secondary rounded-full w-12 h-12 flex items-center justify-center"
             data-tooltip-id="addTip">
@@ -291,6 +296,7 @@ const AdminPage: React.FC = () => {
           </button>
           <Tooltip id="addTip" place="top" content={t('songs.add_tooltip')} />
           <button
+            type="button"
             onClick={() => setIsManageSiteModalOpen(true)}
             className="btn btn-secondary rounded-full w-12 h-12 flex items-center justify-center"
             data-tooltip-id="manageTip">
@@ -414,7 +420,7 @@ const AdminPage: React.FC = () => {
         pageSize={songsPerPage}
         onPrev={() => handlePageChange(currentPage - 1)}
         onNext={() => handlePageChange(currentPage + 1)}
-        onPageSizeChange={(newSize) => {
+        onPageSizeChange={(newSize: number) => {
           setSongsPerPage(newSize);
           setCurrentPage(1);
           fetchSongs(currentFilters, 1, newSize);

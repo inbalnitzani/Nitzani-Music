@@ -30,8 +30,7 @@ const SongForm: React.FC<SongFormProps> = ({
     year: song?.year || undefined,
     link: song?.link || '',
     is_free: song?.is_free || false,
-    score: song?.score || 0,
-    artists: song?.artists
+    score: song?.score || 0
   });
   const [selectedArtistIds, setSelectedArtistIds] = useState<string[]>([]);
   const [selectedArtistOptions, setSelectedArtistOptions] = useState<ArtistOption[]>([]);
@@ -88,37 +87,7 @@ const SongForm: React.FC<SongFormProps> = ({
     }
   }, [isEditMode, song?.id, song?.song_artists, song?.song_authors, song?.song_keywords, song?.song_genres]);
 
-  // Also handle song.artists, song.authors, etc. for direct array data
-  useEffect(() => {
-    if (song?.artists && song.artists.length > 0) {
-      const artistOptions = song.artists.map(artistName => ({ 
-        value: artistName, // Use name as value for new items
-        label: artistName 
-      }));
-      setSelectedArtistOptions(prev => [...prev, ...artistOptions]);
-    }
-    if (song?.authors && song.authors.length > 0) {
-      const authorOptions = song.authors.map(authorName => ({ 
-        value: authorName, 
-        label: authorName 
-      }));
-      setSelectedAuthorOptions(prev => [...prev, ...authorOptions]);
-    }
-    if (song?.keywords && song.keywords.length > 0) {
-      const keywordOptions = song.keywords.map(keywordName => ({ 
-        value: keywordName, 
-        label: keywordName 
-      }));
-      setSelectedKeywordOptions(prev => [...prev, ...keywordOptions]);
-    }
-    if (song?.genres && song.genres.length > 0) {
-      const genreOptions = song.genres.map(genreName => ({ 
-        value: genreName, 
-        label: genreName 
-      }));
-      setSelectedGenreOptions(prev => [...prev, ...genreOptions]);
-    }
-  }, [song?.artists, song?.authors, song?.keywords, song?.genres]);
+  // Keep selected options strictly ID-based; do not preload by names
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -154,34 +123,66 @@ const SongForm: React.FC<SongFormProps> = ({
       await handleSongArtists(songId, selectedArtistIds);
 
       // Handle authors through song_authors table
-      await supabase.from('song_authors').delete().eq('song_id', songId);
-      if (selectedAuthorOptions.length > 0) {
-        const songAuthorsData = selectedAuthorOptions.map((author, idx) => ({
-          song_id: songId,
-          author_id: author.value,
-          position: idx
-        }));
-        await supabase.from('song_authors').insert(songAuthorsData);
+      {
+        const { error: delAuthorsErr } = await supabase
+          .from('song_authors')
+          .delete()
+          .eq('song_id', songId);
+        if (delAuthorsErr) throw delAuthorsErr;
+
+        const uniqueAuthorIds = Array.from(new Set(selectedAuthorOptions.map(a => a.value)));
+        if (uniqueAuthorIds.length > 0) {
+          const songAuthorsData = uniqueAuthorIds.map(authorId => ({
+            song_id: songId,
+            author_id: authorId,
+          }));
+          const { error: insAuthorsErr } = await supabase
+            .from('song_authors')
+            .insert(songAuthorsData);
+          if (insAuthorsErr) throw insAuthorsErr;
+        }
       }
 
       // Handle keywords through song_keywords table
-      await supabase.from('song_keywords').delete().eq('song_id', songId);
-      if (selectedKeywordOptions.length > 0) {
-        const songKeywordsData = selectedKeywordOptions.map((keyword) => ({
-          song_id: songId,
-          keyword_id: keyword.value
-        }));
-        await supabase.from('song_keywords').insert(songKeywordsData);
+      {
+        const { error: delKeywordsErr } = await supabase
+          .from('song_keywords')
+          .delete()
+          .eq('song_id', songId);
+        if (delKeywordsErr) throw delKeywordsErr;
+
+        const uniqueKeywordIds = Array.from(new Set(selectedKeywordOptions.map(k => k.value)));
+        if (uniqueKeywordIds.length > 0) {
+          const songKeywordsData = uniqueKeywordIds.map(keywordId => ({
+            song_id: songId,
+            keyword_id: keywordId
+          }));
+          const { error: insKeywordsErr } = await supabase
+            .from('song_keywords')
+            .insert(songKeywordsData);
+          if (insKeywordsErr) throw insKeywordsErr;
+        }
       }
 
       // Handle genres through song_genres table
-      await supabase.from('song_genres').delete().eq('song_id', songId);
-      if (selectedGenreOptions.length > 0) {
-        const songGenresData = selectedGenreOptions.map((genre) => ({
-          song_id: songId,
-          genre_id: genre.value
-        }));
-        await supabase.from('song_genres').insert(songGenresData);
+      {
+        const { error: delGenresErr } = await supabase
+          .from('song_genres')
+          .delete()
+          .eq('song_id', songId);
+        if (delGenresErr) throw delGenresErr;
+
+        const uniqueGenreIds = Array.from(new Set(selectedGenreOptions.map(g => g.value)));
+        if (uniqueGenreIds.length > 0) {
+          const songGenresData = uniqueGenreIds.map(genreId => ({
+            song_id: songId,
+            genre_id: genreId
+          }));
+          const { error: insGenresErr } = await supabase
+            .from('song_genres')
+            .insert(songGenresData);
+          if (insGenresErr) throw insGenresErr;
+        }
       }
 
       onSuccess();
@@ -197,21 +198,23 @@ const SongForm: React.FC<SongFormProps> = ({
   const handleSongArtists = async (songId: string, artistIds: string[]) => {
     try {
       // Delete existing artist associations
-      await supabase
+      const { error: delArtistsErr } = await supabase
         .from('song_artists')
         .delete()
         .eq('song_id', songId);
+      if (delArtistsErr) throw delArtistsErr;
 
       // Insert new artist associations
-      if (artistIds.length > 0) {
-        const songArtistsData = artistIds.map((artistId, idx) => ({
+      const uniqueArtistIds = Array.from(new Set(artistIds));
+      if (uniqueArtistIds.length > 0) {
+        const songArtistsData = uniqueArtistIds.map((artistId) => ({
           song_id: songId,
           artist_id: artistId,
-          position: idx
         }));
-        await supabase
+        const { error: insArtistsErr } = await supabase
           .from('song_artists')
           .insert(songArtistsData);
+        if (insArtistsErr) throw insArtistsErr;
       }
     } catch (error) {
       console.error('Error handling song artists:', error);
@@ -219,13 +222,25 @@ const SongForm: React.FC<SongFormProps> = ({
     }
   };
 
+  type NamedInput = { name: string; value: string };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const el = e.currentTarget as unknown as NamedInput;
+    const fieldName = el.name as keyof Partial<Song>;
+    const fieldValue = el.value as unknown as Partial<Song>[keyof Partial<Song>];
+    setFormData(prev => ({ ...prev, [fieldName]: fieldValue }));
+  };
+
+  const dedupeOptions = (options: ArtistOption[]): ArtistOption[] => {
+    const seen = new Set<string>();
+    return options.filter(opt => {
+      if (seen.has(opt.value)) return false;
+      seen.add(opt.value);
+      return true;
+    });
   };
 
   const handleArtistsChange = (selected: MultiValue<ArtistOption>) => {
-    const options = (selected as ArtistOption[]).filter(Boolean);
+    const options = dedupeOptions((selected as ArtistOption[]).filter(Boolean));
     setSelectedArtistIds(options.map(opt => opt.value));
     setSelectedArtistOptions(options);
   };
@@ -318,7 +333,6 @@ const SongForm: React.FC<SongFormProps> = ({
              className="mt-1"
              classNamePrefix="tagselect"
              placeholder={t('song_form.search_and_select_artists')}
-             menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
              menuPosition="fixed"
              styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
              isClearable
@@ -331,11 +345,10 @@ const SongForm: React.FC<SongFormProps> = ({
             isMulti
             loadOptions={loadAuthorOptions}
             value={selectedAuthorOptions}
-            onChange={opts => setSelectedAuthorOptions(opts as ArtistOption[])}
+            onChange={opts => setSelectedAuthorOptions(dedupeOptions((opts as ArtistOption[]) || []))}
             className="mt-1"
             classNamePrefix="tagselect"
             placeholder={t('song_form.search_and_select_authors')}
-            menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
             menuPosition="fixed"
             styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
           />
@@ -346,11 +359,10 @@ const SongForm: React.FC<SongFormProps> = ({
             isMulti
             loadOptions={loadGenreOptions}
             value={selectedGenreOptions}
-            onChange={opts => setSelectedGenreOptions(opts as ArtistOption[])}
+            onChange={opts => setSelectedGenreOptions(dedupeOptions((opts as ArtistOption[]) || []))}
             className="mt-1"
             classNamePrefix="tagselect"
             placeholder={t('song_form.search_and_select_genres')}
-            menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
             menuPosition="fixed"
             styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
           />
@@ -361,7 +373,7 @@ const SongForm: React.FC<SongFormProps> = ({
             isMulti
             loadOptions={loadKeywordOptions}
             value={selectedKeywordOptions}
-            onChange={opts => setSelectedKeywordOptions(opts as ArtistOption[])}
+            onChange={opts => setSelectedKeywordOptions(dedupeOptions((opts as ArtistOption[]) || []))}
             className="mt-1"
             classNamePrefix="tagselect"
             placeholder={t('song_form.search_and_select_keywords')}
@@ -414,9 +426,9 @@ const SongForm: React.FC<SongFormProps> = ({
             ></Checkbox> */}
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
               <Typography>{t('song_form.not_free')}</Typography>
-              <Switch defaultChecked inputProps={{ 'aria-label': 'ant design' }}  id="is_free" name="is_free"
+              <Switch inputProps={{ 'aria-label': 'ant design' }}  id="is_free" name="is_free"
                 checked={formData.is_free || false}
-                onChange={e => setFormData({ ...formData, is_free: e.target.checked })}
+                onChange={(_, checked) => setFormData({ ...formData, is_free: checked })}
               />
               <Typography>{t('song_form.free')}</Typography>
             </Stack>
