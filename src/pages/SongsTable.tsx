@@ -18,6 +18,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 
 const AdminPage: React.FC = () => {
+  const parseBoolean = (value: unknown): boolean => {
+    if (value === true) return true;
+    if (value === false) return false;
+    if (typeof value === 'number') return value === 1;
+    if (typeof value === 'string') {
+      const v = value.trim().toLowerCase();
+      if (v === 'true' || v === '1') return true;
+      if (v === 'false' || v === '0' || v === '') return false;
+    }
+    return false;
+  };
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [songsPerPage, setSongsPerPage] = useState(5); // default 5
@@ -153,7 +164,7 @@ const AdminPage: React.FC = () => {
           lyrics: song.lyrics,
           year: Number(song.year),
           link: song.link,
-          is_free: song.is_free === true,
+          is_free: parseBoolean(song.is_free as unknown),
           score: Number(song.score),
 
           artists: (song.song_artists || [])

@@ -23,13 +23,24 @@ const SongForm: React.FC<SongFormProps> = ({
   song
 }) => {
   const { t } = useTranslation();
+  const parseBoolean = (value: unknown): boolean => {
+    if (value === true) return true;
+    if (value === false) return false;
+    if (typeof value === 'number') return value === 1;
+    if (typeof value === 'string') {
+      const v = value.trim().toLowerCase();
+      if (v === 'true' || v === '1') return true;
+      if (v === 'false' || v === '0' || v === '') return false;
+    }
+    return false;
+  };
   const isEditMode = !!song;
   const [formData, setFormData] = useState<Partial<Song>>({
     title: song?.title || '',
     lyrics: song?.lyrics || '',
     year: song?.year || undefined,
     link: song?.link || '',
-    is_free: song?.is_free || false,
+    is_free: parseBoolean(song?.is_free as unknown),
     score: song?.score || 0
   });
   const [selectedArtistIds, setSelectedArtistIds] = useState<string[]>([]);
@@ -427,7 +438,7 @@ const SongForm: React.FC<SongFormProps> = ({
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
               <Typography>{t('song_form.not_free')}</Typography>
               <Switch inputProps={{ 'aria-label': 'ant design' }}  id="is_free" name="is_free"
-                checked={formData.is_free || false}
+                checked={!!formData.is_free}
                 onChange={(_, checked) => setFormData({ ...formData, is_free: checked })}
               />
               <Typography>{t('song_form.free')}</Typography>
