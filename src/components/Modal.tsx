@@ -5,7 +5,7 @@ type ModalProps = {
     onClose: () => void;
     children: React.ReactNode;
     title?: string;
-    align?: 'bottom' | 'center'
+    align?: 'bottom' | 'center';
 };
 
 export default function Modal({ isOpen, onClose, children, title, align = 'center' }: ModalProps) {

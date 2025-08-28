@@ -6,9 +6,10 @@ import CalculatorPage from './pages/CalculatorPage';
 import { useAuth } from './hooks/useAuth';
 import Header from './components/Header';
 import { useProfile } from './hooks/useProfile';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import './App.css'
+import HomePage from './pages/HomePage.tsx';
 
 declare global {
   interface Window {
@@ -21,9 +22,13 @@ function App() {
   }, []);
   const { user, loading: authLoading } = useAuth();
   const { role, loading: profileLoading } = useProfile(user);
-  const isAdmin = role === 'admin';
+  
+  // Memoize the admin status to prevent unnecessary re-renders
+  const isAdmin = useMemo(() => role === 'admin', [role]);
+  const isLoading = useMemo(() => authLoading || profileLoading, [authLoading, profileLoading]);
 
-  if (authLoading || profileLoading) return <div>Loading...</div>;
+  if (isLoading) return <div>Loading...</div>;
+  
   return (
       <Router>
         <Header />
@@ -33,6 +38,7 @@ function App() {
             <Route path="/songs" element={user && isAdmin ? <AdminPage /> : <Navigate to="/login" />} />
             <Route path="/calculator" element={user ? <CalculatorPage /> : <Navigate to="/login" />} />
             <Route path="/monitoring" element={user && isAdmin ? <MonitoringPage /> : <Navigate to="/login" />} />
+            <Route path="/home" element={user ? <HomePage /> : <Navigate to="/login" />} />
 
           </Routes>
           <script src="./assets/vendor/preline/dist/preline.js"></script>

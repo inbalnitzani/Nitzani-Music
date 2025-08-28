@@ -35,10 +35,19 @@ const AdminPage: React.FC = () => {
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isEditSongModalOpen, setIsEditSongModalOpen] = useState(false);
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isEditSongModalOpen, setIsEditSongModalOpen] = useState(() => {
+    const saved = localStorage.getItem('isEditSongModalOpen');
+    return saved ? JSON.parse(saved) : false;
+  });
+  const [isExportModalOpen, setIsExportModalOpen] = useState(() => {
+    const saved = localStorage.getItem('isExportModalOpen');
+    return saved ? JSON.parse(saved) : false;
+  });
   const [totalSongs, setTotalSongs] = useState(0);
-  const [selectedSongForEdit, setSelectedSongForEdit] = useState<Song | null>(null);
+  const [selectedSongForEdit, setSelectedSongForEdit] = useState<Song | null>(() => {
+    const saved = localStorage.getItem('selectedSongForEdit');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [selectedSongs, setSelectedSongs] = useState<Song[]>(() => {
     const saved = localStorage.getItem('selectedSongs');
     return saved ? JSON.parse(saved) : [];
@@ -212,11 +221,31 @@ const AdminPage: React.FC = () => {
     localStorage.setItem('selectedSongs', JSON.stringify(selectedSongs));
   }, [selectedSongs]);
 
+  // Save modal states on change
+  useEffect(() => {
+    localStorage.setItem('isEditSongModalOpen', JSON.stringify(isEditSongModalOpen));
+  }, [isEditSongModalOpen]);
+
+  useEffect(() => {
+    localStorage.setItem('isExportModalOpen', JSON.stringify(isExportModalOpen));
+  }, [isExportModalOpen]);
+
+  useEffect(() => {
+    localStorage.setItem('selectedSongForEdit', JSON.stringify(selectedSongForEdit));
+  }, [selectedSongForEdit]);
+
   // On mount or when searchParams change, update filters and fetch
   useEffect(() => {
     const filters = getFiltersFromParams();
-    setCurrentFilters(filters);
-    fetchSongs(filters, 1, songsPerPage);
+    // Only update if filters actually changed
+    const filtersChanged = JSON.stringify(filters) !== JSON.stringify(currentFilters);
+    if (filtersChanged) {
+      setCurrentFilters(filters);
+      fetchSongs(filters, 1, songsPerPage);
+    } else if (songs.length === 0) {
+      // Only fetch if we don't have songs yet
+      fetchSongs(filters, 1, songsPerPage);
+    }
   }, [searchParams, songsPerPage]);
 
   const handleFiltersChange = (filters: SongFilters) => {
