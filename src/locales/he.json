@@ -182,7 +182,11 @@
         "search_and_select_artists": "חפש ובחר אמנים",
         "search_and_select_authors": "חפש ובחר מחברים",
         "search_and_select_genres": "חפש ובחר ז'אנרים",
-        "search_and_select_keywords": "חפש ובחר מילות מפתח"
+        "search_and_select_keywords": "חפש ובחר מילות מפתח",
+        "title_and_link": "כותרת וקישור",
+        "artist_authors_genres_keywords": "אמנים, מחברים, ז'אנרים, מילות מפתח",
+        "lyrics": "מילים",
+        "year_score_free": "שנה, ניקוד, נחלת הכלל"
     },
     "monitoring":{
         "monitoring":"מוניטור",

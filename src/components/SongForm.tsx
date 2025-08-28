@@ -6,8 +6,12 @@ import type { MultiValue } from 'react-select';
 import { useTranslation } from 'react-i18next';
 import Rating from '@mui/material/Rating';
 import Switch from '@mui/material/Switch';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; import Stack from '@mui/material/Stack';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 type SongFormProps = {
   onClose: () => void;
@@ -50,6 +54,8 @@ const SongForm: React.FC<SongFormProps> = ({
   const [selectedGenreOptions, setSelectedGenreOptions] = useState<ArtistOption[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expanded, setExpanded] = React.useState<string | false>(false);
+
 
   // Set selected artists for edit mode
   useEffect(() => {
@@ -298,113 +304,171 @@ const SongForm: React.FC<SongFormProps> = ({
     }
   };
 
+  const handleAccordionChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
+
   return (
     <div className="w-full max-w-full sm:max-w-3xl md:max-w-4xl mx-auto px-2 sm:px-0">
-      <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+      <form onSubmit={handleSubmit} className="">
         {error && (
           <div className="p-3 bg-red-50 text-red-500 rounded-md text-sm">
             {error}
           </div>
         )}
-
         {/* Title and Link */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">{t('song_form.title')}</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title || ''}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
-            />
-          </div>
-          <div>
-            <label htmlFor="link" className="block text-sm font-medium text-gray-700">{t('song_form.link')}</label>
-            <input
-              type="url"
-              id="link"
-              name="link"
-              value={formData.link || ''}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
-            />
-          </div>
-        </div>
+        <Accordion expanded={expanded === 'panel1'} onChange={handleAccordionChange('panel1')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1bh-content"
+            id="panel1bh-header"
+          >
+            <Typography component="span" sx={{ width: '33%', flexShrink: 0 }}>
+              {t('song_form.title_and_link')}
+            </Typography>
 
-        {/* Each select in its own row */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">{t('song_form.artists')}</label>
-                     <AsyncSelect
-             isMulti
-             loadOptions={loadArtistOptions}
-             value={selectedArtistOptions}
-             onChange={handleArtistsChange}
-             className="mt-1"
-             classNamePrefix="tagselect"
-             placeholder={t('song_form.search_and_select_artists')}
-             menuPosition="fixed"
-             styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
-             isClearable
-             isSearchable
-           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">{t('song_form.authors')}</label>
-          <AsyncSelect
-            isMulti
-            loadOptions={loadAuthorOptions}
-            value={selectedAuthorOptions}
-            onChange={opts => setSelectedAuthorOptions(dedupeOptions((opts as ArtistOption[]) || []))}
-            className="mt-1"
-            classNamePrefix="tagselect"
-            placeholder={t('song_form.search_and_select_authors')}
-            menuPosition="fixed"
-            styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">{t('song_form.genres')}</label>
-          <AsyncSelect
-            isMulti
-            loadOptions={loadGenreOptions}
-            value={selectedGenreOptions}
-            onChange={opts => setSelectedGenreOptions(dedupeOptions((opts as ArtistOption[]) || []))}
-            className="mt-1"
-            classNamePrefix="tagselect"
-            placeholder={t('song_form.search_and_select_genres')}
-            menuPosition="fixed"
-            styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">{t('song_form.keywords')}</label>
-          <AsyncSelect
-            isMulti
-            loadOptions={loadKeywordOptions}
-            value={selectedKeywordOptions}
-            onChange={opts => setSelectedKeywordOptions(dedupeOptions((opts as ArtistOption[]) || []))}
-            className="mt-1"
-            classNamePrefix="tagselect"
-            placeholder={t('song_form.search_and_select_keywords')}
-          />
-        </div>
+          </AccordionSummary>
+          <AccordionDetails>
+            <div className="grid grid-cols-1  gap-4 sm:gap-6">
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700">{t('song_form.title')}</label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title || ''}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
+                />
+              </div>
+              <div>
+                <label htmlFor="link" className="block text-sm font-medium text-gray-700">{t('song_form.link')}</label>
+                <input
+                  type="url"
+                  id="link"
+                  name="link"
+                  value={formData.link || ''}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
+                />
+              </div>
+            </div>
+          </AccordionDetails>
+        </Accordion>
+
+        {/* Artist, Authors, Genres, Keywords */}
+        <Accordion expanded={expanded === 'panel2'} onChange={handleAccordionChange('panel2')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel2bh-content"
+            id="panel2bh-header"
+          >
+            <Typography component="span" sx={{  flexShrink: 0 }}>
+              {t('song_form.artist_authors_genres_keywords')}
+            </Typography>
+
+          </AccordionSummary>
+          <AccordionDetails>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">{t('song_form.artists')}</label>
+              <AsyncSelect
+                isMulti
+                loadOptions={loadArtistOptions}
+                value={selectedArtistOptions}
+                onChange={handleArtistsChange}
+                className="mt-1"
+                classNamePrefix="tagselect"
+                placeholder={t('song_form.search_and_select_artists')}
+                menuPosition="fixed"
+                styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
+                isClearable
+                isSearchable
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">{t('song_form.authors')}</label>
+              <AsyncSelect
+                isMulti
+                loadOptions={loadAuthorOptions}
+                value={selectedAuthorOptions}
+                onChange={opts => setSelectedAuthorOptions(dedupeOptions((opts as ArtistOption[]) || []))}
+                className="mt-1"
+                classNamePrefix="tagselect"
+                placeholder={t('song_form.search_and_select_authors')}
+                menuPosition="fixed"
+                styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">{t('song_form.genres')}</label>
+              <AsyncSelect
+                isMulti
+                loadOptions={loadGenreOptions}
+                value={selectedGenreOptions}
+                onChange={opts => setSelectedGenreOptions(dedupeOptions((opts as ArtistOption[]) || []))}
+                className="mt-1"
+                classNamePrefix="tagselect"
+                placeholder={t('song_form.search_and_select_genres')}
+                menuPosition="fixed"
+                styles={{ menuPortal: (base) => ({ ...base, zIndex: 60 }) }}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">{t('song_form.keywords')}</label>
+              <AsyncSelect
+                isMulti
+                loadOptions={loadKeywordOptions}
+                value={selectedKeywordOptions}
+                onChange={opts => setSelectedKeywordOptions(dedupeOptions((opts as ArtistOption[]) || []))}
+                className="mt-1"
+                classNamePrefix="tagselect"
+                placeholder={t('song_form.search_and_select_keywords')}
+              />
+            </div>
+
+          </AccordionDetails>
+        </Accordion>
 
         {/* Lyrics */}
-        <div>
-          <label htmlFor="lyrics" className="block text-sm font-medium text-gray-700">{t('song_form.lyrics')}</label>
-          <textarea
-            id="lyrics"
-            name="lyrics"
-            value={formData.lyrics || ''}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
-          />
-        </div>
+        <Accordion expanded={expanded === 'panel3'} onChange={handleAccordionChange('panel3')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel3bh-content"
+            id="panel3bh-header"
+          >
+            <Typography component="span" sx={{ width: '33%', flexShrink: 0 }}>
+                {t('song_form.lyrics')}
+            </Typography>
 
-        {/* Year, Score, Free */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          </AccordionSummary>
+          <AccordionDetails>
+
+            <div>
+              <textarea
+                id="lyrics"
+                name="lyrics"
+                value={formData.lyrics || ''}
+                onChange={handleChange}
+                className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
+              />
+            </div>
+          </AccordionDetails>
+        </Accordion>
+         
+         {/* Year, Score, Free */}
+        <Accordion expanded={expanded === 'panel4'} onChange={handleAccordionChange('panel4')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel4bh-content"
+            id="panel4bh-header"
+          >
+            <Typography component="span" sx={{ width: '33%', flexShrink: 0 }}>
+                  {t('song_form.year_score_free')}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label htmlFor="year" className="block text-sm font-medium text-gray-700">{t('song_form.year')}</label>
             <input
@@ -431,13 +495,9 @@ const SongForm: React.FC<SongFormProps> = ({
             />
           </div>
           <div className="flex items-center mt-6">
-            {/* <Checkbox id="is_free" name="is_free"
-              checked={formData.is_free || false}
-              onChange={e => setFormData({ ...formData, is_free: e.target.checked })}
-            ></Checkbox> */}
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
               <Typography>{t('song_form.not_free')}</Typography>
-              <Switch inputProps={{ 'aria-label': 'ant design' }}  id="is_free" name="is_free"
+              <Switch inputProps={{ 'aria-label': 'ant design' }} id="is_free" name="is_free"
                 checked={!!formData.is_free}
                 onChange={(_, checked) => setFormData({ ...formData, is_free: checked })}
               />
@@ -446,6 +506,14 @@ const SongForm: React.FC<SongFormProps> = ({
           </div>
         </div>
 
+          </AccordionDetails>
+        </Accordion>
+
+
+
+
+
+      
         {/* Actions */}
         <div className="flex flex-row-reverse justify-between items-center gap-4 pt-6">
           <div className="flex gap-2">
@@ -472,7 +540,7 @@ const SongForm: React.FC<SongFormProps> = ({
               className="btn btn-danger"
               disabled={isLoading}
             >
-              {isLoading ? t('song_form.deleting') : t('song_form.delete')}
+              {isLoading ? t('song_form.deleting') : <DeleteIcon />}
             </button>
           )}
         </div>

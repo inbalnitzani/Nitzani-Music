@@ -179,7 +179,11 @@
         "search_and_select_artists": "Search and select artists",
         "search_and_select_authors": "Search and select authors",
         "search_and_select_genres": "Search and select genres",
-        "search_and_select_keywords": "Search and select keywords"
+        "search_and_select_keywords": "Search and select keywords",
+        "title_and_link": "Title and Link",
+        "artist_authors_genres_keywords": "Artist, Authors, Genres, Keywords",
+        "lyrics": "Lyrics",
+        "year_score_free": "Year, Score, Free"
     },
     "monitoring": {
         "monitoring": "Monitoring",
