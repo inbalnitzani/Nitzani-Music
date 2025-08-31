@@ -118,8 +118,6 @@ export default function TagSection({
                     onDelete={onDeleteExisting}
                 />
 
-                <div ref={sentinelRef} />
-
                 {loading && (
                     <div className="absolute bottom-2 left-0 w-full flex justify-center">
                         <span className="text-xs text-gray-400">{texts.loadingText}</span>
@@ -130,6 +128,8 @@ export default function TagSection({
                         <span className="text-xs text-gray-400">{texts.noMoreText}</span>
                     </div>
                 )}
+
+                <div ref={sentinelRef} className="h-4" />
             </div>
         </div>
     );

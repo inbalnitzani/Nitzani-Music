@@ -4,6 +4,11 @@ import TagSection from './tagSection.tsx';
 // import jsPDF from 'jspdf';
 import { useInView } from 'react-intersection-observer';
 import { useTranslation } from 'react-i18next';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 interface ManageSiteProps {
   onSave?: () => void; // Callback to refresh data in parent
 }
@@ -83,6 +88,7 @@ function useInfiniteTags(tableName: string, search: string) {
 
 const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
   const { t } = useTranslation();
+  const [expanded, setExpanded] = React.useState<string | false>('panel1');
   // Tag states
   const [authors, setAuthors] = useState<Tag[]>([]);
   const [artists, setArtists] = useState<Tag[]>([]);
@@ -334,6 +340,11 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
   // Helper: get deleted names for grey-out
   const deletedNames = (tags: { id: string; name: string }[], deletedArr: string[]) => tags.filter((a) => deletedArr.includes(a.id)).map((a) => a.name);
 
+  const handleAccordionChange =
+    (panel: string) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
+
   // Add new tag
   const addNewTag = (type: 'author' | 'artist' | 'keyword' | 'genre') => {
     switch (type) {
@@ -438,132 +449,182 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
           {isSaving ? t('manage_site.saving') : t('manage_site.save')}
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="">
         {/* Authors */}
-        <TagSection
-          typeKey="author"
-          searchValue={searchAuthor}
-          onSearchChange={setSearchAuthor}
-          newInput={newAuthorInput}
-          onNewInputChange={setNewAuthorInput}
-          onAddNew={(type) => addNewTag(type as "author")}
-          newItems={newAuthors}
-          onDeleteNewItem={(deletedItem) =>
-            setNewAuthors((prev) => prev.filter((item) => item !== deletedItem))
-          }
-          items={authorsTags} // [{id,name}]
-          deletedNames={deletedNames(authorsTags, deletedAuthors.map((a) => a.id))}
-          onDeleteExisting={(name) => {
-            const tag = authorsTags.find((a) => a.name === name);
-            if (tag) setDeletedAuthors((prev) => [...prev, tag]);
-          }}
-          sentinelRef={authorsRef}
-          loading={loadingAuthors}
-          hasMore={hasMoreAuthors}
-          texts={{
-            searchPlaceholder: t("manage_site.search_authors"),
-            addPlaceholder: t("manage_site.add_new_author"),
-            newItemsTitle: t("manage_site.new_authors_to_add"),
-            loadingText: t("manage_site.loading"),
-            noMoreText: t("manage_site.no_more_authors"),
-            addButtonLabel: "Add",
-          }}
-        />
+        <Accordion expanded={expanded === 'panel1'} onChange={handleAccordionChange('panel1')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1bh-content"
+            id="panel1bh-header"
+          >
+            <Typography component="span" sx={{ width: '33%', flexShrink: 0 }}>
+              {t('manage_site.authors')}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TagSection
+              typeKey="author"
+              searchValue={searchAuthor}
+              onSearchChange={setSearchAuthor}
+              newInput={newAuthorInput}
+              onNewInputChange={setNewAuthorInput}
+              onAddNew={(type) => addNewTag(type as "author")}
+              newItems={newAuthors}
+              onDeleteNewItem={(deletedItem) =>
+                setNewAuthors((prev) => prev.filter((item) => item !== deletedItem))
+              }
+              items={authorsTags} // [{id,name}]
+              deletedNames={deletedNames(authorsTags, deletedAuthors.map((a) => a.id))}
+              onDeleteExisting={(name) => {
+                const tag = authorsTags.find((a) => a.name === name);
+                if (tag) setDeletedAuthors((prev) => [...prev, tag]);
+              }}
+              sentinelRef={authorsRef}
+              loading={loadingAuthors}
+              hasMore={hasMoreAuthors}
+              texts={{
+                searchPlaceholder: t("manage_site.search_authors"),
+                addPlaceholder: t("manage_site.add_new_author"),
+                newItemsTitle: t("manage_site.new_authors_to_add"),
+                loadingText: t("manage_site.loading"),
+                noMoreText: t("manage_site.no_more_authors"),
+                addButtonLabel: "Add",
+              }}
+            />
+          </AccordionDetails>
+        </Accordion>
 
         {/* Artists */}
-        <TagSection
-          typeKey="artist"
-          searchValue={searchArtist}
-          onSearchChange={setSearchArtist}
-          newInput={newArtistInput}
-          onNewInputChange={setNewArtistInput}
-          onAddNew={(type) => addNewTag(type as "artist")}
-          newItems={newArtists}
-          onDeleteNewItem={(deletedItem) =>
-            setNewArtists((prev) => prev.filter((item) => item !== deletedItem))
-          }
-          items={artistsTags} // [{id,name}]
-          deletedNames={deletedNames(artistsTags, deletedArtists.map((a) => a.id))}
-          onDeleteExisting={(name) => {
-            const tag = artistsTags.find((a) => a.name === name);
-            if (tag) setDeletedArtists((prev) => [...prev, tag]);
-          }}
-          sentinelRef={artistsRef}
-          loading={loadingArtists}
-          hasMore={hasMoreArtists}
-          texts={{
-            searchPlaceholder: t("manage_site.search_artists"),
-            addPlaceholder: t("manage_site.add_new_artist"),
-            newItemsTitle: t("manage_site.new_artists_to_add"),
-            loadingText: t("manage_site.loading"),
-            noMoreText: t("manage_site.no_more_artists"),
-            addButtonLabel: "Add",
-          }}
-        />
+        <Accordion expanded={expanded === 'panel2'} onChange={handleAccordionChange('panel2')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel2bh-content"
+            id="panel2bh-header"
+          >
+            <Typography component="span" sx={{ width: '33%', flexShrink: 0 }}>
+              {t('manage_site.artists')}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TagSection
+              typeKey="artist"
+              searchValue={searchArtist}
+              onSearchChange={setSearchArtist}
+              newInput={newArtistInput}
+              onNewInputChange={setNewArtistInput}
+              onAddNew={(type) => addNewTag(type as "artist")}
+              newItems={newArtists}
+              onDeleteNewItem={(deletedItem) =>
+                setNewArtists((prev) => prev.filter((item) => item !== deletedItem))
+              }
+              items={artistsTags} // [{id,name}]
+              deletedNames={deletedNames(artistsTags, deletedArtists.map((a) => a.id))}
+              onDeleteExisting={(name) => {
+                const tag = artistsTags.find((a) => a.name === name);
+                if (tag) setDeletedArtists((prev) => [...prev, tag]);
+              }}
+              sentinelRef={artistsRef}
+              loading={loadingArtists}
+              hasMore={hasMoreArtists}
+              texts={{
+                searchPlaceholder: t("manage_site.search_artists"),
+                addPlaceholder: t("manage_site.add_new_artist"),
+                newItemsTitle: t("manage_site.new_artists_to_add"),
+                loadingText: t("manage_site.loading"),
+                noMoreText: t("manage_site.no_more_artists"),
+                addButtonLabel: "Add",
+              }}
+            />
+          </AccordionDetails>
+        </Accordion>
 
         {/* Keywords */}
-        <TagSection
-          typeKey="keyword"
-          searchValue={searchKeyword}
-          onSearchChange={setSearchKeyword}
-          newInput={newKeywordInput}
-          onNewInputChange={setNewKeywordInput}
-          onAddNew={(type) => addNewTag(type as "keyword")}
-          newItems={newKeywords}
-          onDeleteNewItem={(deletedItem) =>
-            setNewKeywords((prev) => prev.filter((item) => item !== deletedItem))
-          }
-          items={keywordsTags} // [{id,name}]
-          deletedNames={deletedNames(keywordsTags, deletedKeywords.map((a) => a.id))}
-          onDeleteExisting={(name) => {
-            const tag = keywordsTags.find((a) => a.name === name);
-            if (tag) setDeletedKeywords((prev) => [...prev, tag]);
-          }}
-          sentinelRef={keywordsRef}
-          loading={loadingKeywords}
-          hasMore={hasMoreKeywords}
-          texts={{
-            searchPlaceholder: t("manage_site.search_keywords"),
-            addPlaceholder: t("manage_site.add_new_keyword"),
-            newItemsTitle: t("manage_site.new_keywords_to_add"),
-            loadingText: t("manage_site.loading"),
-            noMoreText: t("manage_site.no_more_keywords"),
-            addButtonLabel: "Add",
-          }}
-        />
-   
-        {/* Genres */}
+        <Accordion expanded={expanded === 'panel3'} onChange={handleAccordionChange('panel3')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel3bh-content"
+            id="panel3bh-header"
+          >
+            <Typography component="span" sx={{ width: '33%', flexShrink: 0 }}>
+              {t('manage_site.keywords')}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TagSection
+              typeKey="keyword"
+              searchValue={searchKeyword}
+              onSearchChange={setSearchKeyword}
+              newInput={newKeywordInput}
+              onNewInputChange={setNewKeywordInput}
+              onAddNew={(type) => addNewTag(type as "keyword")}
+              newItems={newKeywords}
+              onDeleteNewItem={(deletedItem) =>
+                setNewKeywords((prev) => prev.filter((item) => item !== deletedItem))
+              }
+              items={keywordsTags} // [{id,name}]
+              deletedNames={deletedNames(keywordsTags, deletedKeywords.map((a) => a.id))}
+              onDeleteExisting={(name) => {
+                const tag = keywordsTags.find((a) => a.name === name);
+                if (tag) setDeletedKeywords((prev) => [...prev, tag]);
+              }}
+              sentinelRef={keywordsRef}
+              loading={loadingKeywords}
+              hasMore={hasMoreKeywords}
+              texts={{
+                searchPlaceholder: t("manage_site.search_keywords"),
+                addPlaceholder: t("manage_site.add_new_keyword"),
+                newItemsTitle: t("manage_site.new_keywords_to_add"),
+                loadingText: t("manage_site.loading"),
+                noMoreText: t("manage_site.no_more_keywords"),
+                addButtonLabel: "Add",
+              }}
+            />
+          </AccordionDetails>
+        </Accordion>
 
-        <TagSection
-          typeKey="artist"
-          searchValue={searchGenre}
-          onSearchChange={setSearchGenre}
-          newInput={newGenreInput}
-          onNewInputChange={setNewGenreInput}
-          onAddNew={(type) => addNewTag(type as "genre")}
-          newItems={newGenres}
-          onDeleteNewItem={(deletedItem) =>
-            setNewGenres((prev) => prev.filter((item) => item !== deletedItem))
-          }
-          items={genresTags} // [{id,name}]
-          deletedNames={deletedNames(genresTags, deletedGenres.map((a) => a.id))}
-          onDeleteExisting={(name) => {
-            const tag = genresTags.find((a) => a.name === name);
-            if (tag) setDeletedGenres((prev) => [...prev, tag]);
-          }}
-          sentinelRef={genresRef}
-          loading={loadingGenres}
-          hasMore={hasMoreGenres}
-          texts={{
-            searchPlaceholder: t("manage_site.genres"),
-            addPlaceholder: t("manage_site.add_new_genre"),
-            newItemsTitle: t("manage_site.new_genres_to_add"),
-            loadingText: t("manage_site.loading"),
-            noMoreText: t("manage_site.no_more_genres"),
-            addButtonLabel: "Add",
-          }}
-        />
-  
+        {/* Genres */}
+        <Accordion expanded={expanded === 'panel4'} onChange={handleAccordionChange('panel4')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel4bh-content"
+            id="panel4bh-header"
+          >
+            <Typography component="span" sx={{ width: '33%', flexShrink: 0 }}>
+              {t('manage_site.genres')}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TagSection
+              typeKey="genre"
+              searchValue={searchGenre}
+              onSearchChange={setSearchGenre}
+              newInput={newGenreInput}
+              onNewInputChange={setNewGenreInput}
+              onAddNew={(type) => addNewTag(type as "genre")}
+              newItems={newGenres}
+              onDeleteNewItem={(deletedItem) =>
+                setNewGenres((prev) => prev.filter((item) => item !== deletedItem))
+              }
+              items={genresTags} // [{id,name}]
+              deletedNames={deletedNames(genresTags, deletedGenres.map((a) => a.id))}
+              onDeleteExisting={(name) => {
+                const tag = genresTags.find((a) => a.name === name);
+                if (tag) setDeletedGenres((prev) => [...prev, tag]);
+              }}
+              sentinelRef={genresRef}
+              loading={loadingGenres}
+              hasMore={hasMoreGenres}
+              texts={{
+                searchPlaceholder: t("manage_site.genres"),
+                addPlaceholder: t("manage_site.add_new_genre"),
+                newItemsTitle: t("manage_site.new_genres_to_add"),
+                loadingText: t("manage_site.loading"),
+                noMoreText: t("manage_site.no_more_genres"),
+                addButtonLabel: "Add",
+              }}
+            />
+          </AccordionDetails>
+        </Accordion>
       </div>
     </div>
   );
