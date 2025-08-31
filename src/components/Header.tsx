@@ -107,7 +107,7 @@ export default function Header() {
           </button>
         </div>
 
-        <nav className="flex flex-col gap-1 p-4 text-right">
+                 <nav className="mobile-nav flex flex-col gap-1 p-4 text-right">
           <Link to="/" className="nav-link py-2" onClick={() => setOpen(false)}>
             {t('header.home')}
           </Link>

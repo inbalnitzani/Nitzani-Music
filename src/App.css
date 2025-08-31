@@ -152,6 +152,30 @@
   margin-right: 1rem;
 }
 
+/* RTL for select elements */
+.rtl .select-base {
+  padding-right: 0.75rem !important;
+  padding-left: 2.5rem !important;
+  background-position: left 0.5rem center;
+}
+
+/* RTL for modal close button */
+.rtl .modal-close-btn {
+  right: auto !important;
+  left: 0.5rem !important;
+}
+
+/* RTL for modal content */
+.rtl .modal-content {
+  padding-right: 0 !important;
+  padding-left: 2.5rem !important;
+}
+
+/* Mobile navigation - always vertical and LTR regardless of RTL */
+.mobile-nav {
+  flex-direction: column !important;
+}
+
 /* RTL for icons and buttons */
 .rtl .icon-left {
   margin-left: unset;
@@ -214,6 +238,12 @@
   @apply border border-[var(--color-border)] rounded px-3 py-2 text-sm 
          focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-[var(--color-primary)] 
          bg-white text-[var(--color-text)] transition duration-150 ease-in-out;
+  padding-right: 2.5rem !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  appearance: none;
 }
 @layer components {
   .checkbox-base {

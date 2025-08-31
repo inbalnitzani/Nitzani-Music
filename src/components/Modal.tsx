@@ -25,21 +25,22 @@ export default function Modal({ isOpen, onClose, children, title, align = 'cente
                 p-3 md:p-4 lg:p-6
                 sm:my-0
                sm:rounded-2xl
-               /* רוחב רספונסיבי שמרני במסכים רגילים */
             sm:max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl
-               /* גלילה: רק במובייל פנימה, ב-sm+ אין גלילה פנימית */
                 max-h-[90vh] lg:max-h-[95vh] xl:max-h-[97vh] overflow-y-auto
 `}
                 onClick={e => e.stopPropagation()} // Prevent close when clicking inside modal
             >
                 <button
-                    className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-2xl"
+                    className="modal-close-btn absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-2xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors z-10"
                     onClick={onClose}
+                    aria-label="Close modal"
                 >
                     &times;
                 </button>
-                {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
-                {children}
+                <div className="modal-content pr-10">
+                    {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
+                    {children}
+                </div>
             </div>
         </div>
     );
