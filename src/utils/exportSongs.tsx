@@ -98,8 +98,7 @@ const pdfStyles = StyleSheet.create({
   table: { display: "flex", width: "auto", marginBottom: 10 },
   tableRow: { flexDirection: "row" },
   tableCol: { flex: 1, borderStyle: "solid", borderWidth: 1, borderColor: "#000", padding: 4 },
-  tableCell: { fontSize: 10, textAlign: "right" },
-  fontFamily: "Rubik",
+  tableCell: { fontSize: 10, textAlign: "right", fontFamily: "Rubik" },
 });
 
 const headerCell = {
@@ -185,10 +184,10 @@ async function exportExcel(
   if (logoDataUrl) {
     const base64 = logoDataUrl.split(",")[1] || "";
     const imageId = workbook.addImage({ base64, extension: "png" });
-    worksheet.addImage(imageId, {
+    (worksheet as any).addImage(imageId, {
       tl: { col: 0, row: 0 },
-      br: { col: 3, row: 4 }, 
-      ext: { width: 180, height: 60 },
+      br: { col: 3, row: 4 },
+      ext: { width: 180, height: 60 } as any
     });
 
   }
@@ -211,7 +210,7 @@ async function exportExcel(
   }
 
   // Create header row with 3 columns per field for better visibility
-  const headerRow = [];
+  const headerRow: string[] = [];
   fields.forEach((f) => {
     headerRow.push(f.label, '', ''); // 3 columns per field
   });
@@ -219,7 +218,7 @@ async function exportExcel(
 
   // Create data rows with 3 columns per field
   rows.forEach((row) => {
-    const dataRow = [];
+    const dataRow: any[] = [];
     fields.forEach((f) => {
       if (f.key === "link" && row[f.key]) {
         // For links, only put the hyperlink in the first column
