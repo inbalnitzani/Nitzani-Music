@@ -8,8 +8,7 @@ type Props = {
   totalItems?: number;
   pageSize: number;
   pageSizeOptions?: number[];
-  onPrev: () => void;
-  onNext: () => void;
+  onPageChange: (page: number) => void;
   onPageSizeChange: (size: number) => void;
 };
 
@@ -19,8 +18,7 @@ export default function Pagination({
   totalItems,
   pageSize,
   pageSizeOptions = [5, 10, 20, 50, 100],
-  onPrev,
-  onNext,
+  onPageChange,
   onPageSizeChange,
 }: Props) {
   const { t } = useTranslation();
@@ -33,19 +31,15 @@ export default function Pagination({
   const count = typeof totalItems === 'number' ? totalItems : totalPages * pageSize;
 
   const handleChangePage = (_event: unknown, newZeroBasedPage: number) => {
-    const delta = newZeroBasedPage - zeroBasedPage;
-    if (delta === 0) return;
-    // Call the provided next/prev handlers the required number of times
-    const steps = Math.abs(delta);
-    const fn = delta > 0 ? onNext : onPrev;
-    for (let i = 0; i < steps; i += 1) fn();
+    const newPage = newZeroBasedPage + 1; // Convert to 1-based
+    if (newPage === currentPage) return;
+    onPageChange(newPage);
   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const value = (event.target as HTMLInputElement).value;
-    const newSize = Number(value);
+    const newSize = Number(event.target.value);
     onPageSizeChange(newSize);
   };
 

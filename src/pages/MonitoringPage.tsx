@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseClient.ts';
 import { FileText } from 'lucide-react';
 import type { Log } from '../types/log.ts';
-import { exportUsageReportPDF } from "../utils/exportUsageReportPDF";
+import { exportUsageReportPDF } from "../utils/exportUsageReportPDF.tsx";
 import Pagination from '../components/Pagination.tsx';
 
 export default function MonitoringPage() {
@@ -166,8 +166,7 @@ export default function MonitoringPage() {
                     totalPages={totalPages}
                     totalItems={totalLogs}
                     pageSize={logsPerPage}
-                    onPrev={() => handlePageChange(currentPage - 1)}
-                    onNext={() => handlePageChange(currentPage + 1)}
+                    onPageChange={handlePageChange}
                     onPageSizeChange={(newSize) => {
                         setLogsPerPage(newSize);
                         setCurrentPage(1);

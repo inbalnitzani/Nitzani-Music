@@ -73,6 +73,8 @@ const AdminPage: React.FC = () => {
       // Calculate range for pagination
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
+      
+      console.log(`Fetching page ${page}: range ${from}-${to}, pageSize: ${pageSize}`);
 
       // Dynamically build the select string based on active filters
       const artistJoin = (filters.artists?.length)
@@ -159,7 +161,8 @@ const AdminPage: React.FC = () => {
 
       const { data: songsData, error: songsError, count: totalSongs } = await query
         .range(from, to)
-        .order('score', { ascending: false });
+        .order('score', { ascending: false })
+        .order('id', { ascending: true }); // Secondary ordering for consistency
 
       if (songsError) {
         console.error('Error fetching songs:', songsError);
@@ -167,7 +170,34 @@ const AdminPage: React.FC = () => {
 
       // Map for display, and also keep join-table IDs for editing
       if (Array.isArray(songsData) && songsData.length > 0) {
-        const songsWithDetails = (songsData as unknown as RawSongFromSupabase[]).map((song: RawSongFromSupabase) => ({
+        // First, deduplicate songs by ID (joins can create duplicates)
+        const uniqueSongs = new Map();
+        (songsData as unknown as RawSongFromSupabase[]).forEach((song: RawSongFromSupabase) => {
+          if (!uniqueSongs.has(song.id)) {
+            uniqueSongs.set(song.id, song);
+          } else {
+            // Merge join data for songs that appear multiple times
+            const existing = uniqueSongs.get(song.id);
+            // Merge artists
+            if (song.song_artists) {
+              existing.song_artists = [...(existing.song_artists || []), ...song.song_artists];
+            }
+            // Merge authors
+            if (song.song_authors) {
+              existing.song_authors = [...(existing.song_authors || []), ...song.song_authors];
+            }
+            // Merge keywords
+            if (song.song_keywords) {
+              existing.song_keywords = [...(existing.song_keywords || []), ...song.song_keywords];
+            }
+            // Merge genres
+            if (song.song_genres) {
+              existing.song_genres = [...(existing.song_genres || []), ...song.song_genres];
+            }
+          }
+        });
+
+        const songsWithDetails = Array.from(uniqueSongs.values()).map((song: RawSongFromSupabase) => ({
           id: song.id,
           title: song.title,
           lyrics: song.lyrics,
@@ -176,31 +206,43 @@ const AdminPage: React.FC = () => {
           is_free: parseBoolean(song.is_free as unknown),
           score: Number(song.score),
 
-          artists: (song.song_artists || [])
+          artists: [...new Set((song.song_artists || [])
             .map((sa: { artists?: { name?: string } | null }) => sa.artists?.name)
-            .filter((name: string | undefined): name is string => Boolean(name)),
-          authors: (song.song_authors || [])
+            .filter((name: string | undefined): name is string => Boolean(name)))],
+          authors: [...new Set((song.song_authors || [])
             .map((sa: { authors?: { name?: string } | null }) => sa.authors?.name)
-            .filter((name: string | undefined): name is string => Boolean(name)),
-          keywords: (song.song_keywords || [])
+            .filter((name: string | undefined): name is string => Boolean(name)))],
+          keywords: [...new Set((song.song_keywords || [])
             .map((sk: { keywords?: { name?: string } | null }) => sk.keywords?.name)
-            .filter((name: string | undefined): name is string => Boolean(name)),
-          genres: (song.song_genres || [])
+            .filter((name: string | undefined): name is string => Boolean(name)))],
+          genres: [...new Set((song.song_genres || [])
             .map((sg: { genres?: { name?: string } | null }) => sg.genres?.name)
-            .filter((name: string | undefined): name is string => Boolean(name)),
+            .filter((name: string | undefined): name is string => Boolean(name)))],
 
-          // Provide IDs for SongForm preload
-          song_artists: ((song.song_artists as unknown as { artist_id: string }[]) || []).map((sa) => ({ artist_id: sa.artist_id })),
-          song_authors: ((song.song_authors as unknown as { author_id: string }[]) || []).map((sa) => ({ author_id: sa.author_id })),
-          song_keywords: ((song.song_keywords as unknown as { keyword_id: string }[]) || []).map((sk) => ({ keyword_id: sk.keyword_id })),
-          song_genres: ((song.song_genres as unknown as { genre_id: string }[]) || []).map((sg) => ({ genre_id: sg.genre_id })),
+          // Provide IDs for SongForm preload (deduplicated)
+          song_artists: [...new Map(((song.song_artists as unknown as { artist_id: string }[]) || [])
+            .map((sa) => ({ artist_id: sa.artist_id }))
+            .map(item => [item.artist_id, item])).values()],
+          song_authors: [...new Map(((song.song_authors as unknown as { author_id: string }[]) || [])
+            .map((sa) => ({ author_id: sa.author_id }))
+            .map(item => [item.author_id, item])).values()],
+          song_keywords: [...new Map(((song.song_keywords as unknown as { keyword_id: string }[]) || [])
+            .map((sk) => ({ keyword_id: sk.keyword_id }))
+            .map(item => [item.keyword_id, item])).values()],
+          song_genres: [...new Map(((song.song_genres as unknown as { genre_id: string }[]) || [])
+            .map((sg) => ({ genre_id: sg.genre_id }))
+            .map(item => [item.genre_id, item])).values()],
         }));
 
         setSongs(songsWithDetails as unknown as Song[]);
+        console.log(`Page ${page} results (${songsWithDetails.length} unique songs):`, songsWithDetails.map(s => ({ id: s.id, title: s.title, score: s.score })));
+        console.log(`Original data had ${songsData.length} rows, deduplicated to ${songsWithDetails.length} songs`);
       } else {
         setSongs([]);
+        console.log(`Page ${page} results: No songs found`);
       }
       setTotalSongs(totalSongs || 0);
+      console.log(`Total songs: ${totalSongs}`);
     } catch (err) {
       console.error('Error fetching songs:', err);
     } finally {
@@ -264,8 +306,13 @@ const AdminPage: React.FC = () => {
 
   // handle pagination
   const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages) setCurrentPage(newPage);
-    fetchSongs(currentFilters, newPage, songsPerPage);
+    console.log(`Page change requested: ${currentPage} -> ${newPage}, totalPages: ${totalPages}`);
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      fetchSongs(currentFilters, newPage, songsPerPage);
+    } else {
+      console.log(`Invalid page change: ${newPage} (must be between 1 and ${totalPages})`);
+    }
   };
 
   // handle close modal
@@ -459,8 +506,7 @@ const AdminPage: React.FC = () => {
         totalPages={totalPages}
         totalItems={totalSongs}
         pageSize={songsPerPage}
-        onPrev={() => handlePageChange(currentPage - 1)}
-        onNext={() => handlePageChange(currentPage + 1)}
+        onPageChange={handlePageChange}
         onPageSizeChange={(newSize: number) => {
           setSongsPerPage(newSize);
           setCurrentPage(1);
