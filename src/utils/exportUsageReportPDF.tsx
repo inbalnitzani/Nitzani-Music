@@ -13,8 +13,8 @@ import { saveAs } from "file-saver";
 import appLogo from "../assets/logo.png";
 
 Font.register({
-  family: "Noto Sans Hebrew",
-  src: "/fonts/NotoSansHebrew-VariableFont_wdth,wght.ttf",
+  family: "Rubik",
+  src: "/fonts/Rubik-VariableFont_wght.ttf",
 });
 
 const styles = StyleSheet.create({
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     padding: 20,
     fontSize: 12,
     direction: "rtl",
-    fontFamily: "Noto Sans Hebrew",
+    fontFamily: "Rubik",
   },
   logo: {
     width: 100,
@@ -44,7 +44,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
     textAlign: "center",
-    color: "#1e293b",
+    color: "#000000",
+    fontFamily: "Rubik",
   },
   table: {
     display: "flex",
@@ -64,13 +65,17 @@ const styles = StyleSheet.create({
   tableCell: {
     fontSize: 10,
     textAlign: "right",
+    color: "#000000",
+    fontWeight: "bold",
+    fontFamily: "Rubik",
   },
   headerCell: {
     fontSize: 12,
     fontWeight: "bold",
-    color: "#1e293b",
+    color: "#000000",
     textAlign: "center",
     padding: 6,
+    fontFamily: "Rubik",
   },
 });
 

@@ -64,27 +64,27 @@ function dataURLToUint8Array(dataURL: string): Uint8Array {
   return out;
 }
 
-// ---------------------- Font (כמו שהיה אצלך) ----------------------
+// ---------------------- Font ----------------------
 let fontRegistered = false;
 function ensureHebrewFont() {
   if (fontRegistered) return;
   try {
     Font.register({
-      family: "Noto Sans Hebrew",
-      src: "/fonts/NotoSansHebrew-VariableFont_wdth,wght.ttf",
+      family: "Rubik",
+      src: "/fonts/Rubik-VariableFont_wght.ttf",
     });
     fontRegistered = true;
   } catch {}
 }
 
-// ---------------------- Styles (הוספתי header+logo ל-PDF) ----------------------
+// ---------------------- Styles ----------------------
 const pdfStyles = StyleSheet.create({
   page: {
     flexDirection: "column",
     padding: 20,
     fontSize: 12,
     direction: "rtl",
-    fontFamily: "Noto Sans Hebrew",
+    fontFamily: "Rubik",
   },
   header: {
     flexDirection: "row",
@@ -99,14 +99,16 @@ const pdfStyles = StyleSheet.create({
   tableRow: { flexDirection: "row" },
   tableCol: { flex: 1, borderStyle: "solid", borderWidth: 1, borderColor: "#000", padding: 4 },
   tableCell: { fontSize: 10, textAlign: "right" },
+  fontFamily: "Rubik",
 });
 
 const headerCell = {
   fontSize: 12,
   fontWeight: "bold",
-  color: "#1e293b",
+  color: "#000000",
   textAlign: "center",
   padding: 6,
+  fontFamily: "Rubik",
 } as const;
 
 // ---------------------- PDF ----------------------
@@ -179,40 +181,73 @@ async function exportExcel(
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");
 
-  // לוגו בראש הגליון
   const logoDataUrl = await getLogoDataUrl();
   if (logoDataUrl) {
     const base64 = logoDataUrl.split(",")[1] || "";
     const imageId = workbook.addImage({ base64, extension: "png" });
     worksheet.addImage(imageId, {
       tl: { col: 0, row: 0 },
+      br: { col: 3, row: 4 }, 
       ext: { width: 180, height: 60 },
     });
-    worksheet.addRow([]); // מרווח אחרי לוגו
+
   }
 
   if (note?.trim()) {
-    worksheet.addRow([note]);
-    worksheet.mergeCells(worksheet.lastRow!.number, 1, worksheet.lastRow!.number, fields.length);
-    worksheet.getCell(worksheet.lastRow!.number, 1).alignment = {
+    // Create 10 rows for the disclaimer
+    for (let i = 0; i < 10; i++) {
+      worksheet.addRow([]);
+    }
+    // Merge 10x10 cells for the disclaimer
+    const startRow = worksheet.lastRow!.number - 9; // Start from the first of the 10 rows
+    worksheet.mergeCells(startRow, 1, startRow + 9, 10); // 10 rows x 10 columns
+    worksheet.getCell(startRow, 1).value = note;
+    worksheet.getCell(startRow, 1).alignment = {
       horizontal: "right",
       vertical: "middle",
       wrapText: true,
     };
-    worksheet.addRow([]);
+    worksheet.addRow([]); // Add spacing after disclaimer
   }
 
-  worksheet.addRow(fields.map((f) => f.label));
-
-  rows.forEach((row) => {
-    worksheet.addRow(
-      fields.map((f) =>
-        f.key === "link" && row[f.key]
-          ? { text: "קישור", hyperlink: String(row[f.key]) }
-          : (row[f.key] as any)
-      )
-    );
+  // Create header row with 3 columns per field for better visibility
+  const headerRow = [];
+  fields.forEach((f) => {
+    headerRow.push(f.label, '', ''); // 3 columns per field
   });
+  worksheet.addRow(headerRow);
+
+  // Create data rows with 3 columns per field
+  rows.forEach((row) => {
+    const dataRow = [];
+    fields.forEach((f) => {
+      if (f.key === "link" && row[f.key]) {
+        // For links, only put the hyperlink in the first column
+        dataRow.push({ text: "קישור", hyperlink: String(row[f.key]) });
+        dataRow.push('', ''); // Empty cells for the other 2 columns
+      } else {
+        const cellValue = row[f.key] as any;
+        // Fill 3 columns with the same data for better visibility
+        dataRow.push(cellValue, cellValue, cellValue);
+      }
+    });
+    worksheet.addRow(dataRow);
+  });
+
+  // Merge cells in each row to make them more visible (3 columns per field)
+  const startDataRow = worksheet.lastRow!.number - rows.length; // First data row
+  for (let rowIndex = 0; rowIndex <= rows.length; rowIndex++) { // Include header row
+    const currentRow = startDataRow + rowIndex;
+    for (let fieldIndex = 0; fieldIndex < fields.length; fieldIndex++) {
+      const startCol = fieldIndex * 3 + 1; // 1, 4, 7, 10, etc.
+      const endCol = startCol + 2; // 3, 6, 9, 12, etc.
+      
+      // Only merge if it's not a link field
+      if (fields[fieldIndex].key !== "link") {
+        worksheet.mergeCells(currentRow, startCol, currentRow, endCol);
+      }
+    }
+  }
 
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
@@ -300,7 +335,7 @@ async function exportWord(
   saveAs(blob, fileName.endsWith(".docx") ? fileName : `${fileName}.docx`);
 }
 
-// ---------------------- Public API (כמו שהיה) ----------------------
+// ---------------------- Public API ----------------------
 export async function exportSongs(opts: ExportOptions) {
   const { fileName, rows, fields, note, formats } = opts;
   if (formats.pdf) await exportPDF(fileName, fields, rows, note);
