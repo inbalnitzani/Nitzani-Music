@@ -32,12 +32,12 @@ const Export: React.FC<Props> = ({ songsForExport }) => {
   const [fields, setFields] = useState<{ [k: string]: boolean }>({
     title: true,
     artists: true,
-    authors: true,
-    keywords: true,
-    genres: true,
-    lyrics: true,
-    score: true,
-    year: true,
+    authors: false,
+    keywords: false,
+    genres: false,
+    lyrics: false,
+    score: false,
+    year: false,
     link: true,
   });
 
@@ -84,11 +84,7 @@ const Export: React.FC<Props> = ({ songsForExport }) => {
         rows,
         fields: fieldsMeta,
         note,
-        formats,
-        // title: t("export.report_title") || "דוח שירים",
-        // logoUrl: logo,                        // להשתמש ב-import
-        // pdfFontUrl: "/fonts/Heebo-VariableFont_wght.ttf", // שם פרמטר לפי ה-utils הקיים
-        // pdfFontFamily: "Heebo",
+        formats
       });
       
     } catch (err) {
