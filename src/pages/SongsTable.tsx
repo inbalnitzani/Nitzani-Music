@@ -76,97 +76,70 @@ const AdminPage: React.FC = () => {
       
       console.log(`Fetching page ${page}: range ${from}-${to}, pageSize: ${pageSize}`);
 
-      // Dynamically build the select string based on active filters
-      const artistJoin = (filters.artists?.length)
-        ? 'song_artists!inner(artist_id, artists (id, name))'
-        : 'song_artists(artist_id, artists (id, name))';
-
-      const authorJoin = (filters.authors?.length)
-        ? 'song_authors!inner(author_id, authors (id, name))'
-        : 'song_authors(author_id, authors (id, name))';
-
-      const keywordJoin = (filters.keywords?.length)
-        ? 'song_keywords!inner(keyword_id, keywords (id, name))'
-        : 'song_keywords(keyword_id, keywords (id, name))';
-
-      // Genres are not filtered, so it's always a left join
+      // Always use left joins to get all relationships
+      const artistJoin = 'song_artists(artist_id, artists (id, name))';
+      const authorJoin = 'song_authors(author_id, authors (id, name))';
+      const keywordJoin = 'song_keywords(keyword_id, keywords (id, name))';
       const genreJoin = 'song_genres(genre_id, genres (id, name))';
 
       const selectString = `*, ${artistJoin}, ${authorJoin}, ${keywordJoin}, ${genreJoin}`;
-
 
       let query = supabase
         .from('songs')
         .select(selectString, { count: 'exact' });
 
-      // Filter by artists
-      if (filters.artists?.length && filters.artists.length > 0) {
-        // Get artist ids by name
-        const { data: artistRows, error: artistError } = await supabase
-          .from('artists')
-          .select('id')
-          .in('name', filters.artists);
-        if (artistError) throw artistError;
-        const artistIds = (artistRows || []).map((a: { id: string }) => a.id);
-        if (artistIds.length > 0) {
-          query = query.in('song_artists.artist_id', artistIds);
-        } else {
-          setSongs([]);
-          setTotalSongs(0);
-          setIsLoading(false);
-          return;
-        }
-      }
-
-      // Filter by authors
-      if (filters.authors?.length && filters.authors.length > 0) {
-        // Get author ids by name
-        const { data: authorRows, error: authorError } = await supabase
-          .from('authors')
-          .select('id')
-          .in('name', filters.authors);
-        if (authorError) throw authorError;
-        const authorIds = (authorRows || []).map((a: { id: string }) => a.id);
-        if (authorIds.length > 0) {
-          query = query.in('song_authors.author_id', authorIds);
-        } else {
-          setSongs([]);
-          setTotalSongs(0);
-          setIsLoading(false);
-          return;
-        }
-      }
-
-      // Filter by keywords
-      if (filters.keywords?.length && filters.keywords.length > 0) {
-        // Get keyword ids by name
-        const { data: keywordRows, error: keywordError } = await supabase
-          .from('keywords')
-          .select('id')
-          .in('name', filters.keywords);
-        if (keywordError) throw keywordError;
-        const keywordIds = (keywordRows || []).map((k: { id: string }) => k.id); if (keywordIds.length > 0) {
-          query = query.in('song_keywords.keyword_id', keywordIds);
-        } else {
-          setSongs([]);
-          setTotalSongs(0);
-          setIsLoading(false);
-          return;
-        }
-      }
-
+      // Only apply text search filter to the query
       if (filters.searchText) {
         query = query.or(`title.ilike.%${filters.searchText}%,lyrics.ilike.%${filters.searchText}%`);
       }
 
-      const { data: songsData, error: songsError, count: totalSongs } = await query
-        .range(from, to)
+      // Get all songs first, then filter in JavaScript
+      const { data: allSongsData, error: songsError, count: totalSongs } = await query
         .order('score', { ascending: false })
         .order('id', { ascending: true }); // Secondary ordering for consistency
 
       if (songsError) {
         console.error('Error fetching songs:', songsError);
+        setSongs([]);
+        setTotalSongs(0);
+        setIsLoading(false);
+        return;
       }
+
+      // Filter songs in JavaScript based on artists, authors, keywords
+      let filteredSongs = allSongsData || [];
+      
+      if (filters.artists?.length && filters.artists.length > 0) {
+        filteredSongs = filteredSongs.filter((song: any) => {
+          const songArtists = (song.song_artists || [])
+            .map((sa: any) => sa.artists?.name)
+            .filter(Boolean);
+          return filters.artists!.some(filterArtist => songArtists.includes(filterArtist));
+        });
+      }
+
+      if (filters.authors?.length && filters.authors.length > 0) {
+        filteredSongs = filteredSongs.filter((song: any) => {
+          const songAuthors = (song.song_authors || [])
+            .map((sa: any) => sa.authors?.name)
+            .filter(Boolean);
+          return filters.authors!.some(filterAuthor => songAuthors.includes(filterAuthor));
+        });
+      }
+
+      if (filters.keywords?.length && filters.keywords.length > 0) {
+        filteredSongs = filteredSongs.filter((song: any) => {
+          const songKeywords = (song.song_keywords || [])
+            .map((sk: any) => sk.keywords?.name)
+            .filter(Boolean);
+          return filters.keywords!.some(filterKeyword => songKeywords.includes(filterKeyword));
+        });
+      }
+
+      // Apply pagination to filtered results
+      const totalFilteredSongs = filteredSongs.length;
+      const paginatedSongs = filteredSongs.slice(from, to + 1);
+      const songsData = paginatedSongs;
 
       // Map for display, and also keep join-table IDs for editing
       if (Array.isArray(songsData) && songsData.length > 0) {
@@ -236,13 +209,13 @@ const AdminPage: React.FC = () => {
 
         setSongs(songsWithDetails as unknown as Song[]);
         console.log(`Page ${page} results (${songsWithDetails.length} unique songs):`, songsWithDetails.map(s => ({ id: s.id, title: s.title, score: s.score })));
-        console.log(`Original data had ${songsData.length} rows, deduplicated to ${songsWithDetails.length} songs`);
+        console.log(`Filtered from ${totalSongs || 0} total songs to ${totalFilteredSongs} matching songs`);
       } else {
         setSongs([]);
         console.log(`Page ${page} results: No songs found`);
       }
-      setTotalSongs(totalSongs || 0);
-      console.log(`Total songs: ${totalSongs}`);
+      setTotalSongs(totalFilteredSongs);
+      console.log(`Total filtered songs: ${totalFilteredSongs}`);
     } catch (err) {
       console.error('Error fetching songs:', err);
     } finally {
@@ -352,6 +325,48 @@ const AdminPage: React.FC = () => {
     }
   }
 
+  // handle artist click - add to artists filter
+  const handleArtistClick = (artistName: string) => {
+    const currentArtists = currentFilters.artists || [];
+    if (!currentArtists.includes(artistName)) {
+      const newArtists = [...currentArtists, artistName];
+      const newFilters = { ...currentFilters, artists: newArtists };
+      handleFiltersChange(newFilters);
+    }
+  }
+
+  // handle author click - add to authors filter
+  const handleAuthorClick = (authorName: string) => {
+    const currentAuthors = currentFilters.authors || [];
+    if (!currentAuthors.includes(authorName)) {
+      const newAuthors = [...currentAuthors, authorName];
+      const newFilters = { ...currentFilters, authors: newAuthors };
+      handleFiltersChange(newFilters);
+    }
+  }
+
+  // handle keyword click - add to keywords filter
+  const handleKeywordClick = (keywordName: string) => {
+    const currentKeywords = currentFilters.keywords || [];
+    if (!currentKeywords.includes(keywordName)) {
+      const newKeywords = [...currentKeywords, keywordName];
+      const newFilters = { ...currentFilters, keywords: newKeywords };
+      handleFiltersChange(newFilters);
+    }
+  }
+
+  // handle genre click - add to genres filter
+  // const handleGenreClick = (genreName: string) => {
+  //   const currentGenres = currentFilters.genres || [];
+  //   if (!currentGenres.includes(genreName)) {
+  //     const newGenres = [...currentGenres, genreName];
+  //     const newFilters = { ...currentFilters, genres: newGenres };
+  //     handleFiltersChange(newFilters);
+  //   }
+  // }
+
+
+
 
   const totalPages = Math.ceil(totalSongs / songsPerPage)
 
@@ -458,13 +473,17 @@ const AdminPage: React.FC = () => {
                 onClick={() => handleEditSong(song)}
               >                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{song.title}</td>
                 <td className="px-6 py-4 hidden sm:table-cell">
-                  <TagList items={song.artists} />
+                  <TagList 
+                    items={song.artists} 
+                    clickable={true}
+                    onClick={handleArtistClick}
+                  />
                 </td>
                 <td className="hidden sm:table-cell px-6 py-4">
-                  <TagList items={song.authors} colorClass="bg-green-100 text-green-800" />
+                  <TagList items={song.authors} colorClass="bg-green-100 text-green-800" clickable={true} onClick={handleAuthorClick} />
                 </td>
                 <td className="px-6 py-4 hidden sm:table-cell">
-                  <TagList items={song.keywords} colorClass="bg-pink-100 text-pink-800" />
+                  <TagList items={song.keywords} colorClass="bg-pink-100 text-pink-800" clickable={true} onClick={handleKeywordClick} />
                 </td>
                 <td className="px-6 py-4 hidden sm:table-cell">
                   <TagList items={song.genres} colorClass="bg-yellow-100 text-yellow-800" />

@@ -190,7 +190,6 @@ const SongFiltersComponent: React.FC<SongFiltersProps> = ({
                                 {...params}
                                 variant="standard"
                                 label={t('filters.search_and_select_artists')}
-                                placeholder="Favorites"
                             />
                         )}
                     />
