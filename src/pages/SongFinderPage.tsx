@@ -59,7 +59,7 @@ export default function SongFinderPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-7rem)] bg-[var(--color-bg)] flex flex-col">
+    <div className="song-finder min-h-[calc(100vh-7rem)] bg-[var(--color-bg)] flex flex-col">
       <div className="w-full max-w-3xl mx-auto flex-1 flex flex-col px-4 py-6 sm:py-10">
         {/* Title */}
         <div className="flex items-start justify-between gap-4 mb-6">

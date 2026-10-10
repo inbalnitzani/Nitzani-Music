@@ -45,7 +45,7 @@ function App() {
             <Route path="/songs" element={user && isAdmin ? <AdminPage /> : <Navigate to="/login" />} />
             <Route path="/calculator" element={user ? <CalculatorPage /> : <Navigate to="/login" />} />
             <Route path="/monitoring" element={user && isAdmin ? <MonitoringPage /> : <Navigate to="/login" />} />
-            <Route path="/find-a-song" element={user ? <SongFinderPage /> : <Navigate to="/login" />} />
+            <Route path="/find-a-song" element={user && isAdmin ? <SongFinderPage /> : <Navigate to="/login" />} />
             <Route path="/home" element={<Navigate to="/find-a-song" replace />} />
 
           </Routes>

@@ -325,3 +325,18 @@ body {
   color: var(--color-text);
   font-family: 'Inter', sans-serif;
 }
+
+/* Song finder is laid out with normal flex (columns stay columns).
+   The global `.rtl .flex { flex-direction: row-reverse }` rule is more
+   specific than Tailwind's `flex-col`, so in Hebrew it turns this page
+   sideways and pulls the How it works block apart. Native `dir="rtl"`
+   already mirrors a normal row, which matches the English layout. */
+.rtl .song-finder.flex,
+.rtl .song-finder .flex {
+  flex-direction: row;
+}
+
+.rtl .song-finder.flex.flex-col,
+.rtl .song-finder .flex.flex-col {
+  flex-direction: column;
+}
