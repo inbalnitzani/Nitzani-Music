@@ -50,6 +50,7 @@ export default function Header() {
       {/*Desktop Navigation */}
       <nav className="hidden sm:flex flex-row items-center gap-4">
         <Link to="/" className="nav-link">{t('header.home')}</Link>
+        {user && <Link to="/find-a-song" className="nav-link">{t('header.song_finder')}</Link>}
         {role === 'admin' && (
           <>
             <Link to="/songs" className="nav-link">{t('header.songs')}</Link>
@@ -111,6 +112,11 @@ export default function Header() {
           <Link to="/" className="nav-link py-2" onClick={() => setOpen(false)}>
             {t('header.home')}
           </Link>
+          {user && (
+            <Link to="/find-a-song" className="nav-link py-2" onClick={() => setOpen(false)}>
+              {t('header.song_finder')}
+            </Link>
+          )}
 
           {role === 'admin' && (
             <>

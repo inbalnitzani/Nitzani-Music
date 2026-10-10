@@ -11,7 +11,7 @@ import { RTLProvider } from './theme/RTLProvider';
 import { useEffect, useMemo } from 'react';
 
 import './App.css'
-import HomePage from './pages/HomePage.tsx';
+import SongFinderPage from './pages/SongFinderPage.tsx';
 
 declare global {
   interface Window {
@@ -45,7 +45,8 @@ function App() {
             <Route path="/songs" element={user && isAdmin ? <AdminPage /> : <Navigate to="/login" />} />
             <Route path="/calculator" element={user ? <CalculatorPage /> : <Navigate to="/login" />} />
             <Route path="/monitoring" element={user && isAdmin ? <MonitoringPage /> : <Navigate to="/login" />} />
-            <Route path="/home" element={user ? <HomePage /> : <Navigate to="/login" />} />
+            <Route path="/find-a-song" element={user ? <SongFinderPage /> : <Navigate to="/login" />} />
+            <Route path="/home" element={<Navigate to="/find-a-song" replace />} />
 
           </Routes>
           <script src="./assets/vendor/preline/dist/preline.js"></script>
