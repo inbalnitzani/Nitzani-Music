@@ -174,7 +174,7 @@ const AdminPage: React.FC = () => {
           id: song.id,
           title: song.title,
           lyrics: song.lyrics,
-          year: Number(song.year),
+          year: song.year == null ? null : Number(song.year),
           link: song.link,
           is_free: parseBoolean(song.is_free as unknown),
           score: Number(song.score),

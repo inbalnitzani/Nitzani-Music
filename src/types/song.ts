@@ -6,7 +6,7 @@ export interface Song {
   keywords: string[];
   lyrics: string;
   genres: string[];
-  year: number;
+  year: number | null;
   link: string;
   is_free: boolean;
   score: number;
@@ -24,7 +24,7 @@ export interface RawSongFromSupabase {
   id: string;
   title: string;
   lyrics: string;
-  year: number;
+  year: number | null;
   link: string;
   is_free: boolean;
   score: number;

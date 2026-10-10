@@ -246,7 +246,11 @@ const SongForm: React.FC<SongFormProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const el = e.currentTarget as unknown as NamedInput;
     const fieldName = el.name as keyof Partial<Song>;
-    const fieldValue = el.value as unknown as Partial<Song>[keyof Partial<Song>];
+    let fieldValue = el.value as unknown as Partial<Song>[keyof Partial<Song>];
+    // year is an integer column: send null for an empty field, a number otherwise
+    if (fieldName === 'year') {
+      fieldValue = (el.value === '' ? null : Number(el.value)) as unknown as Partial<Song>[keyof Partial<Song>];
+    }
     setFormData(prev => ({ ...prev, [fieldName]: fieldValue }));
   };
 
