@@ -240,8 +240,8 @@ const CalculatorPage: React.FC = () => {
                     </button>
                 </div>
                 {result && (
-                    <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-                        <p className="text-xl font-bold text-blue-800 mb-2">
+                    <div className="mt-8 bg-[var(--color-primary-light)] border border-[#f9c9cd] rounded-xl p-6 text-center">
+                        <p className="text-xl font-semibold text-[var(--color-primary-dark)] mb-2">
                             {t('calculator.result', { price: result.total })}
                         </p>
                     </div>

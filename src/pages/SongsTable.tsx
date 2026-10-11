@@ -446,7 +446,7 @@ const AdminPage: React.FC = () => {
       {/* Modern Tailwind Table */}
       {isLoading && (
         <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
-          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-6 h-6 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-[spin_0.6s_linear_infinite]"></div>
         </div>
       )}
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -461,7 +461,7 @@ const AdminPage: React.FC = () => {
               <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('songs.lyrics')}</th>
               <th scope="col" className="hidden sm:table-cell px-6 py-3">{t('songs.year')}</th>
               <th scope="col" className="px-6 py-3">{t('songs.link')}</th>
-              <th scope="col" className="px-6 py-3 cursor-pointer hover:bg-gray-100 hover:text-blue-600" data-tooltip-id="selectAllTip" onClick={() => handleSelectAllSongs()}>{t('songs.select')}</th>
+              <th scope="col" className="px-6 py-3 cursor-pointer hover:bg-gray-100 hover:text-[var(--color-primary)]" data-tooltip-id="selectAllTip" onClick={() => handleSelectAllSongs()}>{t('songs.select')}</th>
             </tr>
           </thead>
 
@@ -491,7 +491,7 @@ const AdminPage: React.FC = () => {
                 <td className="px-6 py-4 truncate max-w-xs hidden sm:table-cell">{song.lyrics}</td>
                 <td className="px-6 py-4 hidden sm:table-cell">{song.year}</td>
                 <td className="px-6 py-4"><a href={song.link}
-                  className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+                  className="text-[var(--color-primary)] hover:underline" target="_blank" rel="noopener noreferrer">
                   {song.link ? <YouTubeIcon style={{ color: 'red' }} /> : ''}</a></td>
                 <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                   <Checkbox

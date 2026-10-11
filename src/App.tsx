@@ -12,6 +12,7 @@ import { useEffect, useMemo } from 'react';
 
 import './App.css'
 import SongFinderPage from './pages/SongFinderPage.tsx';
+import logo from './assets/logo.png';
 
 declare global {
   interface Window {
@@ -33,7 +34,18 @@ function App() {
   const isAdmin = useMemo(() => role === 'admin', [role]);
   const isLoading = useMemo(() => authLoading || profileLoading, [authLoading, profileLoading]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-[var(--color-bg)]">
+        <img src={logo} alt="Yair Nitzani Music" className="h-16" />
+        <div
+          className="w-5 h-5 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-[spin_0.6s_linear_infinite]"
+          role="status"
+          aria-label="Loading"
+        />
+      </div>
+    );
+  }
   
   return (
     <RTLProvider isRTL={isRTL}>

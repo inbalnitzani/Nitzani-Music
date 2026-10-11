@@ -78,7 +78,7 @@ export default function MonitoringPage() {
             {/* Modern Tailwind Table */}
             {isLoading && (
                 <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
-                    <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-6 h-6 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-[spin_0.6s_linear_infinite]"></div>
                 </div>
             )}
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">

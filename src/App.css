@@ -190,48 +190,118 @@
 /* ===== Tailwind base styles ===== */
 @tailwind base;
 
+/* ===== Brand font ===== */
+/* Rubik covers Hebrew and Latin; the PDF exports load the same file. */
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik-VariableFont_wght.ttf') format('truetype');
+  font-weight: 300 900;
+  font-display: swap;
+}
+
 /* ===== Global Color Variables ===== */
+/* Brand red is sampled from the logo (src/assets/logo.png). */
 :root {
-  --color-primary: #0369a1;
-  --color-primary-light: #e0f2fe;
-  --color-text: #1f2937;
-  --color-muted: #6b7280;
-  --color-bg: #f9fafb;
-  --color-border: #e5e7eb;
+  --color-primary: #e20a17;
+  --color-primary-dark: #b80713;
+  --color-primary-light: #fdecee;
+  --color-secondary: var(--color-primary);
+  --color-accent: var(--color-primary);
+  --color-neutral: #6b6b6b;
+  --color-text: #1a1a1a;
+  --color-muted: #6b6b6b;
+  --color-bg: #fafaf9;
+  --color-border: #e7e5e4;
+  --color-danger: #b80713;
+  --color-danger-bg: #fdecee;
+  --focus-ring: 0 0 0 3px rgb(226 10 23 / 0.15);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .btn {
-  @apply px-4 py-2 rounded-full font-medium transition duration-150 ease-in-out;
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-[10px] font-medium border border-transparent;
+  transition: transform 160ms var(--ease-out), background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  @apply opacity-60 cursor-not-allowed;
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .btn-primary {
-  @apply bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white;
+  background-color: var(--color-primary);
+  color: #fff;
 }
 
-.btn-secondary {
-  @apply bg-white text-[var(--color-primary)] border border-[var(--color-primary)] hover:bg-[var(--color-primary-light)];
-}
-
+.btn-secondary,
 .btn-neutral {
-  @apply bg-white text-[var(--color-text)] border border-[var(--color-border)] hover:bg-gray-100;
+  background-color: #fff;
+  color: var(--color-text);
+  border-color: var(--color-border);
 }
 
+/* Outlined so a destructive action never looks like the main one */
 .btn-danger {
-  @apply bg-red-100 text-red-600 border border-red-300 hover:bg-red-600 hover:text-white;
+  background-color: #fff;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover:not(:disabled) { background-color: var(--color-primary-dark); }
+  .btn-secondary:hover:not(:disabled),
+  .btn-neutral:hover:not(:disabled) { background-color: var(--color-bg); border-color: #d6d3d1; }
+  .btn-danger:hover:not(:disabled) { background-color: var(--color-primary-light); }
 }
 
 .nav-link {
-  @apply text-[var(--color-primary)] font-medium transition-transform duration-200 ease-in-out;
+  @apply relative font-normal;
+  color: var(--color-text);
+  transition: color 150ms ease;
 }
 
-.nav-link:hover {
-  @apply scale-110 text-[var(--color-primary)];
+.nav-link:hover,
+.nav-link.active {
+  color: var(--color-primary);
 }
 
+.nav-link.active {
+  @apply font-medium;
+}
+
+/* Current page underline (desktop header only) */
+.site-header nav:not(.mobile-nav) .nav-link.active::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: -6px;
+  margin-inline: auto;
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+  background-color: var(--color-primary);
+}
+
+/* 16px text keeps iOS from zooming in when the field is tapped */
 .input-base {
-  @apply border border-[var(--color-border)] rounded-md px-3 py-2 text-sm 
-         focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] 
-         bg-white text-[var(--color-text)] transition duration-150 ease-in-out;
+  @apply border border-[var(--color-border)] rounded-[10px] px-3.5 py-2.5 text-base
+         bg-white text-[var(--color-text)] placeholder:text-[var(--color-muted)];
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.input-base:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
 }
 
 .select-base {
@@ -299,7 +369,7 @@
     background-color: white;
   }
   .rs__option--is-focused {
-    background-color: #e5f3fb; /* הובר עדין */
+    background-color: #f5f5f4; /* הובר עדין */
   }
   .rs__option--is-selected {
     background-color: var(--color-primary-light) !important;
@@ -321,22 +391,70 @@
 
 /* ===== Optional: base font and background ===== */
 body {
-  background-color: #f8f9fc;
+  background-color: var(--color-bg);
   color: var(--color-text);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Rubik', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Song finder is laid out with normal flex (columns stay columns).
+/* These areas are laid out with normal flex (columns stay columns).
    The global `.rtl .flex { flex-direction: row-reverse }` rule is more
-   specific than Tailwind's `flex-col`, so in Hebrew it turns this page
-   sideways and pulls the How it works block apart. Native `dir="rtl"`
-   already mirrors a normal row, which matches the English layout. */
-.rtl .song-finder.flex,
-.rtl .song-finder .flex {
+   specific than Tailwind's `flex-col`, so in Hebrew it turns them
+   sideways. Native `dir="rtl"` already mirrors a normal row, which
+   matches the English layout. */
+.rtl .native-flex.flex,
+.rtl .native-flex .flex {
   flex-direction: row;
 }
 
-.rtl .song-finder.flex.flex-col,
-.rtl .song-finder .flex.flex-col {
+.rtl .native-flex.flex.flex-col,
+.rtl .native-flex .flex.flex-col {
   flex-direction: column;
+}
+
+/* ===== Motion ===== */
+@keyframes enter-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes enter-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* New chat messages and song cards; set animation-delay inline to stagger */
+.enter-up {
+  animation: enter-up 200ms var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter-up { animation-name: enter-fade; }
+}
+
+/* Song finder example prompts */
+.example-prompt {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  transition: transform 160ms var(--ease-out), background-color 150ms ease, border-color 150ms ease;
+}
+
+.example-prompt:active {
+  transform: scale(0.98);
+}
+
+.example-prompt:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .example-prompt:hover {
+    background-color: var(--color-primary-light);
+    border-color: var(--color-primary);
+  }
+  .example-prompt:hover .example-chevron {
+    color: var(--color-primary);
+  }
 }
