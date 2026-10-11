@@ -200,27 +200,31 @@
 }
 
 /* ===== Global Color Variables ===== */
-/* Brand red is sampled from the logo (src/assets/logo.png). */
+/* Brand red is sampled from the logo (src/assets/logo.png).
+   Everything else is one warm grey family: ink on paper. */
 :root {
   --color-primary: #e20a17;
-  --color-primary-dark: #b80713;
-  --color-primary-light: #fdecee;
+  --color-primary-dark: #a50812;
+  --color-primary-light: #fbeae7;
   --color-secondary: var(--color-primary);
   --color-accent: var(--color-primary);
-  --color-neutral: #6b6b6b;
-  --color-text: #1a1a1a;
-  --color-muted: #6b6b6b;
-  --color-bg: #fafaf9;
-  --color-border: #e7e5e4;
-  --color-danger: #b80713;
-  --color-danger-bg: #fdecee;
+  --color-neutral: #857c75;
+  --color-text: #171412;
+  --color-text-soft: #4a4440;
+  --color-muted: #857c75;
+  --color-bg: #f6f4f1;
+  --color-surface: #ffffff;
+  --color-border: #e4ded7;
+  --color-danger: #a50812;
+  --color-danger-bg: #fbeae7;
+  --shadow-raised: 0 1px 2px rgb(23 20 18 / 0.04), 0 14px 36px rgb(23 20 18 / 0.08);
   --focus-ring: 0 0 0 3px rgb(226 10 23 / 0.15);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .btn {
-  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-[10px] font-medium border border-transparent;
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-medium border border-transparent;
   transition: transform 160ms var(--ease-out), background-color 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
@@ -259,41 +263,37 @@
 @media (hover: hover) and (pointer: fine) {
   .btn-primary:hover:not(:disabled) { background-color: var(--color-primary-dark); }
   .btn-secondary:hover:not(:disabled),
-  .btn-neutral:hover:not(:disabled) { background-color: var(--color-bg); border-color: #d6d3d1; }
+  .btn-neutral:hover:not(:disabled) { background-color: var(--color-bg); border-color: #d4ccc4; }
   .btn-danger:hover:not(:disabled) { background-color: var(--color-primary-light); }
 }
 
 .nav-link {
-  @apply relative font-normal;
-  color: var(--color-text);
+  @apply relative inline-flex items-center gap-2 font-normal;
+  color: var(--color-muted);
   transition: color 150ms ease;
 }
 
-.nav-link:hover,
-.nav-link.active {
-  color: var(--color-primary);
+.nav-link:hover {
+  color: var(--color-text);
 }
 
 .nav-link.active {
   @apply font-medium;
+  color: var(--color-text);
 }
 
-/* Current page underline (desktop header only) */
-.site-header nav:not(.mobile-nav) .nav-link.active::after {
+/* Current page: a small red dot after the label */
+.nav-link.active::after {
   content: '';
-  position: absolute;
-  inset-inline: 0;
-  bottom: -6px;
-  margin-inline: auto;
-  width: 20px;
-  height: 2px;
-  border-radius: 1px;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
   background-color: var(--color-primary);
 }
 
 /* 16px text keeps iOS from zooming in when the field is tapped */
 .input-base {
-  @apply border border-[var(--color-border)] rounded-[10px] px-3.5 py-2.5 text-base
+  @apply border border-[var(--color-border)] rounded-xl px-4 py-3 text-base
          bg-white text-[var(--color-text)] placeholder:text-[var(--color-muted)];
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
@@ -432,29 +432,125 @@ body {
   .enter-up { animation-name: enter-fade; }
 }
 
-/* Song finder example prompts */
-.example-prompt {
-  background-color: var(--color-bg);
-  border: 1px solid var(--color-border);
-  transition: transform 160ms var(--ease-out), background-color 150ms ease, border-color 150ms ease;
+/* Small red rule before section labels ("eyebrow") */
+.eyebrow {
+  @apply inline-flex items-center gap-3 text-sm font-medium;
+  color: var(--color-muted);
 }
 
-.example-prompt:active {
-  transform: scale(0.98);
+.eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 2px;
+  background-color: var(--color-primary);
 }
 
-.example-prompt:focus-visible {
+.display-title {
+  @apply font-semibold;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+/* Song finder example prompts: hairline rows, not boxes */
+.example-row {
+  @apply flex w-full items-center justify-between gap-6 py-4 text-start text-[17px];
+  color: var(--color-text-soft);
+  border-bottom: 1px solid var(--color-border);
+  transition: color 150ms ease;
+}
+
+.example-row .row-arrow {
+  color: var(--color-muted);
+  transition: transform 200ms var(--ease-out), color 150ms ease;
+}
+
+.example-row:focus-visible {
   outline: none;
-  border-color: var(--color-primary);
+  color: var(--color-text);
+  box-shadow: 0 2px 0 var(--color-primary);
+}
+
+/* Song results: album-style tracklist rows */
+.track-row {
+  @apply flex items-center gap-4 sm:gap-6 rounded-xl px-2 sm:px-4 py-4;
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 150ms ease;
+}
+
+.track-index {
+  @apply shrink-0 w-10 sm:w-12 text-[28px] sm:text-[34px] font-light leading-none;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+  transition: color 150ms ease;
+}
+
+.refine-chip {
+  @apply inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm whitespace-nowrap;
+  color: var(--color-text-soft);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  transition: transform 160ms var(--ease-out), border-color 150ms ease, color 150ms ease;
+}
+
+.refine-chip:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.refine-chip:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.refine-chip:focus-visible {
+  outline: none;
   box-shadow: var(--focus-ring);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .example-prompt:hover {
-    background-color: var(--color-primary-light);
-    border-color: var(--color-primary);
-  }
-  .example-prompt:hover .example-chevron {
-    color: var(--color-primary);
-  }
+  .example-row:hover { color: var(--color-text); }
+  .example-row:hover .row-arrow { color: var(--color-primary); transform: translateX(-4px); }
+  [dir='ltr'] .example-row:hover .row-arrow { transform: translateX(4px); }
+  .track-row:hover { background-color: var(--color-primary-light); }
+  .track-row:hover .track-index { color: var(--color-primary); }
+  .refine-chip:hover:not(:disabled) { color: var(--color-text); border-color: #d4ccc4; }
+}
+
+/* Loading: equaliser bars and skeleton rows */
+.equaliser {
+  @apply inline-flex items-end gap-[3px] h-[18px];
+}
+
+.equaliser span {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background-color: var(--color-primary);
+  transform-origin: bottom;
+  animation: eq-bounce 900ms ease-in-out infinite;
+}
+
+.equaliser span:nth-child(2) { animation-delay: -300ms; }
+.equaliser span:nth-child(3) { animation-delay: -600ms; }
+.equaliser span:nth-child(4) { animation-delay: -150ms; }
+
+@keyframes eq-bounce {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+
+.skeleton {
+  border-radius: 9999px;
+  background-color: var(--color-border);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .equaliser span,
+  .skeleton { animation: none; }
+  .equaliser span { transform: scaleY(0.7); }
 }

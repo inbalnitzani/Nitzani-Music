@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient.ts';
 import { useAuth } from '../hooks/useAuth.ts';
 import { useProfile } from '../hooks/useProfile.ts';
@@ -11,29 +11,20 @@ import { Tooltip } from 'react-tooltip';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) => `nav-link${isActive ? ' active' : ''}`;
 
-function LanguageSwitch({ onChange }: { onChange?: () => void }) {
+// Shows the language you can switch to, as plain text
+export function LanguageSwitch({ onChange, className = '' }: { onChange?: () => void; className?: string }) {
   const isHebrew = i18n.language?.startsWith('he');
-  const options = [
-    { lang: 'he', label: 'עב', active: isHebrew },
-    { lang: 'en', label: 'EN', active: !isHebrew },
-  ];
+  const target = isHebrew ? { lang: 'en', label: 'EN', name: 'English' } : { lang: 'he', label: 'עב', name: 'עברית' };
   return (
-    <div className="flex p-[3px] rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]" role="group" aria-label="Language">
-      {options.map(({ lang, label, active }) => (
-        <button
-          key={lang}
-          type="button"
-          lang={lang}
-          aria-pressed={active}
-          onClick={() => { i18n.changeLanguage(lang); onChange?.(); }}
-          className={`px-2.5 py-1 rounded-md text-[13px] font-medium transition-colors ${
-            active ? 'bg-white text-[var(--color-text)] shadow-sm' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
-          }`}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
+    <button
+      type="button"
+      lang={target.lang}
+      aria-label={target.name}
+      onClick={() => { i18n.changeLanguage(target.lang); onChange?.(); }}
+      className={`px-2 py-1 rounded-md text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors ${className}`}
+    >
+      {target.label}
+    </button>
   );
 }
 
@@ -42,6 +33,7 @@ export default function Header() {
   const { user } = useAuth();
   const { role } = useProfile(user);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
 
   const handleSignOut = async () => {
@@ -56,20 +48,23 @@ export default function Header() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // The login screen carries its own logo and language switch
+  if (pathname === '/login') return null;
+
   return (
     <header
-      className="site-header native-flex flex items-center justify-between h-16 md:h-[72px] px-4 md:px-8 bg-white border-b border-[var(--color-border)]"
+      className="site-header native-flex flex items-center justify-between h-16 md:h-[68px] px-4 md:px-10 bg-[var(--color-bg)] border-b border-[var(--color-border)]"
       dir="rtl"
     >
       <div className="flex items-center gap-2">
         <NavLink to="/" aria-label={t('header.home')}>
-          <img src={logo} alt="Yair Nitzani Music" className="h-10 md:h-[52px]" />
+          <img src={logo} alt="Yair Nitzani Music" className="h-10 md:h-11" />
         </NavLink>
       </div>
 
       {/* Mobile menu button */}
       <button
-        className="sm:hidden p-2 rounded-lg text-[var(--color-text)] hover:bg-[var(--color-bg)]"
+        className="sm:hidden p-2 rounded-lg text-[var(--color-text)] hover:bg-[var(--color-border)]"
         aria-label={t('header.open_menu') || 'פתח תפריט'}
         aria-expanded={open}
         aria-controls="mobile-drawer"
@@ -79,8 +74,8 @@ export default function Header() {
       </button>
 
       {/*Desktop Navigation */}
-      <div className="hidden sm:flex items-center gap-10">
-        <nav className="flex items-center gap-7">
+      <div className="hidden sm:flex flex-1 items-center justify-between ms-10">
+        <nav className="flex items-center gap-9">
           <NavLink to="/" end className={navLinkClass}>{t('header.home')}</NavLink>
           {role === 'admin' && (
             <>
@@ -90,17 +85,17 @@ export default function Header() {
             </>
           )}
         </nav>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <LanguageSwitch />
           {user && (
             <button
               onClick={handleSignOut}
-              className="p-2 rounded-lg text-[var(--color-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-bg)] transition-colors"
+              className="p-2 rounded-lg text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors"
               aria-label={t('header.sign_out')}
               data-tooltip-id="signOutTip"
               data-tooltip-place="bottom"
             >
-              <LogOut size={20} className="rtl:-scale-x-100" aria-hidden />
+              <LogOut size={20} strokeWidth={1.5} className="rtl:-scale-x-100" aria-hidden />
               <Tooltip id="signOutTip" content={t('header.sign_out')} />
             </button>
           )}
@@ -119,7 +114,7 @@ export default function Header() {
       {/*Side drawer*/}
       <aside
         id="mobile-drawer"
-        className={`fixed inset-y-0 right-0 z-50 w-80 max-w-[85vw] bg-white shadow-xl sm:hidden
+        className={`fixed inset-y-0 right-0 z-50 w-80 max-w-[85vw] bg-[var(--color-bg)] shadow-xl sm:hidden
                     transform transition-transform duration-[250ms] ease-[var(--ease-drawer)]
                     ${open ? 'translate-x-0' : 'translate-x-full'}`}
         role="dialog"
@@ -128,7 +123,7 @@ export default function Header() {
         <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
           <img src={logo} alt="" className="h-9" />
           <button
-            className="p-2 rounded-lg text-[var(--color-text)] hover:bg-[var(--color-bg)]"
+            className="p-2 rounded-lg text-[var(--color-text)] hover:bg-[var(--color-border)]"
             aria-label={t('header.close_menu') || 'סגור תפריט'}
             onClick={() => setOpen(false)}
           >
