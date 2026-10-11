@@ -47,7 +47,9 @@
         "hebrew": "עברית",
         "english": "English",
         "monitor": "Monitor",
-        "song_finder": "Find a Song"
+        "song_finder": "Find a Song",
+        "open_menu": "Open menu",
+        "close_menu": "Close menu"
     },
     "song_finder": {
         "title": "Find a Song",
@@ -201,15 +203,21 @@
     },
     "login": {
         "login": "Login",
-        "sign_up_msg": "Don't have an account? Sign Up",
         "sign_up": "Sign Up",
-        "login_msg": "Already have an account? Login",
         "check_email": "Check your email to verify your account.",
         "name": "Full Name",
         "email": "Email",
         "phone": "Phone Number",
         "company": "Company, Production or Project Name",
-        "password": "password"
+        "password": "Password",
+        "subtitle": "Sign in with your email and password",
+        "sign_up_subtitle": "A few details and your account is ready",
+        "no_account": "Don't have an account?",
+        "sign_up_cta": "Sign up",
+        "have_account": "Already have an account?",
+        "login_cta": "Log in",
+        "signed_in": "Signed in",
+        "loading": "Loading..."
     },
     "pagination": {
         "page":"Page",

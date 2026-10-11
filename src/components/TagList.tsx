@@ -42,7 +42,7 @@ const TagList: React.FC<TagListProps> = ({ items = [], colorClass, deleteable = 
             } ${
               isDeleted
                 ? 'bg-gray-200 text-gray-400 line-through'
-                : colorClass || "bg-blue-100 text-blue-800 hover:bg-blue-200"
+                : colorClass || "bg-[var(--color-primary-light)] text-[var(--color-primary-dark)] hover:bg-[#fbd9dc]"
             }`}
             onClick={(e) => handleTagClick(item, e)}
           >

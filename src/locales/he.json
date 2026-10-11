@@ -47,7 +47,9 @@
         "hebrew": "עברית",
         "english": "אנגלית",
         "monitor": "מוניטור",
-        "song_finder": "מצאו שיר"
+        "song_finder": "מצאו שיר",
+        "open_menu": "פתח תפריט",
+        "close_menu": "סגור תפריט"
     },
     "song_finder": {
         "title": "מצאו שיר",
@@ -207,15 +209,21 @@
     },
     "login":{
         "login": "כניסה",
-        "sign_up_msg": "אין לך חשבון? הירשם",
         "sign_up":"הרשמה",
-        "login_msg": "יש לך כבר חשבון? היכנס",
         "check_email": "בדוק את המייל שלך כדי לאשר הרשמה.",
         "name": "שם מלא",
         "email": "מייל",
         "phone": "מספר טלפון",
         "company": "חברה, הפקה או שם פרוייקט",
-        "password": "סיסמה"
+        "password": "סיסמה",
+        "subtitle": "מייל וסיסמה כדי להיכנס לקטלוג",
+        "sign_up_subtitle": "כמה פרטים ונפתח לכם חשבון",
+        "no_account": "אין לכם חשבון?",
+        "sign_up_cta": "הירשמו",
+        "have_account": "יש לכם כבר חשבון?",
+        "login_cta": "היכנסו",
+        "signed_in": "נכנסתם בהצלחה",
+        "loading": "טוען..."
     },
     "pagination": {
         "page":"עמוד",

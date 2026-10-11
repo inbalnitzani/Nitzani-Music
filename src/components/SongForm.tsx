@@ -346,7 +346,7 @@ const SongForm: React.FC<SongFormProps> = ({
                   name="title"
                   value={formData.title || ''}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
+                  className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)] text-base py-2.5 px-3 leading-normal"
                 />
               </div>
               <div>
@@ -357,7 +357,7 @@ const SongForm: React.FC<SongFormProps> = ({
                   name="link"
                   value={formData.link || ''}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
+                  className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)] text-base py-2.5 px-3 leading-normal"
                 />
               </div>
             </div>
@@ -458,7 +458,7 @@ const SongForm: React.FC<SongFormProps> = ({
                 rows={10}
                 value={formData.lyrics || ''}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
+                className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)] text-base py-2.5 px-3 leading-normal"
               />
             </div>
           </AccordionDetails>
@@ -487,7 +487,7 @@ const SongForm: React.FC<SongFormProps> = ({
               onChange={handleChange}
               min="1900"
               max="2030"
-              className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 leading-normal"
+              className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)] text-base py-2.5 px-3 leading-normal"
             />
           </div>
 
