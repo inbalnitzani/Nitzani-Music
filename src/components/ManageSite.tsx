@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient.ts';
 import TagSection from './tagSection.tsx';
+import SongIndexer from './SongIndexer.tsx';
 // import jsPDF from 'jspdf';
 import { useInView } from 'react-intersection-observer';
 import { useTranslation } from 'react-i18next';
@@ -440,6 +441,7 @@ const ManageSite: React.FC<ManageSiteProps> = ({ onSave }) => {
           </div>
         </div>
       )}
+      <SongIndexer />
       <div className="flex justify-end mb-4">
         <button
           onClick={handleSaveAll}

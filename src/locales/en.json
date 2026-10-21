@@ -239,5 +239,15 @@
         "rows_in_page": "Rows in page",
         "total": "Total",
         "of":"Of"
+    },
+    "song_indexer": {
+        "title": "Song Finder index",
+        "description": "Prepares songs that are new or changed so the Song Finder can suggest them.",
+        "remaining": "{{count}} songs left to index",
+        "waiting": "Gemini's free limit was reached. Continuing in a minute…",
+        "error": "Indexing stopped because of an error. Try again.",
+        "done": "All songs are indexed.",
+        "start": "Index songs",
+        "stop": "Stop"
     }
 }

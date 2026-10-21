@@ -272,6 +272,9 @@ function TrackRow({ song, index, delay }: { song: SuggestedSong; index: number; 
       <div className="min-w-0 flex-1">
         <div className="text-[17px] sm:text-[19px] font-medium text-[var(--color-text)] truncate">{song.title}</div>
         <div className="text-sm sm:text-[15px] text-[var(--color-muted)] truncate">{song.artist}</div>
+        {song.reason && (
+          <p className="mt-1.5 text-sm sm:text-[15px] leading-[1.5] text-[var(--color-text-soft)]">{song.reason}</p>
+        )}
       </div>
       {song.link ? (
         <a
