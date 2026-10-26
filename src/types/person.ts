@@ -8,10 +8,20 @@ export interface PersonSong {
   score: number | null;
 }
 
+/** Which part of the photo shows in the round frame; see PersonPhoto */
+export interface PhotoFraming {
+  x: number;
+  y: number;
+  zoom: number;
+}
+
 export interface Person {
   id: number;
   name: string;
   photo_path: string | null;
+  photo_x: number;
+  photo_y: number;
+  photo_zoom: number;
   is_represented: boolean;
   song_count: number;
   top_songs: PersonSong[];

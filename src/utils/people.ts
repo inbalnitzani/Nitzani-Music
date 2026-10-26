@@ -1,10 +1,11 @@
 import { supabase } from '../supabaseClient';
-import type { Person, PersonKind } from '../types/person';
+import type { Person, PersonKind, PhotoFraming } from '../types/person';
 
 const PHOTO_BUCKET = 'people-photos';
 const PHOTO_URL_TTL_SECONDS = 60 * 60;
 export const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 export const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+export const DEFAULT_FRAMING: PhotoFraming = { x: 50, y: 50, zoom: 1 };
 
 // The API returns at most this many rows per request, so larger lists come in pages
 const PAGE_SIZE = 1000;
@@ -40,6 +41,11 @@ export async function setRepresented(kind: PersonKind, id: number, isRepresented
   if (error) throw error;
 }
 
+export async function savePhotoFraming(kind: PersonKind, id: number, { x, y, zoom }: PhotoFraming) {
+  const { error } = await supabase.from(kind).update({ photo_x: x, photo_y: y, photo_zoom: zoom }).eq('id', id);
+  if (error) throw error;
+}
+
 // Uploads under a new path each time so browsers never show a cached old photo,
 // then removes the previous file. Returns the new signed URL.
 export async function uploadPhoto(kind: PersonKind, person: Person, file: File): Promise<{ path: string; url: string }> {
@@ -51,7 +57,11 @@ export async function uploadPhoto(kind: PersonKind, person: Person, file: File):
     .upload(path, file, { contentType: file.type, cacheControl: '3600' });
   if (uploadError) throw uploadError;
 
-  const { error: updateError } = await supabase.from(kind).update({ photo_path: path }).eq('id', person.id);
+  // A new photo starts centred; the old framing was for a different picture
+  const { error: updateError } = await supabase
+    .from(kind)
+    .update({ photo_path: path, photo_x: DEFAULT_FRAMING.x, photo_y: DEFAULT_FRAMING.y, photo_zoom: DEFAULT_FRAMING.zoom })
+    .eq('id', person.id);
   if (updateError) {
     await supabase.storage.from(PHOTO_BUCKET).remove([path]);
     throw updateError;

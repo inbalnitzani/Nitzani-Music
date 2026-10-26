@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowUpRight, Camera, Check, Music, Search } from 'lucide-react';
+import PersonPhoto from '../components/PersonPhoto';
+import PhotoFramer from '../components/PhotoFramer';
 import { useAuth } from '../hooks/useAuth';
 import { useProfile } from '../hooks/useProfile';
 import type { Person, PersonKind } from '../types/person';
-import { fetchPeople, MAX_PHOTO_BYTES, PHOTO_TYPES, setRepresented, uploadPhoto } from '../utils/people';
+import { fetchPeople, MAX_PHOTO_BYTES, PHOTO_TYPES, savePhotoFraming, setRepresented, uploadPhoto } from '../utils/people';
 
 const TABS: { kind: PersonKind; labelKey: string }[] = [
   { kind: 'authors', labelKey: 'people.tab_writers' },
@@ -180,6 +182,9 @@ function PersonCard({ kind, person, isAdmin, delay, onChange }: {
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState<'photo' | 'represented' | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isFraming, setIsFraming] = useState(false);
+
+  const framing = { x: person.photo_x, y: person.photo_y, zoom: person.photo_zoom };
 
   // First letter of the first two words, skipping punctuation (some names start with ":" or quotes)
   const initials = person.name.split(/\s+/).map(w => w.match(/\p{L}/u)?.[0]).filter(Boolean).slice(0, 2).join('');
@@ -195,7 +200,9 @@ function PersonCard({ kind, person, isAdmin, delay, onChange }: {
     setError(null);
     try {
       const { path, url } = await uploadPhoto(kind, person, file);
-      onChange({ photo_path: path, photo_url: url });
+      onChange({ photo_path: path, photo_url: url, photo_x: 50, photo_y: 50, photo_zoom: 1 });
+      // Straight into framing, since a new photo is rarely centred right
+      setIsFraming(true);
     } catch (err) {
       console.error('Photo upload error:', err);
       setError(t('people.photo_error'));
@@ -224,7 +231,7 @@ function PersonCard({ kind, person, isAdmin, delay, onChange }: {
       <div className="flex items-center gap-4">
         <div className="relative shrink-0">
           {person.photo_url ? (
-            <img src={person.photo_url} alt="" className="w-16 h-16 rounded-full object-cover bg-[var(--color-border)]" />
+            <PersonPhoto url={person.photo_url} framing={framing} className="w-16 h-16" />
           ) : (
             <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[var(--color-primary-light)] text-[var(--color-primary)] text-xl font-semibold" aria-hidden>
               {initials}
@@ -234,9 +241,9 @@ function PersonCard({ kind, person, isAdmin, delay, onChange }: {
             <>
               <button
                 type="button"
-                onClick={() => fileRef.current?.click()}
+                onClick={() => (person.photo_url ? setIsFraming(true) : fileRef.current?.click())}
                 disabled={busy !== null}
-                aria-label={t('people.upload_photo', { name: person.name })}
+                aria-label={t(person.photo_url ? 'people.edit_photo' : 'people.upload_photo', { name: person.name })}
                 className="absolute -bottom-1 -end-1 w-7 h-7 rounded-full flex items-center justify-center bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-soft)] hover:text-[var(--color-primary)] transition-colors disabled:opacity-60"
               >
                 {busy === 'photo'
@@ -244,6 +251,19 @@ function PersonCard({ kind, person, isAdmin, delay, onChange }: {
                   : <Camera size={14} strokeWidth={1.75} aria-hidden />}
               </button>
               <input ref={fileRef} type="file" accept={PHOTO_TYPES.join(',')} onChange={handleFile} className="hidden" />
+              {isFraming && person.photo_url && (
+                <PhotoFramer
+                  name={person.name}
+                  photoUrl={person.photo_url}
+                  initial={framing}
+                  onSave={async f => {
+                    await savePhotoFraming(kind, person.id, f);
+                    onChange({ photo_x: f.x, photo_y: f.y, photo_zoom: f.zoom });
+                  }}
+                  onReplace={() => { setIsFraming(false); fileRef.current?.click(); }}
+                  onClose={() => setIsFraming(false)}
+                />
+              )}
             </>
           )}
         </div>
