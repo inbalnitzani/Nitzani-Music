@@ -49,7 +49,8 @@
         "monitor": "Monitor",
         "song_finder": "Find a Song",
         "open_menu": "Open menu",
-        "close_menu": "Close menu"
+        "close_menu": "Close menu",
+        "people": "Artists"
     },
     "song_finder": {
         "title": "Find a Song",
@@ -249,5 +250,33 @@
         "done": "All songs are indexed.",
         "start": "Index songs",
         "stop": "Stop"
+    },
+    "people": {
+        "eyebrow": "Represented by Yair Nitzani Music",
+        "title": "Our artists",
+        "subtitle": "The writers and performers we represent, with their top songs.",
+        "tab_writers": "Writers",
+        "tab_performers": "Performers",
+        "filter_name": "Filter by name",
+        "show_more": "Show {{count}} more",
+        "show_everyone": "Show everyone",
+        "count_one": "{{count}} person",
+        "count_other": "{{count}} people",
+        "song_count_one": "{{count}} song",
+        "song_count_other": "{{count}} songs",
+        "more_songs_one": "+{{count}} more song",
+        "more_songs_other": "+{{count}} more songs",
+        "no_songs": "No songs in the catalog yet.",
+        "no_match": "No one matches that name.",
+        "empty": "No one to show yet.",
+        "empty_admin": "No one is marked as represented yet. Turn on “Show everyone” to mark people.",
+        "load_error": "Couldn’t load the list. Try again in a moment.",
+        "represented": "Represented",
+        "mark_represented": "Mark as represented",
+        "save_error": "Couldn’t save. Try again.",
+        "upload_photo": "Upload a photo of {{name}}",
+        "photo_error": "Couldn’t upload the photo. Try again.",
+        "photo_type_error": "Use a JPG, PNG or WebP image.",
+        "photo_size_error": "The photo must be 5 MB or smaller."
     }
 }

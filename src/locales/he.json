@@ -49,7 +49,8 @@
         "monitor": "מוניטור",
         "song_finder": "מצאו שיר",
         "open_menu": "פתח תפריט",
-        "close_menu": "סגור תפריט"
+        "close_menu": "סגור תפריט",
+        "people": "אמנים"
     },
     "song_finder": {
         "title": "מצאו שיר",
@@ -255,5 +256,36 @@
         "done": "כל השירים מאונדקסים.",
         "start": "אנדקס שירים",
         "stop": "עצור"
+    },
+    "people": {
+        "eyebrow": "בייצוג יאיר ניצני מוזיקה",
+        "title": "האמנים שלנו",
+        "subtitle": "הכותבים והמבצעים שאנחנו מייצגים, עם השירים המובילים שלהם.",
+        "tab_writers": "כותבים",
+        "tab_performers": "מבצעים",
+        "filter_name": "סינון לפי שם",
+        "show_more": "הצג עוד {{count}}",
+        "show_everyone": "הצג את כולם",
+        "count_one": "אדם אחד",
+        "count_two": "{{count}} אנשים",
+        "count_other": "{{count}} אנשים",
+        "song_count_one": "שיר אחד",
+        "song_count_two": "{{count}} שירים",
+        "song_count_other": "{{count}} שירים",
+        "more_songs_one": "ועוד שיר אחד",
+        "more_songs_two": "ועוד {{count}} שירים",
+        "more_songs_other": "ועוד {{count}} שירים",
+        "no_songs": "עדיין אין שירים בקטלוג.",
+        "no_match": "אין אף אחד בשם הזה.",
+        "empty": "עדיין אין מי להציג.",
+        "empty_admin": "עדיין אף אחד לא מסומן כמיוצג. הפעילו את „הצג את כולם” כדי לסמן.",
+        "load_error": "לא הצלחנו לטעון את הרשימה. נסו שוב בעוד רגע.",
+        "represented": "מיוצג",
+        "mark_represented": "סמן כמיוצג",
+        "save_error": "השמירה נכשלה. נסו שוב.",
+        "upload_photo": "העלאת תמונה של {{name}}",
+        "photo_error": "העלאת התמונה נכשלה. נסו שוב.",
+        "photo_type_error": "יש להשתמש בתמונת JPG, PNG או WebP.",
+        "photo_size_error": "התמונה צריכה להיות עד 5MB."
     }
 }

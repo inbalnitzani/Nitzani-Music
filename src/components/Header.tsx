@@ -77,6 +77,7 @@ export default function Header() {
       <div className="hidden sm:flex flex-1 items-center justify-between ms-10">
         <nav className="flex items-center gap-9">
           <NavLink to="/" end className={navLinkClass}>{t('header.home')}</NavLink>
+          <NavLink to="/authors" className={navLinkClass}>{t('header.people')}</NavLink>
           {role === 'admin' && (
             <>
               <NavLink to="/find-a-song" className={navLinkClass}>{t('header.song_finder')}</NavLink>
@@ -134,6 +135,9 @@ export default function Header() {
         <nav className="mobile-nav flex flex-col gap-1 p-4 text-start text-lg">
           <NavLink to="/" end className={navLinkClass} onClick={() => setOpen(false)}>
             <span className="block py-2">{t('header.home')}</span>
+          </NavLink>
+          <NavLink to="/authors" className={navLinkClass} onClick={() => setOpen(false)}>
+            <span className="block py-2">{t('header.people')}</span>
           </NavLink>
 
           {role === 'admin' && (

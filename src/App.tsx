@@ -12,6 +12,7 @@ import { useEffect, useMemo } from 'react';
 
 import './App.css'
 import SongFinderPage from './pages/SongFinderPage.tsx';
+import AuthorsPage from './pages/AuthorsPage.tsx';
 import logo from './assets/logo.png';
 
 declare global {
@@ -58,6 +59,7 @@ function App() {
             <Route path="/calculator" element={user ? <CalculatorPage /> : <Navigate to="/login" />} />
             <Route path="/monitoring" element={user && isAdmin ? <MonitoringPage /> : <Navigate to="/login" />} />
             <Route path="/find-a-song" element={user && isAdmin ? <SongFinderPage /> : <Navigate to="/login" />} />
+            <Route path="/authors" element={user ? <AuthorsPage /> : <Navigate to="/login" />} />
             <Route path="/home" element={<Navigate to="/find-a-song" replace />} />
 
           </Routes>
