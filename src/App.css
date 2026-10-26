@@ -473,7 +473,7 @@ body {
 
 /* Song results: album-style tracklist rows */
 .track-row {
-  @apply flex items-center gap-4 sm:gap-6 rounded-xl px-2 sm:px-4 py-4;
+  @apply flex items-start gap-4 sm:gap-6 rounded-xl px-2 sm:px-4 py-4;
   border-bottom: 1px solid var(--color-border);
   transition: background-color 150ms ease;
 }

@@ -281,13 +281,13 @@ function TrackRow({ song, index, delay }: { song: SuggestedSong; index: number; 
           href={song.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="shrink-0 inline-flex items-center gap-1.5 text-[15px] font-medium text-[var(--color-text-soft)] hover:text-[var(--color-primary)] transition-colors"
+          className="shrink-0 mt-1 inline-flex items-center gap-1.5 text-[15px] font-medium text-[var(--color-text-soft)] hover:text-[var(--color-primary)] transition-colors"
         >
           <ArrowUpRight size={16} strokeWidth={1.75} className="rtl:-scale-x-100" aria-hidden />
           {t('song_finder.listen')}
         </a>
       ) : (
-        <Music size={18} strokeWidth={1.5} className="shrink-0 text-[var(--color-border)]" aria-hidden />
+        <Music size={18} strokeWidth={1.5} className="shrink-0 mt-1.5 text-[var(--color-border)]" aria-hidden />
       )}
     </li>
   );
