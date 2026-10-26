@@ -17,8 +17,13 @@ export async function askSongFinder(messages: ChatMessage[]): Promise<SongFinder
 
   const { data, error } = await supabase.functions.invoke<SongFinderResponse>('suggest-songs', {
     body: {
-      // Only role + text go to the server; earlier song cards are not resent
-      messages: messages.map(m => ({ role: m.role, content: m.content })),
+      // Earlier picks go as title + artist only, so follow-ups can avoid repeating them
+      messages: messages.map(m => ({
+        role: m.role,
+        content: m.songs?.length
+          ? `${m.content}\nSuggested: ${m.songs.map(s => `${s.title} – ${s.artist}`).join('; ')}`
+          : m.content,
+      })),
     },
   });
 
@@ -32,11 +37,11 @@ async function mockResponse(): Promise<SongFinderResponse> {
   return {
     reply: 'Here are 5 songs with a confident, young energy that could work for this commercial:',
     songs: [
-      { title: 'Sample Song One', artist: 'Sample Artist', link: 'https://www.youtube.com/' },
-      { title: 'Sample Song Two', artist: 'Another Artist', link: 'https://www.youtube.com/' },
-      { title: 'Sample Song Three', artist: 'Sample Band', link: null },
-      { title: 'Sample Song Four', artist: 'Sample Artist', link: 'https://www.youtube.com/' },
-      { title: 'Sample Song Five', artist: 'Sample Singer', link: 'https://www.youtube.com/' },
+      { title: 'Sample Song One', artist: 'Sample Artist', link: 'https://www.youtube.com/', reason: 'Its bright, confident chorus matches the young energy of the brief.' },
+      { title: 'Sample Song Two', artist: 'Another Artist', link: 'https://www.youtube.com/', reason: 'The lyrics are about new beginnings, which fits a launch campaign.' },
+      { title: 'Sample Song Three', artist: 'Sample Band', link: null, reason: 'A familiar classic that gives the spot instant warmth with an older audience.' },
+      { title: 'Sample Song Four', artist: 'Sample Artist', link: 'https://www.youtube.com/', reason: 'Its steady build works well under a 30-second cut.' },
+      { title: 'Sample Song Five', artist: 'Sample Singer', link: 'https://www.youtube.com/', reason: 'Upbeat and summery without overpowering a voice-over.' },
     ],
   };
 }

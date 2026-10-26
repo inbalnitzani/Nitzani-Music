@@ -205,6 +205,12 @@ const SongForm: React.FC<SongFormProps> = ({
         }
       }
 
+      // Refresh the song's Song Finder embedding. Not awaited: a failure only leaves it
+      // for the "Index songs" backfill in Manage Site, so it shouldn't block the save.
+      supabase.functions
+        .invoke('embed-songs', { body: { song_ids: [Number(songId)] } })
+        .then(({ error }) => { if (error) console.error('Failed to index song for Song Finder:', error); });
+
       onSuccess();
       onClose();
     } catch (err) {

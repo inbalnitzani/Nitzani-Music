@@ -3,6 +3,7 @@ export interface SuggestedSong {
   title: string;
   artist: string;
   link: string | null;
+  reason: string; // why the song fits the brief, in the brief's language
 }
 
 export interface ChatMessage {
