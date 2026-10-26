@@ -6,6 +6,8 @@ import { DEFAULT_FRAMING } from '../utils/people';
 import PersonPhoto from './PersonPhoto';
 
 const MAX_ZOOM = 4;
+// Matches the exit transition on .photo-dialog in App.css
+const EXIT_MS = 150;
 const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
 
 // Admin dialog: drag (or use the arrow keys) to move the photo inside the round
@@ -26,6 +28,15 @@ export default function PhotoFramer({ name, photoUrl, initial, onSave, onReplace
   const [aspect, setAspect] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
+
+  // Let the exit transition play before the dialog unmounts
+  const close = () => {
+    if (isClosing) return;
+    setIsClosing(true);
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.setTimeout(onClose, reduce ? 0 : EXIT_MS);
+  };
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -82,7 +93,7 @@ export default function PhotoFramer({ name, photoUrl, initial, onSave, onReplace
     setError(null);
     try {
       await onSave({ x: Math.round(framing.x * 10) / 10, y: Math.round(framing.y * 10) / 10, zoom: Math.round(framing.zoom * 100) / 100 });
-      onClose();
+      close();
     } catch (err) {
       console.error('Photo framing save error:', err);
       setError(t('people.save_error'));
@@ -93,10 +104,11 @@ export default function PhotoFramer({ name, photoUrl, initial, onSave, onReplace
   return (
     <dialog
       ref={dialogRef}
-      onCancel={e => { e.preventDefault(); if (!isSaving) onClose(); }}
-      onClick={e => { if (e.target === dialogRef.current && !isSaving) onClose(); }}
+      onCancel={e => { e.preventDefault(); if (!isSaving) close(); }}
+      onClick={e => { if (e.target === dialogRef.current && !isSaving) close(); }}
+      data-closing={isClosing || undefined}
       aria-labelledby="photo-framer-title"
-      className="native-flex w-[calc(100vw-2rem)] max-w-[420px] rounded-[20px] p-0 bg-[var(--color-surface)] text-[var(--color-text)] shadow-[var(--shadow-raised)] backdrop:bg-black/40 backdrop:backdrop-blur-sm"
+      className="photo-dialog native-flex text-start w-[calc(100vw-2rem)] max-w-[420px] rounded-[20px] p-0 bg-[var(--color-surface)] text-[var(--color-text)] shadow-[var(--shadow-raised)]"
     >
       <div className="p-5 sm:p-6">
         <div className="flex items-start justify-between gap-4">
@@ -106,7 +118,7 @@ export default function PhotoFramer({ name, photoUrl, initial, onSave, onReplace
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={close}
             disabled={isSaving}
             aria-label={t('people.cancel')}
             className="shrink-0 -m-1 p-1.5 rounded-lg text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors"

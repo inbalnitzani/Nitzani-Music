@@ -16,6 +16,14 @@ const TABS: { kind: PersonKind; labelKey: string }[] = [
 // Admins viewing everyone can have 1,000+ cards; draw them a batch at a time
 const BATCH_SIZE = 60;
 
+// Admin-only: which people to list. Regular users always get represented people.
+type RepresentedView = 'represented' | 'not_represented' | 'all';
+const VIEWS: { view: RepresentedView; labelKey: string }[] = [
+  { view: 'represented', labelKey: 'people.view_represented' },
+  { view: 'not_represented', labelKey: 'people.view_not_represented' },
+  { view: 'all', labelKey: 'people.view_all' },
+];
+
 export default function AuthorsPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -23,7 +31,7 @@ export default function AuthorsPage() {
   const isAdmin = role === 'admin';
 
   const [kind, setKind] = useState<PersonKind>('authors');
-  const [showEveryone, setShowEveryone] = useState(false);
+  const [adminView, setAdminView] = useState<RepresentedView>('represented');
   const [query, setQuery] = useState('');
   const [people, setPeople] = useState<Person[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,21 +39,22 @@ export default function AuthorsPage() {
   const [error, setError] = useState<string | null>(null);
   const [shown, setShown] = useState(BATCH_SIZE);
 
-  const includeAll = isAdmin && showEveryone;
+  const view: RepresentedView = isAdmin ? adminView : 'represented';
 
   useEffect(() => {
     let cancelled = false;
     setIsLoading(true);
     setError(null);
-    fetchPeople(kind, includeAll)
-      .then(data => { if (!cancelled) setPeople(data); })
+    fetchPeople(kind, view !== 'represented')
+      // Filtered once per load, so a card toggled here stays put until the view changes
+      .then(data => { if (!cancelled) setPeople(view === 'not_represented' ? data.filter(p => !p.is_represented) : data); })
       .catch(err => {
         console.error('People load error:', err);
         if (!cancelled) setError('people.load_error');
       })
       .finally(() => { if (!cancelled) setIsLoading(false); });
     return () => { cancelled = true; };
-  }, [kind, includeAll]);
+  }, [kind, view]);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -53,7 +62,7 @@ export default function AuthorsPage() {
   }, [people, query]);
 
   // Start from the first batch whenever the list or filter changes
-  useEffect(() => setShown(BATCH_SIZE), [kind, includeAll, query]);
+  useEffect(() => setShown(BATCH_SIZE), [kind, view, query]);
 
   const updatePerson = (id: number, patch: Partial<Person>) =>
     setPeople(list => list.map(p => (p.id === id ? { ...p, ...patch } : p)));
@@ -78,7 +87,7 @@ export default function AuthorsPage() {
                 role="tab"
                 aria-selected={kind === tab.kind}
                 onClick={() => setKind(tab.kind)}
-                className={`px-4 py-2 rounded-lg text-[15px] font-medium transition-colors ${
+                className={`px-4 py-2 rounded-lg text-[15px] font-medium transition-[transform,background-color,color] duration-150 active:scale-[0.97] ${
                   kind === tab.kind
                     ? 'bg-[var(--color-text)] text-white'
                     : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
@@ -91,15 +100,24 @@ export default function AuthorsPage() {
 
           <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
             {isAdmin && (
-              <button
-                type="button"
-                aria-pressed={showEveryone}
-                onClick={() => setShowEveryone(v => !v)}
-                className={`refine-chip ${showEveryone ? '!border-[var(--color-primary)] !text-[var(--color-primary)]' : ''}`}
-              >
-                {showEveryone && <Check size={14} strokeWidth={2} aria-hidden />}
-                {t('people.show_everyone')}
-              </button>
+              <div role="radiogroup" aria-label={t('people.admin_view')} className="flex gap-0.5 p-0.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]">
+                {VIEWS.map(v => (
+                  <button
+                    key={v.view}
+                    type="button"
+                    role="radio"
+                    aria-checked={adminView === v.view}
+                    onClick={() => setAdminView(v.view)}
+                    className={`px-3 py-1.5 rounded-md text-sm transition-[transform,background-color,color] duration-150 active:scale-[0.97] ${
+                      adminView === v.view
+                        ? 'bg-[var(--color-surface)] text-[var(--color-text)] font-medium shadow-[0_1px_2px_rgb(23_20_18/0.08)]'
+                        : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+                    }`}
+                  >
+                    {t(v.labelKey)}
+                  </button>
+                ))}
+              </div>
             )}
             <label className="relative block w-full sm:w-72">
               <span className="sr-only">{t('people.filter_name')}</span>
@@ -123,23 +141,19 @@ export default function AuthorsPage() {
           {isLoading ? (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-hidden>
               {Array.from({ length: 6 }, (_, i) => (
-                <div key={i} className="rounded-[20px] bg-[var(--color-surface)] border border-[var(--color-border)] p-5" style={{ opacity: 1 - i * 0.12 }}>
-                  <div className="flex items-center gap-4">
-                    <div className="skeleton w-16 h-16 shrink-0" />
-                    <div className="flex-1 space-y-2.5">
-                      <div className="skeleton h-3.5 w-32" />
-                      <div className="skeleton h-2.5 w-16" />
-                    </div>
-                  </div>
-                  <div className="mt-5 space-y-3">
-                    {[150, 120, 170].map(w => <div key={w} className="skeleton h-2.5" style={{ width: w }} />)}
+                <div key={i} className="flex flex-col items-center rounded-[20px] bg-[var(--color-surface)] border border-[var(--color-border)] p-6" style={{ opacity: 1 - i * 0.12 }}>
+                  <div className="skeleton w-28 h-28" />
+                  <div className="skeleton mt-5 h-4 w-36" />
+                  <div className="skeleton mt-2.5 h-2.5 w-16" />
+                  <div className="mt-6 w-full space-y-3.5">
+                    {[170, 130, 190, 120, 150].map(w => <div key={w} className="skeleton h-2.5" style={{ width: w }} />)}
                   </div>
                 </div>
               ))}
             </div>
           ) : visible.length === 0 && !error ? (
             <p className="py-16 text-center text-[17px] text-[var(--color-muted)]">
-              {query.trim() ? t('people.no_match') : isAdmin && !showEveryone ? t('people.empty_admin') : t('people.empty')}
+              {query.trim() ? t('people.no_match') : isAdmin && view === 'represented' ? t('people.empty_admin') : t('people.empty')}
             </p>
           ) : (
             <>
@@ -187,7 +201,7 @@ function PersonCard({ kind, person, isAdmin, delay, onChange }: {
   const framing = { x: person.photo_x, y: person.photo_y, zoom: person.photo_zoom };
 
   // First letter of the first two words, skipping punctuation (some names start with ":" or quotes)
-  const initials = person.name.split(/\s+/).map(w => w.match(/\p{L}/u)?.[0]).filter(Boolean).slice(0, 2).join('');
+  const initials = person.name.split(/\s+/).map(w => w.match(/\p{L}/u)?.[0]).filter(Boolean).slice(0, 2).join('').toLocaleUpperCase();
   const extra = person.song_count - person.top_songs.length;
 
   const handleFile = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -227,13 +241,13 @@ function PersonCard({ kind, person, isAdmin, delay, onChange }: {
   };
 
   return (
-    <li className="enter-up flex flex-col rounded-[20px] bg-[var(--color-surface)] border border-[var(--color-border)] p-5" style={{ animationDelay: `${delay}ms` }}>
-      <div className="flex items-center gap-4">
-        <div className="relative shrink-0">
+    <li className="person-card enter-up flex flex-col rounded-[20px] bg-[var(--color-surface)] border border-[var(--color-border)] p-6" style={{ animationDelay: `${delay}ms` }}>
+      <div className="flex flex-col items-center text-center">
+        <div className="relative">
           {person.photo_url ? (
-            <PersonPhoto url={person.photo_url} framing={framing} className="w-16 h-16" />
+            <PersonPhoto url={person.photo_url} framing={framing} className="w-28 h-28" />
           ) : (
-            <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[var(--color-primary-light)] text-[var(--color-primary)] text-xl font-semibold" aria-hidden>
+            <div className="w-28 h-28 rounded-full flex items-center justify-center bg-[var(--color-primary-light)] text-[var(--color-primary)] text-[34px] font-semibold" aria-hidden>
               {initials}
             </div>
           )}
@@ -244,11 +258,11 @@ function PersonCard({ kind, person, isAdmin, delay, onChange }: {
                 onClick={() => (person.photo_url ? setIsFraming(true) : fileRef.current?.click())}
                 disabled={busy !== null}
                 aria-label={t(person.photo_url ? 'people.edit_photo' : 'people.upload_photo', { name: person.name })}
-                className="absolute -bottom-1 -end-1 w-7 h-7 rounded-full flex items-center justify-center bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-soft)] hover:text-[var(--color-primary)] transition-colors disabled:opacity-60"
+                className="absolute bottom-0.5 end-0.5 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-soft)] hover:text-[var(--color-primary)] transition-[transform,color] duration-150 active:scale-[0.94] disabled:opacity-60"
               >
                 {busy === 'photo'
                   ? <span className="w-3.5 h-3.5 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-[spin_0.6s_linear_infinite]" aria-hidden />
-                  : <Camera size={14} strokeWidth={1.75} aria-hidden />}
+                  : <Camera size={15} strokeWidth={1.75} aria-hidden />}
               </button>
               <input ref={fileRef} type="file" accept={PHOTO_TYPES.join(',')} onChange={handleFile} className="hidden" />
               {isFraming && person.photo_url && (
@@ -267,14 +281,12 @@ function PersonCard({ kind, person, isAdmin, delay, onChange }: {
             </>
           )}
         </div>
-        <div className="min-w-0 flex-1">
-          <h2 className="text-[19px] font-medium text-[var(--color-text)] truncate"><bdi>{person.name}</bdi></h2>
-          <p className="text-sm text-[var(--color-muted)]">{t('people.song_count', { count: person.song_count })}</p>
-        </div>
+        <h2 className="mt-4 w-full text-[20px] font-medium leading-tight text-[var(--color-text)] truncate"><bdi>{person.name}</bdi></h2>
+        <p className="mt-1 text-sm text-[var(--color-muted)]">{t('people.song_count', { count: person.song_count })}</p>
       </div>
 
       {person.top_songs.length > 0 ? (
-        <ol className="mt-4 border-t border-[var(--color-border)]">
+        <ol className="mt-5 border-t border-[var(--color-border)]">
           {person.top_songs.map((song, i) => (
             <li key={song.id} className="border-b border-[var(--color-border)] last:border-b-0">
               {song.link ? (
@@ -282,11 +294,11 @@ function PersonCard({ kind, person, isAdmin, delay, onChange }: {
                   href={song.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center gap-3 py-2.5 text-[15px] text-[var(--color-text-soft)] hover:text-[var(--color-primary)] transition-colors"
+                  className="song-link flex items-center gap-3 py-2.5 text-[15px] text-[var(--color-text-soft)]"
                 >
                   <SongIndex n={i + 1} />
                   <span className="min-w-0 flex-1 truncate"><bdi>{song.title}</bdi></span>
-                  <ArrowUpRight size={15} strokeWidth={1.75} className="shrink-0 text-[var(--color-muted)] group-hover:text-[var(--color-primary)] rtl:-scale-x-100" aria-hidden />
+                  <ArrowUpRight size={15} strokeWidth={1.75} className="song-arrow shrink-0 rtl:-scale-x-100" aria-hidden />
                 </a>
               ) : (
                 <div className="flex items-center gap-3 py-2.5 text-[15px] text-[var(--color-text-soft)]">
@@ -299,14 +311,14 @@ function PersonCard({ kind, person, isAdmin, delay, onChange }: {
           ))}
         </ol>
       ) : (
-        <p className="mt-4 pt-4 border-t border-[var(--color-border)] text-sm text-[var(--color-muted)]">{t('people.no_songs')}</p>
+        <p className="mt-5 pt-4 border-t border-[var(--color-border)] text-center text-sm text-[var(--color-muted)]">{t('people.no_songs')}</p>
       )}
       {extra > 0 && <p className="mt-2 text-xs text-[var(--color-muted)]">{t('people.more_songs', { count: extra })}</p>}
 
       {error && <p role="alert" className="mt-3 text-sm text-[var(--color-danger)]">{error}</p>}
 
       {isAdmin && (
-        <div className="mt-auto pt-4">
+        <div className="mt-auto pt-5 flex justify-center">
           <button
             type="button"
             aria-pressed={person.is_represented}

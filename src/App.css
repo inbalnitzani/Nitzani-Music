@@ -554,3 +554,64 @@ body {
   .skeleton { animation: none; }
   .equaliser span { transform: scaleY(0.7); }
 }
+
+/* ===== Artists page ===== */
+.person-card {
+  transition: border-color 150ms ease;
+}
+
+.song-link {
+  transition: color 150ms ease;
+}
+
+/* Song arrows show on touch screens; with a mouse they appear on hover */
+.song-arrow {
+  color: var(--color-muted);
+  transition: opacity 150ms ease, color 150ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .person-card:hover { border-color: #d4ccc4; }
+  .song-arrow { opacity: 0; }
+  .song-link:hover { color: var(--color-primary); }
+  .song-link:hover .song-arrow,
+  .song-link:focus-visible .song-arrow { opacity: 1; color: var(--color-primary); }
+}
+
+/* Photo dialog: scales in from 96%, leaves faster than it arrives */
+.photo-dialog {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
+}
+
+.photo-dialog::backdrop {
+  background-color: rgb(23 20 18 / 0.4);
+  backdrop-filter: blur(4px);
+  opacity: 1;
+  transition: opacity 200ms var(--ease-out);
+}
+
+@starting-style {
+  .photo-dialog { opacity: 0; transform: scale(0.96); }
+  .photo-dialog::backdrop { opacity: 0; }
+}
+
+.photo-dialog[data-closing] {
+  opacity: 0;
+  transform: scale(0.98);
+  transition-duration: 150ms;
+}
+
+.photo-dialog[data-closing]::backdrop {
+  opacity: 0;
+  transition-duration: 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-dialog,
+  .photo-dialog[data-closing] { transform: none; }
+  @starting-style {
+    .photo-dialog { transform: none; }
+  }
+}
